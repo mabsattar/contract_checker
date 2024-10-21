@@ -13,9 +13,29 @@ Required npm packages installed in the project directory
 Clone the smart-contract-sanctuary-ethereum repository.
 Navigate to the project directory:
 
+```
+cd ~/path/to/contract_checker
+```
+
+### Install project dependencies
+
+```
+npm install
+```
+
+### Usage
+
+1. Ensure you're in the project directory:
+
+`cd ~/path/to/contract_checker`
+
+2. Run the script:
+
+`node find_missing_contracts.js`
+
 ### Configuration
 
-#### Edit config/paths.yaml to set the paths
+##### Edit config/paths.yaml to set the paths
 
 ethereum_repo:
 
