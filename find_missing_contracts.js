@@ -1,15 +1,15 @@
-const { chromium } = require('playwright');
-const fs = require('fs').promises;
-const path = require('path');
+import yaml from 'js-yaml';
+import fs from 'fs/promises';
+import path from 'path';
+import fetch from 'node-fetch';
 
-// Configuration
 const SOURCIFY_API = 'https://sourcify.dev/server/verify';
 const CONFIG_PATH = path.join(__dirname, 'config', 'paths.yaml');
 
 async function loadConfig() {
     try {
         const data = await fs.readFile(CONFIG_PATH, 'utf8');
-        return JSON.parse(data);
+        return yaml.parse(data);
     } catch (error) {
         console.error('Error loading config:', error);
         throw error;
@@ -43,43 +43,33 @@ async function submitContract(chain, contractAddress, contractSource) {
     }
 }
 
-async function processChainRepos(repoBaseDir) {
+async function processChainRepos() {
     const config = await loadConfig();
     const repoPath = config.ethereum_repo || '/home/abcode/opensource/smart-contract-sanctuary-ethereum/contracts';
 
-    const browser = await chromium.launch();
-    const page = await browser.newPage();
+    const contractFiles = await fs.readdir(repoPath);
 
-    try {
-        await page.goto(repoPath);
+    for (const contractFile of contractFiles) {
+        if (contractFiles.endsWith('.sol', '')) {
+            const contractAddress = contractFile.replace('.sol', '');
+            const contractContent = await fs.readFile(path.join(repoPath, contractFile), 'utf8');
 
-        const links = await page.$$eval('a', as => as.map(a => a.href));
-        for (const link of links) {
-            if (link.includes('.sol')) {
-                const contractFile = path.basename(link);
-                const contractAddress = contractFile.replace('.sol', '');
+            const url = `${SOURCIFY_API}?address = ${contractAddress}&chainId=1`;
+            const existingSource = await fetch(url);
 
-                const contractContent = await fs.readFile(path.join(repoPath, contractFile), 'utf8');
-
-                // Check if contract exists in Sourcify
-                const existingSource = await fetch(SOURCIFY_API, {
-                    method: 'GET',
-                    params: { address: contractAddress, chainId: 1 }
-                });
-
-                if (!existingSource.ok) {
-                    await submitContract(path.basename(repoPath), contractAddress, contractContent);
-                }
+            if (!existingSource.ok) {
+                await submitContract('ethereum, contractAddress, contractContent');
             }
+
         }
-    } finally {
-        await browser.close();
+
     }
 }
 
+
 async function main() {
     try {
-        await processChainRepos('/home/abcode/opensource/smart-contract-sanctuary-ethereum/contracts');
+        await processChainRepos();
     } catch (error) {
         console.error('An error occurred:', error);
     }
