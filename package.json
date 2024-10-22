@@ -3,12 +3,7 @@
     "bottleneck": "^2.19.5",
     "js-yaml": "^4.1.0",
     "node-fetch": "^3.3.2",
-    "solc-js": "^1.0.1"
+    "solc": "^0.8.28"
   },
-  "type": "module",
-  "resolutions": {
-    "solc-js": {
-      "type": "commonjs"
-    }
-  }
+  "type": "module"
 }
