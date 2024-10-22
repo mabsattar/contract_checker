@@ -33,8 +33,13 @@ async function getCachedContracts() {
         const cacheData = await fs.readFile(CACHE_FILE, 'utf8');
         return JSON.parse(cacheData);
     } catch (error) {
-        console.error('Error reading cache:', error);
-        return {};
+        if (error.code === 'ENOENT') {
+            // File does not exist, return empty object
+            return {};
+        } else {
+            console.error('Error reading cache:', error);
+            return {}; // Return empty object on other errors
+        }
     }
 }
 
