@@ -5,7 +5,7 @@ import fetch from 'node-fetch';
 import Bottleneck from 'bottleneck';
 
 
-const SOURCIFY_API = 'https://api.sourcify.dev';
+const SOURCIFY_API = 'https://sourcify.dev/server';
 const BASE_PATH = path.join(process.cwd(), 'config');
 const CONFIG_FILE = path.join(BASE_PATH, 'paths.yaml');
 const CACHE_FILE = path.join(BASE_PATH, 'sourcify_cache.json');
@@ -45,20 +45,42 @@ async function saveCachedContracts(contracts) {
 
 async function checkContract(contractAddress) {
     return limiter.schedule(async () => {
-        const url = `${SOURCIFY_API}?address=${contractAddress}&chainId=1`;
-        console.log(`Checking ${url}`);
-        const existingSource = await fetch(url);
-        console.log(`Response status: ${existingSource.status}`);
+        try {
+            const url = `${SOURCIFY_API}?address=${contractAddress}&chainId=1`;
+            console.log(`Checking ${url}`);
 
-        const cacheResult = {
-            ok: existingSource.ok,
-            timestamp: Date.now(),
-        };
-        await saveCachedContracts({ ...getCachedContracts(), [contractAddress]: cacheResult });
+            // Add a timeout to prevent hanging on slow connections
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 seconds timeout
 
-        return existingSource.ok;
+            const existingSource = await fetch(url, { signal: controller.signal });
+
+            clearTimeout(timeoutId);
+
+            console.log(`Response status: ${existingSource.status}`);
+
+            const cacheResult = {
+                ok: existingSource.ok,
+                timestamp: Date.now(),
+            };
+            await saveCachedContracts({ ...getCachedContracts(), [contractAddress]: cacheResult });
+
+            return existingSource.ok;
+
+
+        } catch (error) {
+            if (error.name === 'AbortError') {
+                console.error('Request timed out');
+            } else if (error instanceof Error && error.message.includes('ENOTFOUND')) {
+                console.error('DNS resolution failed:', error.message);
+            } else {
+                console.error('Fetch error:', error.message);
+            }
+            throw error;
+        }
     });
 }
+
 
 async function submitContract(chain, contractAddress, contractSource) {
     return limiter.schedule(async () => {
@@ -104,31 +126,38 @@ async function processChainRepos() {
     console.log("Checking contracts in:", repoPath);
 
     try {
-        const contractFiles = await fs.readdir(repoPath);
+        const contractFolders = await fs.readdir(repoPath);
 
-        const tasks = contractFiles.map(async (contractFile) => {
-            if (contractFile.endsWith('.sol')) {
-                const contractAddress = contractFile.replace('.sol', '');
-                const contractContent = await fs.readFile(path.join(repoPath, contractFile), 'utf8');
+        for (const folder of contractFolders) {
+            const folderPath = path.join(repoPath, folder);
+            const stat = await fs.stat(folderPath);
 
-                const existingSource = await checkContract(contractAddress);
-                console.log(`Response status: ${existingSource ? 'OK' : 'Not Found'}`);
+            if (stat.isDirectory()) {
+                // Read the .sol files within the folder
+                const contractFiles = await fs.readdir(folderPath);
 
-                if (!existingSource) {
-                    console.log(`Contract ${contractAddress} does not exist in Sourcify`);
-                    await submitContract('ethereum', contractAddress, contractContent);
-                } else {
-                    console.log(`Contract ${contractAddress} exists in Sourcify`);
+                for (const contractFile of contractFiles) {
+                    if (contractFile.endsWith('.sol')) {
+                        const contractAddress = contractFile.replace('.sol', '');
+                        const contractContent = await fs.readFile(path.join(folderPath, contractFile), 'utf8');
+
+                        const existingSource = await checkContract(contractAddress);
+                        console.log(`Response status: ${existingSource ? 'OK' : 'Not Found'}`);
+
+                        if (!existingSource) {
+                            console.log(`Contract ${contractAddress} does not exist in Sourcify`);
+                            await submitContract('ethereum', contractAddress, contractContent);
+                        } else {
+                            console.log(`Contract ${contractAddress} exists in Sourcify`);
+                        }
+                    }
                 }
             }
-        });
-
-        await Promise.all(tasks);  // Run them concurrently while keeping rate-limited
+        }
     } catch (error) {
         console.error('Error processing repos:', error);
     }
 }
-
 
 async function main() {
     try {
