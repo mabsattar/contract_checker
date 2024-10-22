@@ -2,7 +2,13 @@
   "dependencies": {
     "bottleneck": "^2.19.5",
     "js-yaml": "^4.1.0",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "solc-js": "^1.0.1"
   },
-  "type": "module"
+  "type": "module",
+  "resolutions": {
+    "solc-js": {
+      "type": "commonjs"
+    }
+  }
 }

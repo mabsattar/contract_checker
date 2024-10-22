@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import fetch from 'node-fetch';
 import Bottleneck from 'bottleneck';
-
+import solc from 'solc-js';
 
 const SOURCIFY_API = 'https://sourcify.dev/server';
 const BASE_PATH = path.join(process.cwd(), 'config');
@@ -88,14 +88,23 @@ async function checkContract(contractAddress) {
 
 
 async function submitContract(chain, contractAddress, contractSource) {
+    if (!contractSource || !contractAddress || !chain) {
+        throw new Error('Missing required parameters');
+    }
     return limiter.schedule(async () => {
         const maxRetries = 3;
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
             try {
+
+                const output = solc.compile(contractSource, 1);
+                const contract = output.contracts[':MyContract'];
+
+
                 const payload = {
                     address: contractAddress,
                     chain: chain,
-                    files: [{ name: 'contract.sol', content: contractSource }]
+                    files: [{ name: 'contract.sol', content: contractSource }, { name: 'metadata.json', content: JSON.stringify(contract.metadata) },
+                    { name: 'abi.json', content: JSON.stringify(contract.abi) }, { name: 'bytecode.txt', content: contract.bytecode }]
                 };
 
                 const response = await fetch(`${SOURCIFY_API}/input-files`, {
@@ -125,42 +134,52 @@ async function submitContract(chain, contractAddress, contractSource) {
 
 
 async function processChainRepos() {
-    const config = await loadConfig();
-    const repoPath = config.ethereum_repo || path.join(BASE_PATH, '..', '..', 'smart-contract-sanctuary-ethereum', 'contracts');
-
-    console.log("Checking contracts in:", repoPath);
-
     try {
-        const contractFolders = await fs.readdir(repoPath);
 
-        for (const folder of contractFolders) {
-            const folderPath = path.join(repoPath, folder);
-            const stat = await fs.stat(folderPath);
+        const config = await loadConfig();
+        const repoPath = config.ethereum_repo || path.join(BASE_PATH, '..', '..', 'smart-contract-sanctuary-ethereum', 'contracts');
 
-            if (stat.isDirectory()) {
-                // Read the .sol files within the folder
-                const contractFiles = await fs.readdir(folderPath);
+        console.log("Checking contracts in:", repoPath);
 
-                for (const contractFile of contractFiles) {
-                    if (contractFile.endsWith('.sol')) {
-                        const contractAddress = contractFile.replace('.sol', '');
-                        const contractContent = await fs.readFile(path.join(folderPath, contractFile), 'utf8');
+        try {
+            const contractFolders = await fs.readdir(repoPath);
 
-                        const existingSource = await checkContract(contractAddress);
-                        console.log(`Response status: ${existingSource ? 'OK' : 'Not Found'}`);
+            for (const folder of contractFolders) {
+                const folderPath = path.join(repoPath, folder);
+                const stat = await fs.stat(folderPath);
 
-                        if (!existingSource) {
-                            console.log(`Contract ${contractAddress} does not exist in Sourcify`);
-                            await submitContract('ethereum', contractAddress, contractContent);
-                        } else {
-                            console.log(`Contract ${contractAddress} exists in Sourcify`);
+                if (stat.isDirectory()) {
+                    // Read the .sol files within the folder
+                    const contractFiles = await fs.readdir(folderPath);
+
+                    for (const contractFile of contractFiles) {
+                        if (contractFile.endsWith('.sol')) {
+                            const contractAddress = contractFile.replace('.sol', '');
+                            const contractContent = await fs.readFile(path.join(folderPath, contractFile), 'utf8');
+
+                            console.log(`Processing contract ${contractAddress}...`);
+
+
+                            const existingSource = await checkContract(contractAddress);
+                            console.log(`Response status: ${existingSource ? 'OK' : 'Not Found'}`);
+
+                            if (!existingSource) {
+                                console.log(`Contract ${contractAddress} does not exist in Sourcify`);
+                                await submitContract('ethereum', contractAddress, contractContent);
+                            } else {
+                                console.log(`Contract ${contractAddress} exists in Sourcify`);
+                            }
                         }
                     }
                 }
             }
+        } catch (error) {
+            console.error('Error processing repos:', error);
         }
-    } catch (error) {
+    }
+    catch (error) {
         console.error('Error processing repos:', error);
+        throw error;
     }
 }
 
