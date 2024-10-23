@@ -101,8 +101,7 @@ async function compileContract(contractSource) {
 
 const cache = await getCachedContracts();
 
-const submittedContractsFile = 'submitted_contracts.json';
-
+const submittedContractsFile = path.join(BASE_PATH, "submitted_contracts.json");
 
 async function submitContract(chain, contractAddress, contractSource) {
     console.log(`Submitting contract ${contractAddress} to Sourcify...`);
@@ -126,7 +125,7 @@ async function submitContract(chain, contractAddress, contractSource) {
     let contractList;
 
     try {
-        const submittedContracts = await fs.readFile(filePath, 'utf8');
+        const submittedContracts = await fs.readFile(submittedContractsFile, 'utf8');
         contractList = JSON.parse(submittedContracts);
     } catch (error) {
         if (error.code === 'ENOENT') {
@@ -141,7 +140,8 @@ async function submitContract(chain, contractAddress, contractSource) {
     // Log the contract address to the file
     if (!contractList.includes(contractAddress)) {
         contractList.push(contractAddress);
-        await fs.writeFile(filePath, JSON.stringify(contractList));
+        await fs.writeFile(submittedContractsFile, JSON.stringify(contractList));
+
     }
     return limiter.schedule(async () => {
         const maxRetries = 3;
@@ -327,7 +327,7 @@ async function processChainRepos() {
         }
 
         if (missingContracts.length > 0) {
-            console.log('Missing contracts: ${missingContracts.join(", ")}');
+            console.log(`Missing contracts: ${missingContracts.join(", ")}`);
         } else {
             console.log("No missing contracts found.");
         }
