@@ -3,6 +3,7 @@
     "bottleneck": "^2.19.5",
     "js-yaml": "^4.1.0",
     "node-fetch": "^3.3.2",
+    "p-limit": "^6.1.0",
     "solc": "^0.8.28"
   },
   "type": "module"
