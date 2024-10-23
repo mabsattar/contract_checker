@@ -198,9 +198,6 @@ async function main() {
         const config = await loadConfig();
         console.log("Loaded configuration:", config);
 
-        const repoPath = config.ethereum_repo || path.join(BASE_PATH, '..', '..', 'smart-contract-sanctuary-ethereum', 'contracts');
-        console.log("Checking contracts in:", repoPath);
-
         await processChainRepos();
 
         console.log("Contract checking completed.");
