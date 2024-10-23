@@ -14,7 +14,7 @@ const CACHE_FILE = path.join(BASE_PATH, 'sourcify_cache.json');
 
 
 const limiter = new Bottleneck({
-    minTime: 60000 // 60 seconds between requests
+    minTime: 5000 // 5 seconds between requests
 });
 
 
@@ -103,6 +103,12 @@ async function submitContract(chain, contractAddress, contractSource) {
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
             try {
 
+                const existingSource = await checkContract(contractAddress);
+                if (existingSource) {
+                    console.log(`Skipping contract ${contractAddress} as it's already submitted.`);
+                    return true;
+                }
+                // this will compiled only if the metadata is not available
                 const compiledContract = await compileContract(contractSource);
                 const contract = compiledContract.contracts[contractAddress];
 
