@@ -10,6 +10,8 @@ const SOURCIFY_API = "https://repo.sourcify.dev/api";
 const BASE_PATH = path.join(process.cwd(), "config");
 const CONFIG_FILE = path.join(BASE_PATH, "paths.yaml");
 const CACHE_FILE = path.join(BASE_PATH, "sourcify_cache.json");
+const missingContractsFile = path.join(BASE_PATH, "config", "missing_contracts.json");
+
 
 
 const limiter = new Bottleneck({
@@ -125,14 +127,6 @@ async function findMissingContracts() {
   }
 }
 
-//in todolist
-/*async function logError(errorMessage) {
-  const logFile = path.join(BASE_PATH, "error.log");
-  const timestamp = new Date().toISOString();
-  await fs.appendFile(logFile, `[${timestamp}] ${errorMessage}\n`);
-}
-*/
-
 const BATCH_SIZE = 10; // Set your desired batch size
 const MAX_RETRIES = 3; // Maximum number of retries for failed requests
 const RETRY_DELAY = 2000; // Delay between retries in milliseconds
@@ -158,7 +152,7 @@ async function processChainRepos() {
     let missingContractCount = 0;
     let skippedContractCount = 0;
 
-    let missingContracts = []; // Initialize an array to store missing contracts
+    let missingContracts = []; // Array to store missing contracts
 
     for (let i = 0; i < contractFolders.length; i += BATCH_SIZE) {
       const batch = contractFolders.slice(i, i + BATCH_SIZE);
@@ -172,7 +166,6 @@ async function processChainRepos() {
             .filter((file) => file.endsWith(".sol"))
             .map(async (contractFile) => {
               const contractAddress = contractFile.replace(".sol", "").replace(/[^a-zA-Z0-9]/g, "");
-
               const contractContent = await fs.readFile(path.join(folderPath, contractFile), "utf8");
 
               if (cache[contractAddress]) {
@@ -189,6 +182,12 @@ async function processChainRepos() {
                     console.log(`Contract ${contractAddress} does not exist in Sourcify`);
                     missingContracts.push(contractAddress);
                     missingContractCount++;
+
+                    // Add contract data to submittedContracts array
+                    missingContracts.push({
+                      address: contractAddress,
+                      content: JSON.stringify(contractContent), // or any other relevant data
+                    });
                   } else {
                     skippedContractCount++;
                     console.log(`Contract ${contractAddress} exists in Sourcify`);
@@ -209,8 +208,10 @@ async function processChainRepos() {
       await Promise.all(batchPromises);
     }
 
+    // Save missing contracts data to missing_contracts.json
     if (missingContracts.length > 0) {
-      console.log(`Missing contracts: ${missingContracts.join(", ")}`);
+      await fs.writeFile(missingContractsFile, JSON.stringify(missingContracts, null, 2));
+      console.log(`Missing contracts data saved to missing_contracts.json.`);
     } else {
       console.log("No missing contracts found.");
     }
@@ -220,22 +221,6 @@ async function processChainRepos() {
   }
 }
 
-//todolist
-/*async function retryFetch(fetchFunction, retries = MAX_RETRIES) {
-  for (let i = 0; i < retries; i++) {
-    try {
-      return await fetchFunction();
-    } catch (error) {
-      if (error.code === "ETIMEDOUT" && i < retries - 1) {
-        console.warn(`Retrying due to timeout... (${i + 1}/${retries})`);
-        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY)); // Wait before retrying
-      } else {
-        throw error; // Re-throw other errors or last retry error
-      }
-    }
-  }
-}
-*/
 async function main() {
   try {
     console.log("Starting contract checker...");
