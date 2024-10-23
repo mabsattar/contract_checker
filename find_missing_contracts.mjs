@@ -156,7 +156,7 @@ async function processChainRepos() {
         console.log("Checking contracts in:", repoPath);
 
         let contractCount = 0;
-        let missingCongtractCount = 0;
+        let missingContractCount = 0;
         let submittedContractCount = 0;
 
         try {
