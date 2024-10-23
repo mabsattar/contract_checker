@@ -48,18 +48,21 @@ async function saveCachedContracts(contracts) {
 }
 
 async function checkContract(contractAddress) {
-    try {
-        const response = await fetch(
-            `${SOURCIFY_API}/contracts/${contractAddress}`
-        );
-        if (response.ok) {
-            return true;
-        } else {
-            return false;
+    const maxRetries = 3;
+    const retryDelay = 5000; // 5 seconds
+
+    for (let i = 0; i < maxRetries; i++) {
+        try {
+            const response = await fetch(`${SOURCIFY_API}/contracts/${contractAddress}`);
+            return response.ok;
+        } catch (error) {
+            if (error.code === 'ETIMEDOUT' && i < maxRetries - 1) {
+                console.log(`Retrying due to timeout... (${i + 1}/${maxRetries})`);
+                await new Promise((resolve) => setTimeout(resolve, retryDelay));
+            } else {
+                throw error;
+            }
         }
-    } catch (error) {
-        console.error("Error checking contract:", error);
-        throw error;
     }
 }
 
@@ -82,7 +85,13 @@ async function compileContract(contractSource) {
         };
 
         const output = compile(JSON.stringify(input));
+        if (output.errors) {
+            console.error("Error compiling contract:", output.errors);
+            throw new Error("Compilation failed");
+        }
+
         const contracts = output.contracts["contract.sol"];
+        return contracts;
     } catch (error) {
         console.error("Error compiling contract:", error);
         throw error;
@@ -92,10 +101,38 @@ async function compileContract(contractSource) {
 const cache = await getCachedContracts();
 
 async function submitContract(chain, contractAddress, contractSource) {
+    console.log(`Submitting contract ${contractAddress} to Sourcify...`);
+
+    // Check if the contract has already been submitted
     if (!contractSource || !contractAddress || !chain) {
         throw new Error("Missing required parameters");
     }
 
+    const filePath = 'submitted_contracts.txt';
+    let contractList;
+
+    if (!fs.existsSync(filePath)) {
+        await fs.writeFile(filePath, '[]'); // Create an empty JSON array
+    }
+
+    try {
+        const submittedContracts = await fs.readFile(filePath, 'utf8');
+        contractList = JSON.parse(submittedContracts);
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            // File does not exist, create an empty array
+            contractList = [];
+        } else {
+            throw error;
+        }
+    }
+
+
+    // Log the contract address to the file
+    if (!contractList.includes(contractAddress)) {
+        contractList.push(contractAddress);
+        await fs.writeFile(filePath, JSON.stringify(contractList));
+    }
     return limiter.schedule(async () => {
         const maxRetries = 3;
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
