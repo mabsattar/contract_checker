@@ -105,12 +105,21 @@ async function submitContract(chain, contractAddress, contractSource) {
 
                 const existingSource = await checkContract(contractAddress);
                 if (existingSource) {
+                    cache[contractAddress] = { chain, submitted: false };
+                    await saveCachedContracts(cache);
                     console.log(`Skipping contract ${contractAddress} as it's already submitted.`);
                     return true;
                 }
                 // this will compiled only if the metadata is not available
                 const compiledContract = await compileContract(contractSource);
-                const contract = compiledContract.contracts[contractAddress];
+                const contract = compiledContract.contracts?.['contract.sol'];
+
+                if (!contract) {
+                    console.error('Compilation failed for contract ${contractAddress}');
+                    return false;
+                }
+
+                console.log(`Submitting ${contractAddress} on ${chain}`);
 
                 const payload = {
                     address: contractAddress,
