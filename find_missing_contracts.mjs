@@ -155,6 +155,10 @@ async function processChainRepos() {
 
         console.log("Checking contracts in:", repoPath);
 
+        let contractCount = 0;
+        let missingCongtractCount = 0;
+        let submittedContractCount = 0;
+
         try {
             const contractFolders = await fs.readdir(repoPath);
 
@@ -183,6 +187,10 @@ async function processChainRepos() {
                             } else {
                                 console.log(`Contract ${contractAddress} exists in Sourcify`);
                             }
+
+                            contractCount++;
+
+                            console.log(`Processed ${contractCount} contracts. Missing: ${missingContractCount}. Submitted: ${submittedContractCount}.`);
                         }
                     }
                 }
