@@ -84,7 +84,7 @@ async function compileContract(contractSource) {
         const output = compile(JSON.stringify(input));
         const contracts = output.contracts["contract.sol"];
 
-        return contracts;
+
     } catch (error) {
         console.error("Error compiling contract:", error);
         throw error;
@@ -102,6 +102,7 @@ async function submitContract(chain, contractAddress, contractSource) {
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
             try {
                 const existingSource = await checkContract(contractAddress);
+                let missingContracts = []; // Initialize an array to store missing contracts
                 if (existingSource) {
 
                     console.log(
@@ -134,30 +135,41 @@ async function submitContract(chain, contractAddress, contractSource) {
                     ],
                 };
 
-                const response = await fetch(`${SOURCIFY_API}/contracts`, {
-                    method: "POST",
-                    body: JSON.stringify(payload),
-                    headers: { "Content-Type": "application/json" },
-                });
+                try {
 
-                if (response.ok) {
-                    console.log(`Successfully submitted ${contractAddress} on ${chain}`);
-                    cache[contractAddress] = { chain, submitted: true };
-                    await saveCachedContracts(cache);
-                    return true;
-                } else {
-                    const errorText = await response.text();
-                    console.error(`Failed to submit ${contractAddress}: ${errorText}`);
-                }
-            } catch (error) {
-                if (attempt < maxRetries) {
-                    console.log(`Attempt ${attempt} failed. Retrying...`);
-                    await new Promise((resolve) => setTimeout(resolve, 1000 * attempt)); // Exponential backoff
-                } else {
-                    throw error;
+                    const response = await fetch(`${SOURCIFY_API}/contracts`, {
+                        method: "POST",
+                        body: JSON.stringify(payload),
+                        headers: { "Content-Type": "application/json" },
+                    });
+
+                    if (response.ok) {
+                        console.log(`Successfully submitted ${contractAddress} on ${chain}`);
+                        cache[contractAddress] = {
+                            chain,
+                            submitted: true,
+                            timestamp: new Date().toISOString(),
+                            metadata: {
+                                abi: contract.abi,
+                                bytecode: contract.bytecode,
+                                metadata: contract.metadata
+                            }
+                        };
+                        await saveCachedContracts(cache);
+                        return true;
+                    } else {
+                        const errorText = await response.text();
+                        console.error(`Failed to submit ${contractAddress}: ${errorText}`);
+                    }
+                } catch (error) {
+                    if (attempt < maxRetries) {
+                        console.log(`Attempt ${attempt} failed. Retrying...`);
+                        await new Promise((resolve) => setTimeout(resolve, 1000 * attempt)); // Exponential backoff
+                    } else {
+                        throw error;
+                    }
                 }
             }
-        }
     });
 }
 
@@ -166,6 +178,11 @@ async function logError(errorMessage) {
     const timestamp = new Date().toISOString();
     await fs.appendFile(logFile, `[${timestamp}] ${errorMessage}\n`);
 }
+
+const BATCH_SIZE = 10; // Set your desired batch size
+const MAX_RETRIES = 3; // Maximum number of retries for failed requests
+const RETRY_DELAY = 2000; // Delay between retries in milliseconds
+
 
 async function processChainRepos() {
     try {
@@ -182,32 +199,30 @@ async function processChainRepos() {
 
         console.log("Checking contracts in:", repoPath);
 
+        const contractFolders = await fs.readdir(repoPath);
         let contractCount = 0;
         let missingContractCount = 0;
         let submittedContractCount = 0;
+        let skippedContractCount = 0;
 
-        try {
-            const contractFolders = await fs.readdir(repoPath);
-
-            const contractPromises = []; // Collect promises for all contract submissions
-
-            for (const folder of contractFolders) {
+        for (let i = 0; i < contractFolders.length; i += BATCH_SIZE) {
+            const batch = contractFolders.slice(i, i + BATCH_SIZE);
+            const batchPromises = batch.map(async (folder) => {
                 const folderPath = path.join(repoPath, folder);
                 const stat = await fs.stat(folderPath);
 
                 if (stat.isDirectory()) {
-                    // Read the .sol files within the folder
                     const contractFiles = await fs.readdir(folderPath);
-
-                    for (const contractFile of contractFiles) {
-                        if (contractFile.endsWith(".sol")) {
+                    const contractPromises = contractFiles
+                        .filter(file => file.endsWith(".sol"))
+                        .map(async (contractFile) => {
                             const contractAddress = contractFile.replace(".sol", "");
                             const contractContent = await fs.readFile(
                                 path.join(folderPath, contractFile),
                                 "utf8"
                             );
 
-                            const promise = limit(async () => {
+                            try {
                                 console.log(`Processing contract ${contractAddress}...`);
 
                                 const existingSource = await checkContract(contractAddress);
@@ -229,30 +244,48 @@ async function processChainRepos() {
                                         submittedContractCount++;
                                     }
                                 } else {
+                                    skippedContractCount++;
                                     console.log(`Contract ${contractAddress} exists in Sourcify`);
                                 }
 
                                 contractCount++;
-
                                 console.log(
                                     `Processed ${contractCount} contracts. Missing: ${missingContractCount}. Submitted: ${submittedContractCount}.`
                                 );
-                            });
-                            contractPromises.push(promise);
-                        }
-                    }
-                }
-            }
+                            } catch (err) {
+                                console.error(`Error processing contract ${contractAddress}:`, err);
+                            }
+                        });
 
-            await Promise.all(contractPromises);
-        } catch (error) {
-            console.error("Error processing repos:", error);
+                    await Promise.all(contractPromises); // Wait for all contracts in this folder
+                }
+            });
+
+            // Wait for the batch to complete before processing the next batch
+            await Promise.all(batchPromises);
         }
     } catch (error) {
         console.error("Error processing repos:", error);
-        throw error;
+        throw error; // Re-throw if you want to handle it further up the call stack
     }
 }
+
+async function retryFetch(fetchFunction, retries = MAX_RETRIES) {
+    for (let i = 0; i < retries; i++) {
+        try {
+            return await fetchFunction();
+        } catch (error) {
+            if (error.code === 'ETIMEDOUT' && i < retries - 1) {
+                console.warn(`Retrying due to timeout... (${i + 1}/${retries})`);
+                await new Promise(resolve => setTimeout(resolve, RETRY_DELAY)); // Wait before retrying
+            } else {
+                throw error; // Re-throw other errors or last retry error
+            }
+        }
+    }
+}
+
+
 
 async function main() {
     try {
