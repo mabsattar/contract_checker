@@ -183,7 +183,11 @@ async function processChainRepos() {
 
                             if (!existingSource) {
                                 console.log(`Contract ${contractAddress} does not exist in Sourcify`);
-                                await submitContract('ethereum', contractAddress, contractContent);
+                                const submitted = await submitContract('ethereum', contractAddress, contractContent);
+                                if (submitted) {
+                                    missingContractCount++;
+                                    submittedContractCount++;
+                                }
                             } else {
                                 console.log(`Contract ${contractAddress} exists in Sourcify`);
                             }
