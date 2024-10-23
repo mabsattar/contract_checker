@@ -205,6 +205,10 @@ async function processChainRepos() {
         let submittedContractCount = 0;
         let skippedContractCount = 0;
 
+
+        let missingContracts = []; // Initialize an array to store missing contracts
+
+
         for (let i = 0; i < contractFolders.length; i += BATCH_SIZE) {
             const batch = contractFolders.slice(i, i + BATCH_SIZE);
             const batchPromises = batch.map(async (folder) => {
@@ -230,10 +234,14 @@ async function processChainRepos() {
                                     `Response status: ${existingSource ? "OK" : "Not Found"}`
                                 );
 
+
+
                                 if (!existingSource) {
                                     console.log(
                                         `Contract ${contractAddress} does not exist in Sourcify`
                                     );
+                                    //adding the missing contract address to the array
+                                    missingContracts.push(contractAddress);
                                     const submitted = await submitContract(
                                         "ethereum",
                                         contractAddress,
@@ -247,6 +255,8 @@ async function processChainRepos() {
                                     skippedContractCount++;
                                     console.log(`Contract ${contractAddress} exists in Sourcify`);
                                 }
+
+
 
                                 contractCount++;
                                 console.log(
@@ -263,6 +273,12 @@ async function processChainRepos() {
 
             // Wait for the batch to complete before processing the next batch
             await Promise.all(batchPromises);
+        }
+
+        if (missingContracts.length > 0) {
+            console.log('Missing contracts: ${missingContracts.join(", ")}');
+        } else {
+            console.log('No missing contracts found.');
         }
     } catch (error) {
         console.error("Error processing repos:", error);
