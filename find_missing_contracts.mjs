@@ -1,5 +1,6 @@
 import yaml from "js-yaml";
 import fs from "node:fs/promises";
+import { promises as fsPromises } from 'node:fs';
 import path from "node:path";
 import fetch from "node-fetch";
 import Bottleneck from "bottleneck";
@@ -100,6 +101,9 @@ async function compileContract(contractSource) {
 
 const cache = await getCachedContracts();
 
+const submittedContractsFile = 'submitted_contracts.json';
+
+
 async function submitContract(chain, contractAddress, contractSource) {
     console.log(`Submitting contract ${contractAddress} to Sourcify...`);
 
@@ -108,12 +112,18 @@ async function submitContract(chain, contractAddress, contractSource) {
         throw new Error("Missing required parameters");
     }
 
-    const filePath = 'submitted_contracts.txt';
-    let contractList;
-
-    if (!fs.existsSync(filePath)) {
-        await fs.writeFile(filePath, '[]'); // Create an empty JSON array
+    // Ensure the submitted contracts file exists
+    try {
+        await fs.access(submittedContractsFile);
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            await fs.writeFile(submittedContractsFile, '[]'); // Create an empty JSON array
+        } else {
+            throw error;
+        }
     }
+
+    let contractList;
 
     try {
         const submittedContracts = await fs.readFile(filePath, 'utf8');
