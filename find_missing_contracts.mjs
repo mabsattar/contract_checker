@@ -92,7 +92,7 @@ async function compileContract(contractSource) {
 }
 
 
-
+const cache = await getCachedContracts();
 
 async function submitContract(chain, contractAddress, contractSource) {
     if (!contractSource || !contractAddress || !chain) {
@@ -130,6 +130,8 @@ async function submitContract(chain, contractAddress, contractSource) {
 
                 if (response.ok) {
                     console.log(`Successfully submitted ${contractAddress} on ${chain}`);
+                    cache[contractAddress] = { chain, submitted: true };
+                    await saveCachedContracts(cache);
                     return true;
                 } else {
                     const errorText = await response.text();
@@ -145,6 +147,12 @@ async function submitContract(chain, contractAddress, contractSource) {
             }
         }
     });
+}
+
+async function logError(errorMessage) {
+    const logFile = path.join(BASE_PATH, 'error.log');
+    const timestamp = new Date().toISOString();
+    await fs.appendFile(logFile, `[${timestamp}] ${errorMessage}\n`);
 }
 
 
