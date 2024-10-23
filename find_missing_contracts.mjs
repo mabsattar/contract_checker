@@ -3,14 +3,14 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import fetch from 'node-fetch';
 import Bottleneck from 'bottleneck';
-import solc from 'solc-js';
+import pkg from 'solc';
+const { compile } = pkg;
 
-const SOURCIFY_API = 'https://sourcify.dev/server';
+
+const SOURCIFY_API = 'https://repo.sourcify.dev/api';
 const BASE_PATH = path.join(process.cwd(), 'config');
 const CONFIG_FILE = path.join(BASE_PATH, 'paths.yaml');
 const CACHE_FILE = path.join(BASE_PATH, 'sourcify_cache.json');
-
-
 
 
 const limiter = new Bottleneck({
@@ -49,42 +49,49 @@ async function saveCachedContracts(contracts) {
 }
 
 async function checkContract(contractAddress) {
-    return limiter.schedule(async () => {
-        try {
-            const url = `${SOURCIFY_API}?address=${contractAddress}&chainId=1`;
-            console.log(`Checking ${url}`);
-
-            // Add a timeout to prevent hanging on slow connections
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 seconds timeout
-
-            const existingSource = await fetch(url, { signal: controller.signal });
-
-            clearTimeout(timeoutId);
-
-            console.log(`Response status: ${existingSource.status}`);
-
-            const cacheResult = {
-                ok: existingSource.ok,
-                timestamp: Date.now(),
-            };
-            await saveCachedContracts({ ...getCachedContracts(), [contractAddress]: cacheResult });
-
-            return existingSource.ok;
-
-
-        } catch (error) {
-            if (error.name === 'AbortError') {
-                console.error('Request timed out');
-            } else if (error instanceof Error && error.message.includes('ENOTFOUND')) {
-                console.error('DNS resolution failed:', error.message);
-            } else {
-                console.error('Fetch error:', error.message);
-            }
-            throw error;
+    try {
+        const response = await fetch(`${SOURCIFY_API}/contracts/${contractAddress}`);
+        if (response.ok) {
+            return true;
+        } else {
+            return false;
         }
-    });
+    } catch (error) {
+        console.error('Error checking contract:', error);
+        throw error;
+    }
 }
+
+
+async function compileContract(contractSource) {
+    try {
+        const input = {
+            language: 'Solidity',
+            sources: {
+                'contract.sol': {
+                    content: contractSource,
+                },
+            },
+            settings: {
+                outputSelection: {
+                    '*': {
+                        '*': ['*'],
+                    },
+                },
+            },
+        };
+
+        const output = compile(JSON.stringify(input));
+        const contracts = output.contracts['contract.sol'];
+
+        return contracts;
+    } catch (error) {
+        console.error('Error compiling contract:', error);
+        throw error;
+    }
+}
+
+
 
 
 async function submitContract(chain, contractAddress, contractSource) {
@@ -96,18 +103,20 @@ async function submitContract(chain, contractAddress, contractSource) {
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
             try {
 
-                const output = solc.compile(contractSource, 1);
-                const contract = output.contracts[':MyContract'];
-
+                const compiledContract = await compileContract(contractSource);
+                const contract = compiledContract.contracts[contractAddress];
 
                 const payload = {
                     address: contractAddress,
                     chain: chain,
-                    files: [{ name: 'contract.sol', content: contractSource }, { name: 'metadata.json', content: JSON.stringify(contract.metadata) },
-                    { name: 'abi.json', content: JSON.stringify(contract.abi) }, { name: 'bytecode.txt', content: contract.bytecode }]
+                    files: [{ name: 'contract.sol', content: contractSource },
+                    { name: 'metadata.json', content: JSON.stringify(contract.metadata) },
+                    { name: 'abi.json', content: JSON.stringify(contract.abi) },
+                    { name: 'bytecode.txt', content: contract.bytecode }
+                    ]
                 };
 
-                const response = await fetch(`${SOURCIFY_API}/input-files`, {
+                const response = await fetch(`${SOURCIFY_API}/contracs`, {
                     method: 'POST',
                     body: JSON.stringify(payload),
                     headers: { 'Content-Type': 'application/json' }
@@ -135,7 +144,6 @@ async function submitContract(chain, contractAddress, contractSource) {
 
 async function processChainRepos() {
     try {
-
         const config = await loadConfig();
         const repoPath = config.ethereum_repo || path.join(BASE_PATH, '..', '..', 'smart-contract-sanctuary-ethereum', 'contracts');
 
