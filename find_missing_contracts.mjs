@@ -116,7 +116,7 @@ async function submitContract(chain, contractAddress, contractSource) {
                     ]
                 };
 
-                const response = await fetch(`${SOURCIFY_API}/contracs`, {
+                const response = await fetch(`${SOURCIFY_API}/contracts`, {
                     method: 'POST',
                     body: JSON.stringify(payload),
                     headers: { 'Content-Type': 'application/json' }
