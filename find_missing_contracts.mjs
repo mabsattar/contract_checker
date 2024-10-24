@@ -1,6 +1,6 @@
 import yaml from "js-yaml";
 import fs from "node:fs/promises";
-import path from "node:path";
+import path, { format } from "node:path";
 import fetch from "node-fetch";
 import Bottleneck from "bottleneck";
 import pkg from "solc";
@@ -48,26 +48,23 @@ async function saveCachedContracts(contracts) {
 }
 
 async function checkContract(contractAddress) {
-  const maxRetries = 3;
-  const retryDelay = 5000; // 5 seconds
-
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      const response = await fetch(
-        `${SOURCIFY_API}/contracts/${contractAddress}`,
-      );
-      return response.ok;
-    } catch (error) {
-      if (error.code === "ETIMEDOUT" && i < maxRetries - 1) {
-        console.log(`Retrying due to timeout... (${i + 1}/${maxRetries})`);
-        await new Promise((resolve) => setTimeout(resolve, retryDelay));
-      } else {
-        throw error;
-      }
-    }
+  try {
+    const response = await fetch(
+      `${SOURCIFY_API}/contracts/${contractAddress}`
+    );
+    return response.ok;
+  } catch (error) {
+    console.error("Error checking contract:", error);
+    return false; // Return false on error to skip that contract
   }
 }
 
+
+/**
+ * Compile a Solidity contract given its source code.
+ * @param {string} contractSource - Source code of the contract.
+ * @returns {Promise<object>} - The compiled contract, or throws an error if compilation fails.
+ */
 async function compileContract(contractSource) {
   try {
     const input = {
@@ -128,8 +125,7 @@ async function compileContract(contractSource) {
 }
 */
 const BATCH_SIZE = 10; // Set your desired batch size
-const MAX_RETRIES = 3; // Maximum number of retries for failed requests
-const RETRY_DELAY = 2000; // Delay between retries in milliseconds
+
 
 async function processChainRepos() {
   try {
@@ -151,6 +147,9 @@ async function processChainRepos() {
     let contractCount = 0;
     let missingContractCount = 0;
     let skippedContractCount = 0;
+
+    // Initialize the JSON file for missing contracts
+    await fs.writeFile(missingContractsFile, JSON.stringify([]));
 
     const missingContracts = {}; // object to store missing contracts
     const formattedContracts = [];
@@ -181,18 +180,35 @@ async function processChainRepos() {
 
                   if (!existingSource) {
                     console.log(`Contract ${contractAddress} does not exist in Sourcify`);
-                    missingContracts[contractAddress] = {
+
+                    let abi;
+                    try {
+                      const contractContent = await fs.readFile(path.join(folderPath, contractFile), "utf8");
+                      abi = JSON.parse(contractContent).abi || [];
+                    }
+                    catch (err) {
+                      console.error(`Error parsing ABI for contract ${contractAddress}:`, err);
+                      abi = [];
+                    }
+                    const missingContractData = {
                       name: contractFile,
                       address: contractAddress,
-                      content: contractContent,
+                      abi: [] || [],
                     };
+
+
+                    // Write the missing contract data to the JSON file
+                    const currentData = JSON.parse(await fs.readFile(missingContractsFile, "utf8"));
+                    currentData.push(missingContractData);
+                    await fs.writeFile(missingContractsFile, JSON.stringify(currentData, null, 2));
+
                     missingContractCount++;
 
                     // Add contract data to submittedContracts array
                     formattedContracts.push({
                       name: contractFile,
                       address: contractAddress,
-                      content: contractContent, // Include contract content
+                      abi: abi || [],
                     });
                   } else {
                     skippedContractCount++;
@@ -217,14 +233,26 @@ async function processChainRepos() {
     console.log(`Found ${missingContractCount} missing contracts.`);
 
 
+    // formattedContracts = Object.values(missingContracts).map((contract) => {
+    //   return {
+    //     name: contract.name,
+    //     address: contract.address,
+    //     abi: contract.abi,
+    //   };
+    // });
 
-    // Save missing contracts data to missing_contracts.json
-    if (Object.keys(missingContracts).length > 0) {
+    // Saves missing contracts data to missing_contracts.json
+    if (formattedContracts.length > 0) {
+      console.log("Saving missing contracts data...");
       await fs.writeFile(missingContractsFile, JSON.stringify(missingContracts, null, 2));
       console.log(`Missing contracts data saved to missing_contracts.json.`);
     } else {
       console.log("No missing contracts found.");
     }
+
+    // Log contents of missingContracts for verification
+    console.log("Contents of missingContracts:");
+    console.log(JSON.stringify(missingContracts, null, 2));
   } catch (error) {
     console.error("Error processing repos:", error);
     throw error;
