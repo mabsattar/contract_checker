@@ -160,71 +160,90 @@ async function processChainRepos() {
         const folderPath = path.join(repoPath, folder);
         const stat = await fs.stat(folderPath);
 
-        if (stat.isDirectory()) {
-          const contractFiles = await fs.readdir(folderPath);
-          const contractPromises = contractFiles
-            .filter((file) => file.endsWith(".sol"))
-            .map(async (contractFile) => {
-              const contractAddress = contractFile.replace(".sol", "").replace(/[^a-zA-Z0-9]/g, "");
-              const contractContent = await fs.readFile(path.join(folderPath, contractFile), "utf8");
+        const contractPromises = contractFiles
+          .filter((file) => file.endsWith(".sol"))
+          .map(async (contractFile) => {
+            const contractAddress = contractFile.replace(".sol", "").replace(/[^a-zA-Z0-9]/g, "");
+            const folderPath = path.join(folderPath, contractFile);
 
-              if (cache[contractAddress]) {
-                console.log(`Skipping contract ${contractAddress} as it's already in the cache.`);
-                skippedContractCount++;
-              } else {
+            // Skip if the contract is already in the cache
+            console.log(`Processing contract ${contractAddress}...`);
+
+            if (cache[contractAddress]) {
+              console.log(`Skipping contract ${contractAddress} as it's already in the cache.`);
+              skippedContractCount++;
+              return;
+            } else {
+              try {
+                const contractContent = await fs.readFile(path.join(folderPath, contractFile), "utf8");
+
+
+                // Remove comments and trim whitespace
+                const cleanContent = contractContent.replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, "").trim();
+
+                let parsedContent;
                 try {
-                  console.log(`Processing contract ${contractAddress}...`);
-
-                  const existingSource = await checkContract(contractAddress);
-                  console.log(`Response status: ${existingSource ? "OK" : "Not Found"}`);
-
-                  if (!existingSource) {
-                    console.log(`Contract ${contractAddress} does not exist in Sourcify`);
-
-                    let abi;
-                    try {
-                      const contractContent = await fs.readFile(path.join(folderPath, contractFile), "utf8");
-                      abi = JSON.parse(contractContent).abi || [];
-                    }
-                    catch (err) {
-                      console.error(`Error parsing ABI for contract ${contractAddress}:`, err);
-                      abi = [];
-                    }
-                    const missingContractData = {
-                      name: contractFile,
-                      address: contractAddress,
-                      abi: [] || [],
-                    };
-
-
-                    // Write the missing contract data to the JSON file
-                    const currentData = JSON.parse(await fs.readFile(missingContractsFile, "utf8"));
-                    currentData.push(missingContractData);
-                    await fs.writeFile(missingContractsFile, JSON.stringify(currentData, null, 2));
-
-                    missingContractCount++;
-
-                    // Add contract data to submittedContracts array
-                    formattedContracts.push({
-                      name: contractFile,
-                      address: contractAddress,
-                      abi: abi || [],
-                    });
-                  } else {
-                    skippedContractCount++;
-                    console.log(`Contract ${contractAddress} exists in Sourcify`);
-                  }
-
-                  contractCount++;
-                  console.log(`Processed ${contractCount} contracts. Missing: ${missingContractCount}. Skipped: ${skippedContractCount}.`);
-                } catch (err) {
-                  console.error(`Error processing contract ${contractAddress}:`, err);
+                  parsedContent = JSON.parse(cleanContent);
+                } catch (jsonError) {
+                  console.error(`Failed to parse JSON for contract ${contractAddress}:`, jsonError);
+                  // If JSON parsing fails, use the clean content as is
+                  parsedContent = {};
                 }
-              }
-            });
 
-          await Promise.all(contractPromises); // Wait for all contracts in this folder
-        }
+                let name = '';
+                if ('name' in parsedContent && typeof parsedContent.name === 'string') {
+                  name = parsedContent.name;
+                } else {
+                  console.warn(`Name not found in contract ${contractAddress}`);
+                  // Fallback to filename if no name is found
+                  name = path.basename(contractFile);
+                }
+
+                const existingSource = await checkContract(contractAddress);
+                console.log(`Response status: ${existingSource ? "OK" : "Not Found"}`);
+
+                if (!existingSource) {
+                  console.log(`Contract ${contractAddress} does not exist in Sourcify`);
+
+                  const compiledContract = await compileContract(contractContent);
+
+                  const missingContractData = {
+                    name: name || contractFile,
+                    address: contractAddress,
+                    bytecode: compiledContract.bytecode,
+                    abi: compiledContract.abi
+                  };
+
+
+                  // Write the missing contract data to the JSON file
+                  const currentData = JSON.parse(await fs.readFile(missingContractsFile, "utf8"));
+                  currentData.push(missingContractData);
+                  await fs.writeFile(missingContractsFile, JSON.stringify(currentData, null, 2));
+
+                  missingContractCount++;
+
+                  // Add contract data to submittedContracts array
+                  formattedContracts.push({
+                    name: name || contractFile,
+                    address: contractAddress,
+                    bytecode: compiledContract.bytecode,
+                    abi: compiledContract.abi
+                  });
+                } else {
+                  skippedContractCount++;
+                  console.log(`Contract ${contractAddress} exists in Sourcify`);
+                }
+
+                contractCount++;
+                console.log(`Processed ${contractCount} contracts. Missing: ${missingContractCount}. Skipped: ${skippedContractCount}.`);
+              } catch (err) {
+                console.error(`Error processing contract ${contractAddress}:`, err);
+              }
+            }
+          });
+
+        await Promise.all(contractPromises); // Wait for all contracts in this folder
+
       });
 
       await Promise.all(batchPromises);
@@ -237,7 +256,6 @@ async function processChainRepos() {
     //   return {
     //     name: contract.name,
     //     address: contract.address,
-    //     abi: contract.abi,
     //   };
     // });
 
