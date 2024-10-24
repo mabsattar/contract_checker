@@ -93,34 +93,6 @@ async function compileContract(contractSource) {
   }
 }
 
-
-/*async function findMissingContracts() {
-  try {
-    const config = await loadConfig();
-    const repoPath =
-      config.ethereum_repo ||
-      path.join(
-        BASE_PATH,
-        "..",
-        "..",
-        "smart-contract-sanctuary-ethereum",
-        "contracts",
-      );
-    const cache = await getCachedContracts();
-
-    const contractFolders = await fs.readdir(repoPath);
-    const missingContracts = contractFolders
-      .filter((folder) => !cache[folder])
-      .map((folder) => path.join(repoPath, folder));
-
-    return missingContracts;
-  } catch (error) {
-    console.error("Error finding missing contracts:", error);
-    throw error;
-  }
-}
-*/
-
 async function processContracts() {
   try {
     const config = await loadConfig();
@@ -139,7 +111,7 @@ async function processContracts() {
         const contractAddress = contractFile.replace(".sol", "").replace(/[^a-zA-Z0-9]/g, "");
         console.log(`Processing contract ${contractAddress}...`);
 
-        const contractExists = await checkContractInSourcify(contractAddress);
+        const contractExists = await checkContract(contractAddress);
         if (contractExists) {
           console.log(`Contract ${contractAddress} exists in Sourcify`);
           continue;
