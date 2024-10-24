@@ -10,7 +10,7 @@ const SOURCIFY_API = "https://repo.sourcify.dev/api";
 const BASE_PATH = path.join(process.cwd(), "config");
 const CONFIG_FILE = path.join(BASE_PATH, "paths.yaml");
 const CACHE_FILE = path.join(BASE_PATH, "sourcify_cache.json");
-const missingContractsFile = path.join(BASE_PATH, "config", "missing_contracts.json");
+const missingContractsFile = path.join(process.cwd(), "missing_contracts.json");
 
 
 
@@ -101,7 +101,7 @@ async function compileContract(contractSource) {
 }
 
 
-async function findMissingContracts() {
+/*async function findMissingContracts() {
   try {
     const config = await loadConfig();
     const repoPath =
@@ -126,7 +126,7 @@ async function findMissingContracts() {
     throw error;
   }
 }
-
+*/
 const BATCH_SIZE = 10; // Set your desired batch size
 const MAX_RETRIES = 3; // Maximum number of retries for failed requests
 const RETRY_DELAY = 2000; // Delay between retries in milliseconds
@@ -152,7 +152,8 @@ async function processChainRepos() {
     let missingContractCount = 0;
     let skippedContractCount = 0;
 
-    let missingContracts = []; // Array to store missing contracts
+    const missingContracts = {}; // object to store missing contracts
+    const formattedContracts = [];
 
     for (let i = 0; i < contractFolders.length; i += BATCH_SIZE) {
       const batch = contractFolders.slice(i, i + BATCH_SIZE);
@@ -180,13 +181,18 @@ async function processChainRepos() {
 
                   if (!existingSource) {
                     console.log(`Contract ${contractAddress} does not exist in Sourcify`);
-                    missingContracts.push(contractAddress);
+                    missingContracts[contractAddress] = {
+                      name: contractFile,
+                      address: contractAddress,
+                      content: contractContent,
+                    };
                     missingContractCount++;
 
                     // Add contract data to submittedContracts array
-                    missingContracts.push({
+                    formattedContracts.push({
+                      name: contractFile,
                       address: contractAddress,
-                      content: JSON.stringify(contractContent), // or any other relevant data
+                      content: contractContent, // Include contract content
                     });
                   } else {
                     skippedContractCount++;
@@ -208,8 +214,12 @@ async function processChainRepos() {
       await Promise.all(batchPromises);
     }
 
+    console.log(`Found ${missingContractCount} missing contracts.`);
+
+
+
     // Save missing contracts data to missing_contracts.json
-    if (missingContracts.length > 0) {
+    if (Object.keys(missingContracts).length > 0) {
       await fs.writeFile(missingContractsFile, JSON.stringify(missingContracts, null, 2));
       console.log(`Missing contracts data saved to missing_contracts.json.`);
     } else {
