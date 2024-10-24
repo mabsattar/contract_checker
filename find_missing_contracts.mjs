@@ -15,7 +15,7 @@ const missingContractsFile = path.join(process.cwd(), "missing_contracts.json");
 
 
 const limiter = new Bottleneck({
-  minTime: 5000, // 5 seconds between requests
+  minTime: 1000, // 5 seconds between requests
 });
 
 async function loadConfig() {
@@ -45,9 +45,9 @@ async function getCachedContracts() {
 
 async function checkContract(contractAddress) {
   try {
-    const response = await fetch(
+    const response = await limiter.scheduled(() => fetch(
       `${SOURCIFY_API}/contracts/${contractAddress}`
-    );
+    ));
     return response.ok;
   } catch (error) {
     console.error("Error checking contract:", error);
@@ -101,6 +101,12 @@ async function processContracts() {
     const contractFolders = await fs.readdir(repoPath);
     const formattedContracts = [];
 
+    const batchSize = 100;
+    for (let i = 0; i < contractFolders.length; i += batchSize) {
+      const batch = contractFolders.slice(i, i + batchSize);
+      await processBatch(batch, repoPath, formattedContracts);
+    }
+
     for (const folder of contractFolders) {
       const folderPath = path.join(repoPath, folder);
       const contractFiles = await fs.readdir(folderPath);
@@ -140,6 +146,52 @@ async function processContracts() {
     }
   } catch (error) {
     console.error("Error processing contracts:", error);
+  }
+}
+
+async function processBatch(folderNames, repoPath, formattedContracts) {
+  const promises = [];
+
+  for (const folderName of folderNames) {
+    const folderPath = path.join(repoPath, folderName);
+    try {
+      const contractFiles = await fs.readdir(folderPath);
+
+      for (const contractFile of contractFiles) {
+        if (!contractFile.endsWith(".sol")) continue;
+
+        const contractAddress = contractFile.replace(".sol", "").replace(/[^a-zA-Z0-9]/g, "");
+        console.log(`Processing contract ${contractAddress}...`);
+
+        try {
+          const contractExists = await checkContract(contractAddress);
+          if (contractExists) {
+            console.log(`Contract ${contractAddress} exists in Sourcify`);
+            continue;
+          }
+
+          const contractContent = await fs.readFile(path.join(folderPath, contractFile), "utf8");
+          const compiledContract = await compileContract(contractContent);
+          const contractName = path.basename(contractFile);
+
+          formattedContracts.push({
+            name: contractName,
+            address: contractAddress,
+            bytecode: compiledContract.bytecode || '',
+            abi: compiledContract.abi || []
+          });
+
+          console.log(`Contract ${contractAddress} missing, added to list.`);
+        } catch (error) {
+          console.error(`Error processing contract ${contractAddress}:`, error);
+        }
+      }
+    } catch (error) {
+      console.error(`Error processing folder ${folderName}:`, error);
+    }
+
+    await Promise.all(promises);
+    return formattedContracts;
   }
 }
 
