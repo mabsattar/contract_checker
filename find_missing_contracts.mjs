@@ -1,26 +1,27 @@
 import yaml from "js-yaml";
 import fs from "node:fs/promises";
-import path, { format } from "node:path";
 import fetch from "node-fetch";
 import Bottleneck from "bottleneck";
-import pkg from "solc";
-const { compile } = pkg;
+import { Octokit } from '@octokit/rest';
+import path from "node:path";
 
+
+const GITHUB_TOKEN = 'process.env.GITHUB_TOKEN'; // Replace with your actual token
+const octokit = new Octokit({ auth: GITHUB_TOKEN });
 const SOURCIFY_API = "https://repo.sourcify.dev/api";
 const BASE_PATH = path.join(process.cwd(), "config");
 const CONFIG_FILE = path.join(BASE_PATH, "paths.yaml");
 const CACHE_FILE = path.join(BASE_PATH, "sourcify_cache.json");
 const missingContractsFile = path.join(process.cwd(), "missing_contracts.json");
 
-
-
 const limiter = new Bottleneck({
-  minTime: 1000, // 5 seconds between requests
+  minTime: 1000, // 1 seconds between requests
 });
 
 async function loadConfig() {
   try {
     const data = await fs.readFile(CONFIG_FILE, "utf8");
+    console.log("Config data:", data);
     return yaml.load(data);
   } catch (error) {
     console.error("Error loading config:", error);
@@ -43,98 +44,111 @@ async function getCachedContracts() {
   }
 }
 
-async function checkContract(contractAddress) {
-  try {
-    const response = await limiter.scheduled(() => fetch(
-      `${SOURCIFY_API}/contracts/${contractAddress}`
-    ));
-    return response.ok;
-  } catch (error) {
-    console.error("Error checking contract:", error);
-    return false; // Return false on error to skip that contract
+async function checkContract(contractAddress, config, maxRetries = 3) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const url = `${SOURCIFY_API}/verify/${contractAddress}/${config.chain_id}`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        },
+        timeout: 5000 // Set a 5-second timeout
+      }, {
+        body: JSON.stringify({
+          address: contractAddress,
+          chainId: config.chain_id,
+          bytecode: contractBytecode,
+          // other necessary fields...
+        }),
+      });
+
+      if (!response.ok) {
+        console.error(`Error checking contract (${attempt}/${maxRetries}): ${response.status} ${response.statusText}`);
+        continue;
+      }
+
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const responseBody = await response.text(); // Read the response body for debugging
+        console.error(`Unexpected content type (${attempt}/${maxRetries}): ${contentType}`);
+        console.log(`Response body: ${responseBody}`);
+        continue;
+      }
+
+      const data = await response.json();
+
+      if (data[contractAddress]) {
+        console.log(`Contract ${contractAddress} exists in Sourcify`);
+        return true;
+      } else {
+        console.log(`Contract ${contractAddress} missing, added to list.`);
+        return false;
+      }
+    } catch (error) {
+      console.error(`Attempt ${attempt}/${maxRetries} failed: ${error.message}`);
+      if (attempt < maxRetries) {
+        console.log(`Retrying... (${attempt}/${maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds before retrying
+      } else {
+        console.error(`Max retries reached. Giving up for contract ${contractAddress}.`);
+        return false;
+      }
+    }
   }
+
+  // If we reach here, all retries failed
+  console.error(`All retries failed for contract ${contractAddress}`);
+  return false;
 }
 
 
-/**
- * Compile a Solidity contract given its source code.
- * @param {string} contractSource - Source code of the contract.
- * @returns {Promise<object>} - The compiled contract, or throws an error if compilation fails.
- */
-async function compileContract(contractSource) {
-  try {
-    const input = {
-      language: "Solidity",
-      sources: {
-        "contract.sol": {
-          content: contractSource,
-        },
-      },
-      settings: {
-        outputSelection: {
-          "*": {
-            "*": ["*"],
-          },
-        },
-      },
-    };
 
-    const output = compile(JSON.stringify(input));
-    if (output.errors) {
-      console.error("Error compiling contract:", output.errors);
-      throw new Error("Compilation failed");
+async function processContracts(config) {
+  try {
+    const repoUrl = config.ethereum_repo;
+    const parts = repoUrl.split('/');
+
+    const owner = repoParts[3]; // e.g., "tintinweb"
+    const repoName = repoParts[4]; // e.g., "smart-contract-sanctuary-ethereum"
+    const path = repoParts.slice(5).join('/'); // e.g., "contracts/mainnet"
+
+
+    // Fetch contents of the repository
+    const response = await octokit.rest.repos.getContent({
+      owner,
+      repo: repoName,
+      path,
+    });
+
+
+    if (!response.data || !Array.isArray(response.data)) {
+      throw new Error('Failed to fetch repository contents');
     }
 
-    const contracts = output.contracts["contract.sol"];
-    return contracts;
-  } catch (error) {
-    console.error("Error compiling contract:", error);
-    throw error;
-  }
-}
+    const contents = response.data;
 
-async function processContracts() {
-  try {
-    const config = await loadConfig();
-    const repoPath = config.ethereum_repo;
-
-    const contractFolders = await fs.readdir(repoPath);
+    let processedCount = 0;
     const formattedContracts = [];
 
-    const batchSize = 100;
-    for (let i = 0; i < contractFolders.length; i += batchSize) {
-      const batch = contractFolders.slice(i, i + batchSize);
-      await processBatch(batch, repoPath, formattedContracts);
-    }
+    // Process contracts in the fetched contents
+    for (const item of contents) {
+      if (item.type === 'file' && item.name.endsWith('.sol')) {
+        processedCount++;
+        console.log(`Processing contract ${processedCount}/${contents.length}...`);
 
-    for (const folder of contractFolders) {
-      const folderPath = path.join(repoPath, folder);
-      const contractFiles = await fs.readdir(folderPath);
+        const contractAddress = item.name.replace('.sol', '').replace(/[^a-zA-Z0-9]/g, '');
+        const contractExists = await checkContract(contractAddress, config);
 
-      for (const contractFile of contractFiles) {
-        if (!contractFile.endsWith(".sol")) continue;
-
-        const contractAddress = contractFile.replace(".sol", "").replace(/[^a-zA-Z0-9]/g, "");
-        console.log(`Processing contract ${contractAddress}...`);
-
-        const contractExists = await checkContract(contractAddress);
-        if (contractExists) {
-          console.log(`Contract ${contractAddress} exists in Sourcify`);
-          continue;
+        if (!contractExists) {
+          formattedContracts.push({
+            name: item.name,
+            address: contractAddress,
+            bytecode: '',
+            abi: [],
+          });
+          console.log(`Contract ${contractAddress} missing, added to list.`);
         }
-
-        const contractContent = await fs.readFile(path.join(folderPath, contractFile), "utf8");
-        const compiledContract = await compileContract(contractContent);
-        const contractName = path.basename(contractFile);
-
-        formattedContracts.push({
-          name: contractName,
-          address: contractAddress,
-          bytecode: compiledContract.bytecode || '',
-          abi: compiledContract.abi || []
-        });
-
-        console.log(`Contract ${contractAddress} missing, added to list.`);
       }
     }
 
@@ -149,54 +163,9 @@ async function processContracts() {
   }
 }
 
-async function processBatch(folderNames, repoPath, formattedContracts) {
-  const promises = [];
-
-  for (const folderName of folderNames) {
-    const folderPath = path.join(repoPath, folderName);
-    try {
-      const contractFiles = await fs.readdir(folderPath);
-
-      for (const contractFile of contractFiles) {
-        if (!contractFile.endsWith(".sol")) continue;
-
-        const contractAddress = contractFile.replace(".sol", "").replace(/[^a-zA-Z0-9]/g, "");
-        console.log(`Processing contract ${contractAddress}...`);
-
-        try {
-          const contractExists = await checkContract(contractAddress);
-          if (contractExists) {
-            console.log(`Contract ${contractAddress} exists in Sourcify`);
-            continue;
-          }
-
-          const contractContent = await fs.readFile(path.join(folderPath, contractFile), "utf8");
-          const compiledContract = await compileContract(contractContent);
-          const contractName = path.basename(contractFile);
-
-          formattedContracts.push({
-            name: contractName,
-            address: contractAddress,
-            bytecode: compiledContract.bytecode || '',
-            abi: compiledContract.abi || []
-          });
-
-          console.log(`Contract ${contractAddress} missing, added to list.`);
-        } catch (error) {
-          console.error(`Error processing contract ${contractAddress}:`, error);
-        }
-      }
-    } catch (error) {
-      console.error(`Error processing folder ${folderName}:`, error);
-    }
-
-    await Promise.all(promises);
-    return formattedContracts;
-  }
-}
 
 
-
+// Update main function to pass config
 async function main() {
   try {
     console.log("Starting contract checker...");
@@ -204,7 +173,8 @@ async function main() {
     const config = await loadConfig();
     console.log("Loaded configuration:", config);
 
-    await processContracts();
+    // Process all contracts in one go
+    await processContracts(config);
 
     console.log("Contract checking completed.");
   } catch (error) {
