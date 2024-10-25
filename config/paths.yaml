@@ -1,4 +1,3 @@
-ethereum:
-  ethereum_repo: "https://github.com/tintinweb/smart-contract-sanctuary-ethereum/contracts/mainnet"
-  chain_id: 1 # Ethereum Mainnet
-  sourcify_repo: "https://repo.sourcify.dev/api/contracts"
+ethereum_repo: "/home/abcode/opensource/smart-contract-sanctuary-ethereum/contracts/mainnet"
+chain_id: 1 # Ethereum Mainnet
+sourcify_repo: "https://repo.sourcify.dev/api/contracts"
