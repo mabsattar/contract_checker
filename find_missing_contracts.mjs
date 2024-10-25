@@ -85,7 +85,7 @@ async function processContractsInBatches(contracts, batchSize = 100) {
 
 
 
-async function processChainRepos() {
+async function processingChain() {
   try {
     const config = await loadConfig();
     const repoPath = config.ethereum_repo || path.join(BASE_PATH, "..", "..", "smart-contract-sanctuary-ethereum", "contracts", "mainnet");
@@ -108,14 +108,16 @@ async function processChainRepos() {
         const folderPath = path.join(repoPath, folder);
         const stat = await fs.stat(folderPath);
 
+
         if (stat.isDirectory()) {
           const contractFiles = await fs.readdir(folderPath);
           const contractPromises = contractFiles
             .filter((file) => file.endsWith(".sol"))
             .map(async (contractFile) => {
+              const contractPath = path.join(folderPath, contractFile);
+              const contractContent = await fs.readFile(contractPath, "utf8");
               const contractAddress = contractFile.replace(".sol", "").replace(/[^a-zA-Z0-9]/g, "");
               console.log(`Processing contract ${contractAddress}...`);
-
 
               try {
                 const existingSource = await checkContract(contractAddress);
@@ -125,6 +127,11 @@ async function processChainRepos() {
                   const missingContractData = {
                     name: path.basename(contractFile),
                     address: contractAddress,
+                    source: contractContent,
+                    compiler: "solidity",
+                    compilerVersion: "0.8.10",
+                    network: "mainnet",
+                    deploymentTransactionHash: "0x..."
                   };
 
                   missingContracts.push(missingContractData);
@@ -146,23 +153,32 @@ async function processChainRepos() {
       });
 
       await Promise.all(batchPromises);
+      await new Promise((resolve) => setTimeout(resolve, 10000)); // Pause for 10 seconds
     }
 
     console.log(`Found ${missingContractCount} missing contracts.`);
-
 
     await processContractsInBatches(contractAddresses, BATCH_SIZE);
 
     console.log(`Processed ${contractCount} contracts. Missing: ${missingContractCount}. Skipped: ${skippedContractCount}.`);
 
+
+
     // Saves missing contracts data to missing_contracts.json
     if (missingContracts.length > 0) {
       console.log("Saving missing contracts data...");
       await fs.writeFile(missingContractsFile, JSON.stringify(missingContracts, null, 2));
+      await processMissingContracts(missingContracts);
       console.log(`Missing contracts data saved to missing_contracts.json.`);
     } else {
       console.log("No missing contracts found.");
     }
+
+    const contractAddress = contractFile.replace(".sol", "").replace(/[^a-zA-Z0-9]/g, "");
+    console.log(`Processing contract ${contractAddress}...`);
+
+
+
 
     // Update cache
     await saveCachedContracts(cache);
@@ -175,9 +191,55 @@ async function processChainRepos() {
   }
 }
 
+async function processMissingContracts(missingContracts) {
+  for (const contract of missingContracts) {
+    const contractAddress = contract.address;
+    const contractContent = contract.source;
+    await contractSubmission(contractAddress, contractContent);
+  }
+}
 
 
-// Main function to initiate contract checking
+async function contractSubmission(contractAddress, contractContent) {
+  const sourcifyApiUrl = "https://repo.sourcify.dev/api/contracts";
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  contractAddress = `0x${contractAddress}`;
+
+  const contractData = {
+    address: contractAddress,
+    contractName: path.basename(contractFile),
+    source: contractContent,
+    compiler: "solidity",
+    compilerVersion: "0.8.10",
+    network: "mainnet",
+    deploymentTransactionHash: "0x..."
+  };
+
+
+  const body = JSON.stringify(contractData);
+
+  const response = await fetch(sourcifyApiUrl, {
+    method: "POST",
+    headers,
+    body,
+  });
+
+  const responseBody = await response.json();
+  const status = responseBody.status;
+
+  if (status === "success") {
+    console.log(`Contract ${contractAddress} submitted successfully to Sourcify.`);
+    return { success: true, contractAdddress: contractAddress };
+  } else {
+    console.error(`Error submitting contract ${contractAddress} to Sourcify: ${status}`);
+    return { success: false, contractAdddress: contractAddress };
+  }
+}
+
+
 async function main() {
   try {
     console.log("Starting contract checker...");
@@ -185,7 +247,7 @@ async function main() {
     const config = await loadConfig();
     console.log("Loaded configuration:", config);
 
-    await processChainRepos();
+    await processingChain();
 
     console.log("Contract checking completed.");
   } catch (error) {
