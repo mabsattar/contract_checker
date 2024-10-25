@@ -44,128 +44,240 @@ async function getCachedContracts() {
   }
 }
 
-async function checkContract(contractAddress, config, maxRetries = 3) {
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      const url = `${SOURCIFY_API}/verify/${contractAddress}/${config.chain_id}`;
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json'
-        },
-        timeout: 5000 // Set a 5-second timeout
-      }, {
-        body: JSON.stringify({
-          address: contractAddress,
-          chainId: config.chain_id,
-          bytecode: contractBytecode,
-          // other necessary fields...
-        }),
-      });
+async function saveCachedContracts(contracts) {
+  await fs.writeFile(CACHE_FILE, JSON.stringify(contracts, null, 2));
+}
 
-      if (!response.ok) {
-        console.error(`Error checking contract (${attempt}/${maxRetries}): ${response.status} ${response.statusText}`);
-        continue;
-      }
-
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        const responseBody = await response.text(); // Read the response body for debugging
-        console.error(`Unexpected content type (${attempt}/${maxRetries}): ${contentType}`);
-        console.log(`Response body: ${responseBody}`);
-        continue;
-      }
-
-      const data = await response.json();
-
-      if (data[contractAddress]) {
-        console.log(`Contract ${contractAddress} exists in Sourcify`);
-        return true;
-      } else {
-        console.log(`Contract ${contractAddress} missing, added to list.`);
-        return false;
-      }
-    } catch (error) {
-      console.error(`Attempt ${attempt}/${maxRetries} failed: ${error.message}`);
-      if (attempt < maxRetries) {
-        console.log(`Retrying... (${attempt}/${maxRetries})`);
-        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds before retrying
-      } else {
-        console.error(`Max retries reached. Giving up for contract ${contractAddress}.`);
-        return false;
-      }
-    }
+async function checkContract(contractAddress) {
+  try {
+    const response = await fetch(
+      `${SOURCIFY_API}/contracts/${contractAddress}`
+    );
+    return response.ok;
+  } catch (error) {
+    console.error("Error checking contract:", error);
+    return false; // Return false on error to skip that contract
   }
-
-  // If we reach here, all retries failed
-  console.error(`All retries failed for contract ${contractAddress}`);
-  return false;
 }
 
 
-
-async function processContracts(config) {
+/**
+ * Compile a Solidity contract given its source code.
+ * @param {string} contractSource - Source code of the contract.
+ * @returns {Promise<object>} - The compiled contract, or throws an error if compilation fails.
+ */
+async function compileContract(contractSource) {
   try {
-    const repoUrl = config.ethereum_repo;
-    const parts = repoUrl.split('/');
+    const input = {
+      language: "Solidity",
+      sources: {
+        "contract.sol": {
+          content: contractSource,
+        },
+      },
+      settings: {
+        outputSelection: {
+          "*": {
+            "*": ["*"],
+          },
+        },
+      },
+    };
 
-    const owner = repoParts[3]; // e.g., "tintinweb"
-    const repoName = repoParts[4]; // e.g., "smart-contract-sanctuary-ethereum"
-    const path = repoParts.slice(5).join('/'); // e.g., "contracts/mainnet"
-
-
-    // Fetch contents of the repository
-    const response = await octokit.rest.repos.getContent({
-      owner,
-      repo: repoName,
-      path,
-    });
-
-
-    if (!response.data || !Array.isArray(response.data)) {
-      throw new Error('Failed to fetch repository contents');
+    const output = compile(JSON.stringify(input));
+    if (output.errors) {
+      console.error("Error compiling contract:", output.errors);
+      throw new Error("Compilation failed");
     }
 
-    const contents = response.data;
+    const contracts = output.contracts["contract.sol"];
+    return contracts;
+  } catch (error) {
+    console.error("Error compiling contract:", error);
+    throw error;
+  }
+}
 
-    let processedCount = 0;
+
+/*async function findMissingContracts() {
+  try {
+    const config = await loadConfig();
+    const repoPath =
+      config.ethereum_repo ||
+      path.join(
+        BASE_PATH,
+        "..",
+        "..",
+        "smart-contract-sanctuary-ethereum",
+        "contracts",
+      );
+    const cache = await getCachedContracts();
+
+    const contractFolders = await fs.readdir(repoPath);
+    const missingContracts = contractFolders
+      .filter((folder) => !cache[folder])
+      .map((folder) => path.join(repoPath, folder));
+
+    return missingContracts;
+  } catch (error) {
+    console.error("Error finding missing contracts:", error);
+    throw error;
+  }
+}
+*/
+const BATCH_SIZE = 10; // Set your desired batch size
+
+
+async function processChainRepos() {
+  try {
+    const config = await loadConfig();
+    const repoPath =
+      config.ethereum_repo ||
+      path.join(
+        BASE_PATH,
+        "..",
+        "..",
+        "smart-contract-sanctuary-ethereum",
+        "contracts",
+      );
+    const cache = await getCachedContracts();
+
+    console.log("Checking contracts in:", repoPath);
+
+    const contractFolders = await fs.readdir(repoPath);
+    let contractCount = 0;
+    let missingContractCount = 0;
+    let skippedContractCount = 0;
+
+    // Initialize the JSON file for missing contracts
+    await fs.writeFile(missingContractsFile, JSON.stringify([]));
+
+    const missingContracts = {}; // object to store missing contracts
     const formattedContracts = [];
 
-    // Process contracts in the fetched contents
-    for (const item of contents) {
-      if (item.type === 'file' && item.name.endsWith('.sol')) {
-        processedCount++;
-        console.log(`Processing contract ${processedCount}/${contents.length}...`);
+    for (let i = 0; i < contractFolders.length; i += BATCH_SIZE) {
+      const batch = contractFolders.slice(i, i + BATCH_SIZE);
+      const batchPromises = batch.map(async (folder) => {
+        const folderPath = path.join(repoPath, folder);
+        const stat = await fs.stat(folderPath);
 
-        const contractAddress = item.name.replace('.sol', '').replace(/[^a-zA-Z0-9]/g, '');
-        const contractExists = await checkContract(contractAddress, config);
+        const contractPromises = contractFiles
+          .filter((file) => file.endsWith(".sol"))
+          .map(async (contractFile) => {
+            const contractAddress = contractFile.replace(".sol", "").replace(/[^a-zA-Z0-9]/g, "");
+            const folderPath = path.join(folderPath, contractFile);
 
-        if (!contractExists) {
-          formattedContracts.push({
-            name: item.name,
-            address: contractAddress,
-            bytecode: '',
-            abi: [],
+            // Skip if the contract is already in the cache
+            console.log(`Processing contract ${contractAddress}...`);
+
+            if (cache[contractAddress]) {
+              console.log(`Skipping contract ${contractAddress} as it's already in the cache.`);
+              skippedContractCount++;
+              return;
+            } else {
+              try {
+                const contractContent = await fs.readFile(path.join(folderPath, contractFile), "utf8");
+
+
+                // Remove comments and trim whitespace
+                const cleanContent = contractContent.replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, "").trim();
+
+                let parsedContent;
+                try {
+                  parsedContent = JSON.parse(cleanContent);
+                } catch (jsonError) {
+                  console.error(`Failed to parse JSON for contract ${contractAddress}:`, jsonError);
+                  // If JSON parsing fails, use the clean content as is
+                  parsedContent = {};
+                }
+
+                let name = '';
+                if ('name' in parsedContent && typeof parsedContent.name === 'string') {
+                  name = parsedContent.name;
+                } else {
+                  console.warn(`Name not found in contract ${contractAddress}`);
+                  // Fallback to filename if no name is found
+                  name = path.basename(contractFile);
+                }
+
+                const existingSource = await checkContract(contractAddress);
+                console.log(`Response status: ${existingSource ? "OK" : "Not Found"}`);
+
+                if (!existingSource) {
+                  console.log(`Contract ${contractAddress} does not exist in Sourcify`);
+
+                  const compiledContract = await compileContract(contractContent);
+
+                  const missingContractData = {
+                    name: name || contractFile,
+                    address: contractAddress,
+                    bytecode: compiledContract.bytecode,
+                    abi: compiledContract.abi
+                  };
+
+
+                  // Write the missing contract data to the JSON file
+                  const currentData = JSON.parse(await fs.readFile(missingContractsFile, "utf8"));
+                  currentData.push(missingContractData);
+                  await fs.writeFile(missingContractsFile, JSON.stringify(currentData, null, 2));
+
+                  missingContractCount++;
+
+                  // Add contract data to submittedContracts array
+                  formattedContracts.push({
+                    name: name || contractFile,
+                    address: contractAddress,
+                    bytecode: compiledContract.bytecode,
+                    abi: compiledContract.abi
+                  });
+                } else {
+                  skippedContractCount++;
+                  console.log(`Contract ${contractAddress} exists in Sourcify`);
+                }
+
+                contractCount++;
+                console.log(`Processed ${contractCount} contracts. Missing: ${missingContractCount}. Skipped: ${skippedContractCount}.`);
+              } catch (err) {
+                console.error(`Error processing contract ${contractAddress}:`, err);
+              }
+            }
           });
-          console.log(`Contract ${contractAddress} missing, added to list.`);
-        }
-      }
+
+        await Promise.all(contractPromises); // Wait for all contracts in this folder
+
+      });
+
+      await Promise.all(batchPromises);
     }
 
+    console.log(`Found ${missingContractCount} missing contracts.`);
+
+
+    // formattedContracts = Object.values(missingContracts).map((contract) => {
+    //   return {
+    //     name: contract.name,
+    //     address: contract.address,
+    //   };
+    // });
+
+    // Saves missing contracts data to missing_contracts.json
     if (formattedContracts.length > 0) {
-      await fs.writeFile(missingContractsFile, JSON.stringify(formattedContracts, null, 2));
-      console.log(`Missing contracts data saved to ${missingContractsFile}.`);
+      console.log("Saving missing contracts data...");
+      await fs.writeFile(missingContractsFile, JSON.stringify(missingContracts, null, 2));
+      console.log(`Missing contracts data saved to missing_contracts.json.`);
     } else {
       console.log("No missing contracts found.");
     }
+
+    // Log contents of missingContracts for verification
+    console.log("Contents of missingContracts:");
+    console.log(JSON.stringify(missingContracts, null, 2));
   } catch (error) {
-    console.error("Error processing contracts:", error);
+    console.error("Error processing repos:", error);
+    throw error;
   }
 }
 
-
-
-// Update main function to pass config
 async function main() {
   try {
     console.log("Starting contract checker...");
@@ -173,8 +285,7 @@ async function main() {
     const config = await loadConfig();
     console.log("Loaded configuration:", config);
 
-    // Process all contracts in one go
-    await processContracts(config);
+    await processChainRepos();
 
     console.log("Contract checking completed.");
   } catch (error) {
