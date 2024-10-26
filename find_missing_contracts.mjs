@@ -5,12 +5,6 @@ import { SourcifyAPI } from './services/sourcify-api.mjs';
 import { ContractProcessor } from './services/contract-processor.mjs';
 
 
-async function extractCompilerVersion(sourceCode) {
-  const versionRegex = /pragma solidity (\^?\d+\.\d+\.\d+)/;
-  const match = sourceCode.match(versionRegex);
-  return match ? match[1].replace('^', '') : null;
-}
-
 function isValidContract(source) {
   return source.includes('contract') &&
     source.includes('pragma solidity') &&
