@@ -50,12 +50,6 @@ export class ContractProcessor {
             return false;
         }
 
-        // Check for minimum length
-        if (source.length < 200) {
-            logger.warn(`Source code too short (${source.length} characters)`);
-            return false;
-        }
-
         // Check for Solidity-specific keywords
         const solidityKeywords = ['function', 'event', 'mapping', 'struct'];
         if (!solidityKeywords.some(keyword => source.includes(keyword))) {
