@@ -1,21 +1,8 @@
-import yaml from "js-yaml";
-import fs from "node:fs/promises";
-import fetch from "node-fetch";
-import Bottleneck from "bottleneck";
-import path from "node:path";
-
-const SOURCIFY_API = "https://repo.sourcify.dev/api";
-const BASE_PATH = path.join(process.cwd(), "config");
-const CONFIG_FILE = path.join(BASE_PATH, "paths.yaml");
-const CACHE_FILE = path.join(BASE_PATH, "sourcify_cache.json");
-const missingContractsFile = path.join(process.cwd(), "missing_contracts.json");
-const BATCH_SIZE = 10; //
-const MAX_RETRIES = 3;
-
-const limiter = new Bottleneck({
-  minTime: 3000, // 3 seconds between requests
-  maxConcurrent: 1
-});
+import { Config } from './config/config.mjs';
+import { logger } from './utils/logger.mjs';
+import { CacheManager } from './utils/cache.mjs';
+import { SourcifyAPI } from './services/sourcify-api.mjs';
+import { ContractProcessor } from './services/contract-processor.mjs';
 
 
 async function extractCompilerVersion(sourceCode) {
@@ -39,160 +26,103 @@ function validateContract(contractData) {
   }
 }
 
-async function loadConfig() {
-  try {
-    const data = await fs.readFile(CONFIG_FILE, "utf8");
-    console.log("Config loaded successfully");
-    return yaml.load(data);
-  } catch (error) {
-    console.error("Error loading config:", error);
-    throw error;
-  }
-}
-
-
-async function saveCachedContracts(contracts) {
-  await fs.writeFile(CACHE_FILE, JSON.stringify(contracts, null, 2));
-  console.log("Updated cache saved.");
-}
-
-
-async function checkContract(contractAddress, retries = 3) {
-  try {
-    const response = await limiter.schedule(() => fetch(`${SOURCIFY_API}/contracts/${contractAddress}`, { timeout: 5000 }));
-    if (response.status === 429 && retries > 0) {
-      console.log(`Sourcify API rate limit exceeded. Retrying in 5 seconds... (${retries} retries left)`);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      return checkContract(contractAddress, retries - 1);
-    }
-    console.log(`Sourcify API response for ${contractAddress}: ${response.status}`);
-    return response.ok;
-  } catch (error) {
-    if (error.code === "ETIMEOUT" && retries > 0) {
-      console.log(`Timeout for ${contractAddress}, Retrying...`);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      return checkContract(contractAddress, retries - 1);
-    }
-    console.error(`Error checking contract ${contractAddress}:`, error);
-    return false;
-  }
-}
-
-
-
-
-
-async function processContractsInBatches(contracts, batchSize = 100) {
-  for (let i = 0; i < contracts.length; i += batchSize) {
-    const batch = contracts.slice(i, i + batchSize);
-    await Promise.all(batch.map(contractAddress => checkContract(contractAddress)));
-    console.log(`Processed ${i + batchSize} contracts`);
-    await new Promise(resolve => setTimeout(resolve, 10000)); // Pause for 10 seconds
-  }
-}
-
-
-
 async function processingChain() {
   try {
     const config = await loadConfig();
     const repoPath = config.ethereum_repo || path.join(BASE_PATH, "..", "..", "smart-contract-sanctuary-ethereum", "contracts", "mainnet");
     const cache = await getCachedContracts();
 
-    console.log("Checking contracts in:", repoPath);
+    logger.info("Starting contract processing from:", repoPath);
 
     const contractFolders = await fs.readdir(repoPath);
-    let contractCount = 0;
-    let missingContractCount = 0;
-    let skippedContractCount = 0;
     const missingContracts = [];
 
-    await fs.writeFile(missingContractsFile, JSON.stringify([])); // Initialize missing contracts file
+    // Initialize missing contracts file
+    await fs.writeFile(MISSING_CONTRACTS_FILE, JSON.stringify([]));
 
-    // Loop through contract folders in batches
-    for (let i = 0; i < contractFolders.length; i += 10) { // BATCH_SIZE = 10
-      const batch = contractFolders.slice(i, i + 10);
-      const batchPromises = batch.map(async (folder) => {
+    // Process folders in batches
+    for (let i = 0; i < contractFolders.length; i += BATCH_SIZE) {
+      const batch = contractFolders.slice(i, i + BATCH_SIZE);
+
+      await Promise.all(batch.map(async (folder) => {
         const folderPath = path.join(repoPath, folder);
         const stat = await fs.stat(folderPath);
 
-
         if (stat.isDirectory()) {
           const contractFiles = await fs.readdir(folderPath);
-          const contractPromises = contractFiles
-            .filter((file) => file.endsWith(".sol"))
-            .map(async (contractFile) => {
-              const contractPath = path.join(folderPath, contractFile);
-              const contractContent = await fs.readFile(contractPath, "utf8");
-              const contractAddress = contractFile.replace(".sol", "").replace(/[^a-zA-Z0-9]/g, "");
-              console.log(`Processing contract ${contractAddress}...`);
 
-              try {
-                const existingSource = await checkContract(contractAddress);
+          await Promise.all(
+            contractFiles
+              .filter(file => file.endsWith(".sol"))
+              .map(async (contractFile) => {
+                const contractPath = path.join(folderPath, contractFile);
+                const contractContent = await fs.readFile(contractPath, "utf8");
+                const contractAddress = contractFile.replace(".sol", "").toLowerCase();
 
-                if (!existingSource) {
-                  console.log(`Contract ${contractAddress} does not exist in Sourcify`);
-                  const missingContractData = {
-                    name: path.basename(contractFiles),
+                progress.total++;
+
+                if (!isValidContract(contractContent)) {
+                  logger.warn(`Invalid contract found: ${contractAddress}`);
+                  return;
+                }
+
+                if (cache[contractAddress]) {
+                  logger.info(`Skipping cached contract: ${contractAddress}`);
+                  return;
+                }
+
+                const existsInSourcify = await checkContract(contractAddress);
+
+                if (!existsInSourcify) {
+                  missingContracts.push({
                     address: contractAddress,
                     source: contractContent,
-                    compiler: "solidity",
-                    compilerVersion: "0.8.10",
-                    network: "mainnet",
-                    deploymentTransactionHash: "0x..."
-                  };
+                    path: contractPath
+                  });
 
-                  missingContracts.push(missingContractData);
-                  missingContractCount++;
-                } else {
-                  skippedContractCount++;
-                  console.log(`Contract ${contractAddress} exists in Sourcify`);
+                  cache[contractAddress] = {
+                    processed: false,
+                    timestamp: new Date().toISOString()
+                  };
                 }
-                contractCount++;
-                console.log(`Processed ${contractCount} contracts. Missing: ${missingContractCount}. Skipped: ${skippedContractCount}.`);
-              } catch (err) {
-                console.error(`Error processing contract ${contractAddress}:`, err);
-              }
-            });
-          await Promise.all(contractPromises);
-        } else {
-          console.log(`Skipping non-directory: ${folderPath}`);
+
+                progress.processed++;
+              })
+          );
+        }
+      }));
+
+      // Save progress periodically
+      await saveCachedContracts(cache);
+      await fs.writeFile(
+        MISSING_CONTRACTS_FILE,
+        JSON.stringify(missingContracts, null, 2)
+      );
+
+      logger.info(`Progress: ${progress.processed}/${progress.total} contracts processed`);
+
+      // Pause between folder batches
+      await new Promise(resolve => setTimeout(resolve, 5000));
+    }
+
+    // Process missing contracts
+    if (missingContracts.length > 0) {
+      logger.info(`Processing ${missingContracts.length} missing contracts`);
+      const results = await processContractsInBatches(missingContracts);
+
+      // Update cache with results
+      results.forEach(result => {
+        if (result.success) {
+          cache[result.address].processed = true;
+          cache[result.address].verificationTimestamp = new Date().toISOString();
         }
       });
 
-      await Promise.all(batchPromises);
-      await new Promise((resolve) => setTimeout(resolve, 10000)); // Pause for 10 seconds
+      await saveCachedContracts(cache);
     }
 
-    console.log(`Found ${missingContractCount} missing contracts.`);
-
-    await processContractsInBatches(contractAddresses, BATCH_SIZE);
-
-    console.log(`Processed ${contractCount} contracts. Missing: ${missingContractCount}. Skipped: ${skippedContractCount}.`);
-
-
-
-    // Saves missing contracts data to missing_contracts.json
-    if (missingContracts.length > 0) {
-      console.log("Saving missing contracts data...");
-      await fs.writeFile(missingContractsFile, JSON.stringify(missingContracts, null, 2));
-      await processMissingContracts(missingContracts);
-      console.log(`Missing contracts data saved to missing_contracts.json.`);
-    } else {
-      console.log("No missing contracts found.");
-    }
-
-    const contractAddress = contractFile.replace(".sol", "").replace(/[^a-zA-Z0-9]/g, "");
-    console.log(`Processing contract ${contractAddress}...`);
-
-
-    // Update cache
-    await saveCachedContracts(cache);
-
-    // Log contents of missingContracts for verification
-    console.log("Contents of missingContracts:", JSON.stringify(missingContracts, null, 2));
   } catch (error) {
-    console.error("Error processing repos:", error);
+    logger.error("Error in processing chain:", error);
     throw error;
   }
 }
