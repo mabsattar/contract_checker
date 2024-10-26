@@ -9,9 +9,12 @@ const BASE_PATH = path.join(process.cwd(), "config");
 const CONFIG_FILE = path.join(BASE_PATH, "paths.yaml");
 const CACHE_FILE = path.join(BASE_PATH, "sourcify_cache.json");
 const missingContractsFile = path.join(process.cwd(), "missing_contracts.json");
+const BATCH_SIZE = 10; //
+const MAX_RETRIES = 3;
 
 const limiter = new Bottleneck({
-  minTime: 3000, // 1 seconds between requests
+  minTime: 3000, // 3 seconds between requests
+  maxConcurrent: 1
 });
 
 async function loadConfig() {
@@ -72,7 +75,6 @@ async function checkContract(contractAddress, retries = 3) {
 
 
 
-const BATCH_SIZE = 10; // Set your desired batch size
 
 async function processContractsInBatches(contracts, batchSize = 100) {
   for (let i = 0; i < contracts.length; i += batchSize) {
@@ -213,12 +215,15 @@ async function contractSubmission(contractAddress, contractContent) {
 
   contractAddress = `0x${contractAddress}`;
 
+
   const contractData = {
     address: contractAddress,
-    chain: "1", // for mainnet
-    files: files,
-    chosenContract: 1, // if multiple contracts exist in file
-    compilerVersion
+    contractName: path.basename(contractFiles),
+    source: contractContent,
+    compiler: "solidity",
+    compilerVersion: "0.8.10",
+    network: "mainnet",
+    deploymentTransactionHash: "0x..."
   };
 
 
