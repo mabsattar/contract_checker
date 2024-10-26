@@ -36,15 +36,16 @@ export class ContractProcessor {
 
 
     isValidContract(source) {
+        const lowerCaseSource = source.toLowerCase();
         // Check for Solidity pragma
-        const pragmaMatch = source.match(/pragma\s+solidity\s+(\d+(?:\.\d+)*)/);
+        const pragmaMatch = lowerCaseSource.match(/pragma\s+solidity\s+(\d+(?:\.\d+)*)/);
         if (!pragmaMatch) {
             logger.warn(`No Solidity pragma found in contract source`);
             return false;
         }
 
         // Check for contract keyword
-        const contractMatch = source.match(/\bcontract\b/i);
+        const contractMatch = lowerCaseSource.match(/\bcontract\b/i);
         if (!contractMatch) {
             logger.warn(`No contract keyword found in source`);
             return false;
