@@ -50,22 +50,6 @@ async function loadConfig() {
   }
 }
 
-async function getCachedContracts() {
-  try {
-    const cacheData = await fs.readFile(CACHE_FILE, "utf8");
-    console.log("Loaded cached contracts:", cacheData);
-    return JSON.parse(cacheData);
-  } catch (error) {
-    if (error.code === "ENOENT") {
-      console.log("Cache file not found. Starting with an empty cache.");
-      return {};
-    } else {
-      console.error("Error reading cache:", error);
-      return {};
-    }
-  }
-}
-
 
 async function saveCachedContracts(contracts) {
   await fs.writeFile(CACHE_FILE, JSON.stringify(contracts, null, 2));
