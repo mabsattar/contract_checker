@@ -17,10 +17,32 @@ const limiter = new Bottleneck({
   maxConcurrent: 1
 });
 
+
+async function extractCompilerVersion(sourceCode) {
+  const versionRegex = /pragma solidity (\^?\d+\.\d+\.\d+)/;
+  const match = sourceCode.match(versionRegex);
+  return match ? match[1].replace('^', '') : null;
+}
+
+function isValidContract(source) {
+  return source.includes('contract') &&
+    source.includes('pragma solidity') &&
+    source.length > 100; // Basic size check
+}
+
+function validateContract(contractData) {
+  const required = ['address', 'source', 'compilerVersion'];
+  for (const field of required) {
+    if (!contractData[field]) {
+      throw new Error(`Missing required field: ${field}`);
+    }
+  }
+}
+
 async function loadConfig() {
   try {
     const data = await fs.readFile(CONFIG_FILE, "utf8");
-    console.log("Config data:", data);
+    console.log("Config loaded successfully");
     return yaml.load(data);
   } catch (error) {
     console.error("Error loading config:", error);
@@ -199,11 +221,7 @@ async function processMissingContracts(missingContracts) {
   }
 }
 
-async function extractCompilerVersion(sourceCode) {
-  const versionRegex = /pragma solidity (\^?\d+\.\d+\.\d+)/;
-  const match = sourceCode.match(versionRegex);
-  return match ? match[1].replace('^', '') : null;
-}
+
 
 
 async function contractSubmission(contractAddress, contractContent) {
