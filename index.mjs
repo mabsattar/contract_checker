@@ -4,6 +4,10 @@ import { CacheManager } from './utils/cache.mjs';
 import { SourcifyAPI } from './services/sourcify-api.mjs';
 import { ContractProcessor } from './services/contract-processor.mjs';
 
+logger.info("Starting contract verification process");
+
+
+
 async function main() {
   try {
     logger.info("Starting contract verification process");
@@ -15,7 +19,7 @@ async function main() {
     const processor = new ContractProcessor(sourcifyApi, cacheManager, config);
 
     // Specify the test folder
-    const testFolder = '0a';
+    const testFolder = '00';
 
     // Start the processing chain
     await processor.processingChain(testFolder);
@@ -30,4 +34,10 @@ async function main() {
 main().catch(error => {
   logger.error("Unhandled error:", error);
   process.exit(1);
+});
+
+process.on('SIGINT', () => {
+  logger.info('Received SIGINT. Shutting down gracefully...');
+  // Close open resources, save state, etc.
+  process.exit(0);
 });

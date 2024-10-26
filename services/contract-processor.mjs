@@ -2,6 +2,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { logger } from '../utils/logger.mjs';
 
+logger.info("Starting contract verification process");
+
 export class ContractProcessor {
     constructor(sourcifyApi, cacheManager, config) {
         this.sourcifyApi = sourcifyApi;
@@ -34,56 +36,81 @@ export class ContractProcessor {
 
 
     isValidContract(source) {
-        return source.includes('contract') &&
-            source.includes('pragma solidity') &&
-            source.length > 100;
+        // Check for Solidity pragma
+        const pragmaMatch = source.match(/pragma\s+solidity\s+(\d+(?:\.\d+)*)/);
+        if (!pragmaMatch) {
+            logger.warn(`No Solidity pragma found in contract source`);
+            return false;
+        }
+
+        // Check for contract keyword
+        const contractMatch = source.match(/\bcontract\b/i);
+        if (!contractMatch) {
+            logger.warn(`No contract keyword found in source`);
+            return false;
+        }
+
+        // Check for minimum length
+        if (source.length < 200) {
+            logger.warn(`Source code too short (${source.length} characters)`);
+            return false;
+        }
+
+        // Check for Solidity-specific keywords
+        const solidityKeywords = ['function', 'event', 'mapping', 'struct'];
+        if (!solidityKeywords.some(keyword => source.includes(keyword))) {
+            logger.warn(`No Solidity-specific keywords found in source`);
+            return false;
+        }
+
+        // If we've passed all checks, it's likely a valid Solidity contract
+        return true;
     }
 
 
     async processContractsInBatches(contracts, batchSize = 10) {
         for (let i = 0; i < contracts.length; i += batchSize) {
             const batch = contracts.slice(i, i + batchSize);
+            try {
+                await Promise.all(batch.map(async (contract) => {
+                    try {
+                        // Validate contract
+                        const isValid = this.isValidContract(contract);
+                        if (!isValid) {
+                            logger.warn(`Invalid contract found: ${contract.address}`);
+                            logger.debug(`Contract validation error: ${contract.address}`);
+                            logger.debug(`Contract source code: ${contract.source}`);
+                            console.log(`Invalid contract: ${contract.address}`);
+                            console.log(`Contract source code: ${contract.source}`);
+                        } else {
+                            // Transform contract into Sourcify's required format
+                            const transformedContract = this.transformContract(contract);
+                            console.log(`Transformed contract: ${transformedContract}`);
 
-            const results = await Promise.allSettled(
-                batch.map(contract => this.submitContract(contract))
-            );
+                            // Submit contract to Sourcify
+                            const response = await this.sourcifyApi.submitContract(contract.address, transformedContract);
 
-            // Update cache with results
-            for (let j = 0; j < batch.length; j++) {
-                const contract = batch[j];
-                const result = results[j];
-                const cache = await this.cacheManager.load();
-
-                if (result.status === 'fulfilled' && result.value.success) {
-                    cache[contract.address] = {
-                        processed: true,
-                        verificationTimestamp: new Date().toISOString()
-                    };
-                    this.progress.successful++;
-                } else {
-                    cache[contract.address] = {
-                        processed: false,
-                        error: result.reason || 'Verification failed',
-                        timestamp: new Date().toISOString()
-                    };
-                    this.progress.failed++;
-                }
-                await this.cacheManager.save(cache);
+                            // Handle response
+                            if (response.success) {
+                                this.progress.successful++;
+                            } else {
+                                this.progress.failed++;
+                                logger.error(`Failed to submit contract ${contract.address}: ${response.error}`);
+                            }
+                        }
+                    } catch (error) {
+                        logger.error(`Error processing contract ${contract.address}: ${error}`);
+                        this.progress.failed++;
+                    }
+                }));
+                console.log(`Processed ${i + batchSize} contracts`);
+                await new Promise(resolve => setTimeout(resolve, 10000)); // Pause for 10 seconds
+            } catch (error) {
+                logger.error(`Error processing batch: ${error}`);
             }
-
-            this.progress.processed += batch.length;
-            logger.info(`Progress: ${this.progress.processed}/${this.progress.total} contracts processed`);
-
-            // Pause between batches
-            await new Promise(resolve => setTimeout(resolve, 5000));
         }
-
-        return {
-            processed: this.progress.processed,
-            successful: this.progress.successful,
-            failed: this.progress.failed
-        };
     }
+
 
     async submitContract(contract) {
         try {
@@ -107,42 +134,54 @@ export class ContractProcessor {
     async processContractFolder(folderPath, cache) {
         const contractFiles = await fs.readdir(folderPath);
 
+        logger.debug(`Processing folder: ${folderPath}`);
+        logger.debug(`Total contracts: ${this.progress.total}`);
+
         await Promise.all(
             contractFiles
                 .filter(file => file.endsWith(".sol"))
                 .map(async (contractFile) => {
                     const contractPath = path.join(folderPath, contractFile);
-                    const contractContent = await fs.readFile(contractPath, "utf8");
-                    const contractAddress = contractFile.replace(".sol", "").toLowerCase();
+                    try {
+                        const contractContent = await fs.readFile(contractPath, "utf8");
+                        const contractAddress = contractFile.replace(".sol", "").toLowerCase();
 
-                    this.progress.total++;
+                        this.progress.total++;
 
-                    if (!this.isValidContract(contractContent)) {
-                        logger.warn(`Invalid contract found: ${contractAddress}`);
-                        return;
+                        const isValid = this.isValidContract(contractContent);
+                        if (!this.isValidContract(contractContent)) {
+                            logger.warn(`Invalid contract found: ${contractAddress}`);
+                            logger.debug(`Contract validation error: ${contractAddress}`);
+                            logger.debug(`Contract source code: ${contractContent.substring(0, 200)}...`);
+                            return;
+                        }
+
+                        if (cache[contractAddress]) {
+                            logger.info(`Skipping cached contract: ${contractAddress}`);
+                            return;
+                        }
+
+                        const existsInSourcify = await this.sourcifyApi.checkContract(contractAddress);
+
+                        if (!existsInSourcify) {
+                            this.missingContracts.push({
+                                address: contractAddress,
+                                source: contractContent,
+                                path: contractPath
+                            });
+
+                            cache[contractAddress] = {
+                                processed: false,
+                                timestamp: new Date().toISOString()
+                            };
+                        }
+
+                        this.progress.processed++;
+                        logger.debug(`Processed contracts: ${this.progress.processed}`);
+                        logger.debug(`Failed contracts: ${this.progress.failed}`);
+                    } catch (error) {
+                        logger.error(`Error processing contract ${contractFile}:`, error);
                     }
-
-                    if (cache[contractAddress]) {
-                        logger.info(`Skipping cached contract: ${contractAddress}`);
-                        return;
-                    }
-
-                    const existsInSourcify = await this.sourcifyApi.checkContract(contractAddress);
-
-                    if (!existsInSourcify) {
-                        this.missingContracts.push({
-                            address: contractAddress,
-                            source: contractContent,
-                            path: contractPath
-                        });
-
-                        cache[contractAddress] = {
-                            processed: false,
-                            timestamp: new Date().toISOString()
-                        };
-                    }
-
-                    this.progress.processed++;
                 })
         );
     }
