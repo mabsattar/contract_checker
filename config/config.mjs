@@ -15,8 +15,10 @@ export class Config {
             sourcifyApi: config.sourcify_repo || "https://repo.sourcify.dev/api",
             chainId: config.chain_id || "1",
             ethereumRepo: config.ethereum_repo,
-            batchSize: 10,
-            maxRetries: 3
+            batchSize: config.batch_size || 10,
+            maxRetries: config.max_retries || 3
         };
     }
+
+
 }
