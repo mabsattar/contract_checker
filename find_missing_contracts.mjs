@@ -125,7 +125,7 @@ async function processingChain() {
                 if (!existingSource) {
                   console.log(`Contract ${contractAddress} does not exist in Sourcify`);
                   const missingContractData = {
-                    name: path.basename(contractFile),
+                    name: path.basename(contractFiles),
                     address: contractAddress,
                     source: contractContent,
                     compiler: "solidity",
@@ -178,8 +178,6 @@ async function processingChain() {
     console.log(`Processing contract ${contractAddress}...`);
 
 
-
-
     // Update cache
     await saveCachedContracts(cache);
 
@@ -199,8 +197,15 @@ async function processMissingContracts(missingContracts) {
   }
 }
 
+async function extractCompilerVersion(sourceCode) {
+  const versionRegex = /pragma solidity (\^?\d+\.\d+\.\d+)/;
+  const match = sourceCode.match(versionRegex);
+  return match ? match[1].replace('^', '') : null;
+}
+
 
 async function contractSubmission(contractAddress, contractContent) {
+  const compilerVersion = await extractCompilerVersion(contractContent);
   const sourcifyApiUrl = "https://repo.sourcify.dev/api/contracts";
   const headers = {
     "Content-Type": "application/json",
@@ -210,12 +215,10 @@ async function contractSubmission(contractAddress, contractContent) {
 
   const contractData = {
     address: contractAddress,
-    contractName: path.basename(contractFile),
-    source: contractContent,
-    compiler: "solidity",
-    compilerVersion: "0.8.10",
-    network: "mainnet",
-    deploymentTransactionHash: "0x..."
+    chain: "1", // for mainnet
+    files: files,
+    chosenContract: 1, // if multiple contracts exist in file
+    compilerVersion
   };
 
 
@@ -238,6 +241,8 @@ async function contractSubmission(contractAddress, contractContent) {
     return { success: false, contractAdddress: contractAddress };
   }
 }
+
+
 
 
 async function main() {
