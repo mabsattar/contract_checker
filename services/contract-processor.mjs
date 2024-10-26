@@ -52,8 +52,8 @@ export class ContractProcessor {
             for (let j = 0; j < batch.length; j++) {
                 const contract = batch[j];
                 const result = results[j];
-
                 const cache = await this.cacheManager.load();
+
                 if (result.status === 'fulfilled' && result.value.success) {
                     cache[contract.address] = {
                         processed: true,
@@ -147,12 +147,30 @@ export class ContractProcessor {
         );
     }
 
-    async processingChain() {
+    async processingChain(specificFolder = null) {
         try {
             const repoPath = this.config.ethereumRepo || path.join(process.cwd(), "..", "..", "smart-contract-sanctuary-ethereum", "contracts", "mainnet");
             const cache = await this.cacheManager.load();
 
             logger.info("Starting contract processing from:", repoPath);
+
+            if (specificFolder) {
+                const folderPath = path.join(repoPath, specificFolder);
+
+                try {
+                    const stat = await fs.stat(folderPath);
+                    if (stat.isDirectory()) {
+                        logger.info(`processing specific folder: ${specificFolder}`);
+                        await this.processContractFolder(folderPath, cache);
+                        await this.cacheManager.save(cache);
+                    } else {
+                        throw new Error(`${specificFolder} is not a valid folder path`);
+                    }
+                } catch (error) {
+                    logger.error(`Error processing folder ${specificFolder}:`, error);
+                    throw error;
+                }
+            }
 
             const contractFolders = await fs.readdir(repoPath);
 

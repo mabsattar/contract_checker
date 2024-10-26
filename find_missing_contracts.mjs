@@ -14,8 +14,11 @@ async function main() {
     const sourcifyApi = new SourcifyAPI(config.sourcifyApi, config.maxRetries);
     const processor = new ContractProcessor(sourcifyApi, cacheManager, config);
 
+    // Specify the test folder
+    const testFolder = '0a';
+
     // Start the processing chain
-    await processor.processingChain();
+    await processor.processingChain(testFolder);
 
     logger.info("Process completed successfully");
   } catch (error) {
