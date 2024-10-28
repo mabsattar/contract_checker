@@ -60,68 +60,42 @@ export class SourcifyAPI {
     }
 
     async submitContract(address, contractData) {
+        const formData = new FormData();
+
         try {
-            // Create a new FormData instance
-            const formData = new FormData();
-
-            // Add the basic contract information
+            // 1. Contract Address (from contracts.json)
             formData.append('address', address);
-            formData.append('chain', contractData.chainId || '1');
 
-            // Handle the source files
-            if (typeof contractData.files === 'object') {
-                // If files is an object with named sources
-                for (const [filename, content] of Object.entries(contractData.files)) {
-                    formData.append(
-                        'files',
-                        Buffer.from(content),
-                        {
-                            filename,
-                            contentType: 'text/plain'
-                        }
-                    );
+            // 2. Chain ID (from config)
+            formData.append('chain', '1');  // Ethereum mainnet
+
+            // 3. Source Code (from .sol files)
+            formData.append('files', Buffer.from(contractData.source), 'source.sol');
+
+            // 4. Compiler Version (extracted from source)
+            const compilerVersion = this.extractCompilerVersion(contractData.source);
+            if (compilerVersion) {
+                formData.append('compilerVersion', compilerVersion);
+            }
+
+            return await this.client.post('/verify', formData, {
+                headers: {
+                    ...formData.getHeaders()
                 }
-            } else if (contractData.source) {
-                // If it's a single source file
-                formData.append(
-                    'files',
-                    Buffer.from(contractData.source),
-                    {
-                        filename: 'source.sol',
-                        contentType: 'text/plain'
-                    }
-                );
-            }
-
-            // Add compiler information if available
-            if (contractData.compilerVersion) {
-                formData.append('compilerVersion', contractData.compilerVersion);
-            }
-
-            const response = await this.limiter.schedule(() =>
-                this.client.post('/verify', formData, {
-                    headers: {
-                        ...formData.getHeaders(),
-                        'Accept': 'application/json'
-                    },
-                    maxContentLength: Infinity,
-                    maxBodyLength: Infinity
-                })
-            );
-
-            logger.info(`Contract ${address} submitted successfully`);
-            return {
-                success: true,
-                data: response.data
-            };
+            });
         } catch (error) {
-            logger.error(`Failed to submit contract ${address}:`, error.message);
-            return {
-                success: false,
-                error: error.message,
-                details: error.response?.data
-            };
+            logger.error(`Failed to submit contract ${address}:`, error);
+            throw error;
         }
+    }
+
+    // Helper to extract compiler version from source code
+    extractCompilerVersion(source) {
+        const pragmaMatch = source.match(/pragma solidity (\^?\d+\.\d+\.\d+)/);
+        if (pragmaMatch) {
+            return pragmaMatch[1];
+        }
+        return null;
     }
 
     // Helper method to format contract data
