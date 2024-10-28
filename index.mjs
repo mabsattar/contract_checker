@@ -13,12 +13,13 @@ async function main() {
     const config = await new Config().load();
     const cacheManager = new CacheManager();
     const sourcifyApi = new SourcifyAPI(config.sourcifyApi, config.maxRetries);
+    const finder = new ContractFinder(sourcifyApi, config);
+
+    // Reset stats before starting
+    await finder.resetStats();
 
     // Phase 1: Find missing contracts
     logger.info("Starting Phase 1: Finding missing contracts");
-    const finder = new ContractFinder(sourcifyApi, config);
-
-    // If wants to test with a specific folder
     const testFolder = '00'; // Remove this if you want to scan all folders
     const { stats, missingContractsFile } = await finder.findMissingContracts(testFolder);
 

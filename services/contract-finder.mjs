@@ -8,7 +8,13 @@ export class ContractFinder {
         this.config = config;
         this.missingContracts = [];
         this.contractAddresses = new Map(); // Will store address mapping
-        this.stats = {
+        this.stats = this.initializeStats();  // Initialize fresh stats
+        // For auto-saving
+        this.saveInterval = null;
+    }
+
+    initializeStats() {
+        return {
             total: 0,
             processed: 0,
             missing: 0,
@@ -16,8 +22,6 @@ export class ContractFinder {
             startTime: new Date().toISOString(),
             lastProcessed: null
         };
-        // For auto-saving
-        this.saveInterval = null;
     }
 
     async loadContractAddresses() {
@@ -42,6 +46,9 @@ export class ContractFinder {
 
     async findMissingContracts(specificFolder = null) {
         try {
+            // Reset stats before starting
+            await this.resetStats();
+
             const repoPath = this.config.ethereumRepo;
             logger.info(`Starting contract search in: ${repoPath}`);
 
@@ -72,6 +79,16 @@ export class ContractFinder {
             this.clearAutoSave();
             throw error;
         }
+    }
+
+    async resetStats() {
+        // Reset stats file
+        const statsPath = path.join(process.cwd(), 'contract_stats.json');
+        await fs.writeFile(
+            statsPath,
+            JSON.stringify(this.initializeStats(), null, 2)
+        );
+        logger.info('Stats reset successfully');
     }
 
     setupAutoSave() {
