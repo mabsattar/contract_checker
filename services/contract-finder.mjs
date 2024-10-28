@@ -128,27 +128,32 @@ export class ContractFinder {
                         continue;
                     }
 
-                    // Check if contract exists in Sourcify
+                    // Read and validate source
+                    const source = await fs.readFile(contractPath, 'utf8');
+                    if (!await this.validateContractSource(source)) {
+                        logger.warn(`Invalid contract source for ${file}`);
+                        this.stats.errors++;
+                        continue;
+                    }
+
+                    // Check Sourcify
                     const exists = await this.sourcifyApi.checkContract(contractAddress);
 
                     if (!exists) {
-                        const source = await fs.readFile(contractPath, 'utf8');
                         this.missingContracts.push({
                             address: contractAddress,
                             path: contractPath,
                             source,
+                            name: file.split('_')[1].replace('.sol', ''), // Extract contract name
                             foundAt: new Date().toISOString()
                         });
                         this.stats.missing++;
+                        logger.info(`Found missing contract: ${file}`);
                     }
 
                     this.stats.processed++;
                     this.stats.lastProcessed = contractAddress;
 
-                    // Log progress periodically
-                    if (this.stats.processed % 100 === 0) {
-                        this.logProgress();
-                    }
                 } catch (error) {
                     logger.error(`Error processing file ${file}:`, error);
                     this.stats.errors++;
