@@ -7,6 +7,7 @@ export class ContractFinder {
         this.sourcifyApi = sourcifyApi;
         this.config = config;
         this.missingContracts = [];
+        this.contractAddresses = new Map(); // Will store address mapping
         this.stats = {
             total: 0,
             processed: 0,
@@ -17,6 +18,26 @@ export class ContractFinder {
         };
         // For auto-saving
         this.saveInterval = null;
+    }
+
+    async loadContractAddresses() {
+        try {
+            // Load the contracts.json file from mainnet directory
+            const contractsPath = path.join(this.config.ethereumRepo, '../contracts.json');
+            const contractsData = await fs.readFile(contractsPath, 'utf8');
+            const contracts = JSON.parse(contractsData);
+
+            // Create mapping of filename to actual address
+            contracts.forEach(contract => {
+                // Assuming contract has address and filename properties
+                this.contractAddresses.set(contract.filename, contract.address);
+            });
+
+            logger.info(`Loaded ${this.contractAddresses.size} contract addresses`);
+        } catch (error) {
+            logger.error('Error loading contract addresses:', error);
+            throw error;
+        }
     }
 
     async findMissingContracts(specificFolder = null) {
@@ -84,11 +105,11 @@ export class ContractFinder {
             for (const file of solFiles) {
                 try {
                     const contractPath = path.join(folderPath, file);
-                    const contractAddress = file.replace('.sol', '').toLowerCase();
+                    // Get the actual address from our mapping
+                    const contractAddress = this.contractAddresses.get(file);
 
-                    // Validate Ethereum address format
-                    if (!this.isValidEthereumAddress(contractAddress)) {
-                        logger.warn(`Invalid Ethereum address format: ${contractAddress}`);
+                    if (!contractAddress) {
+                        logger.warn(`No address mapping found for file: ${file}`);
                         this.stats.errors++;
                         continue;
                     }
@@ -98,14 +119,6 @@ export class ContractFinder {
 
                     if (!exists) {
                         const source = await fs.readFile(contractPath, 'utf8');
-
-                        // Validate contract source
-                        if (!this.isValidContractSource(source)) {
-                            logger.warn(`Invalid contract source for ${contractAddress}`);
-                            this.stats.errors++;
-                            continue;
-                        }
-
                         this.missingContracts.push({
                             address: contractAddress,
                             path: contractPath,
