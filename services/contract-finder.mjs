@@ -7,10 +7,8 @@ export class ContractFinder {
         this.sourcifyApi = sourcifyApi;
         this.config = config;
         this.missingContracts = [];
-        this.contractAddresses = new Map(); // Will store address mapping
-        this.stats = this.initializeStats();  // Initialize fresh stats
-        // For auto-saving
-        this.saveInterval = null;
+        this.contractAddresses = new Map();
+        this.stats = this.initializeStats();
     }
 
     initializeStats() {
@@ -26,15 +24,18 @@ export class ContractFinder {
 
     async loadContractAddresses() {
         try {
-            // Load the contracts.json file from mainnet directory
+            // Path to contracts.json in mainnet directory
             const contractsPath = path.join(this.config.ethereumRepo, '../contracts.json');
+            logger.info(`Loading contract addresses from: ${contractsPath}`);
+
             const contractsData = await fs.readFile(contractsPath, 'utf8');
             const contracts = JSON.parse(contractsData);
 
-            // Create mapping of filename to actual address
+            // Handle files named like: "address_ContractName.sol" (without 0x prefix)
             contracts.forEach(contract => {
-                // Assuming contract has address and filename properties
-                this.contractAddresses.set(contract.filename, contract.address);
+                const address = contract.address.toLowerCase().replace('0x', '');
+                const fileName = `${address}_${contract.name}.sol`;
+                this.contractAddresses.set(fileName.toLowerCase(), contract.address);
             });
 
             logger.info(`Loaded ${this.contractAddresses.size} contract addresses`);
@@ -46,29 +47,27 @@ export class ContractFinder {
 
     async findMissingContracts(specificFolder = null) {
         try {
-            // Reset stats before starting
+            // Reset stats
             await this.resetStats();
+
+            // Load contract addresses first
+            await this.loadContractAddresses();
 
             const repoPath = this.config.ethereumRepo;
             logger.info(`Starting contract search in: ${repoPath}`);
-
-            // Start auto-save mechanism
-            this.setupAutoSave();
 
             if (specificFolder) {
                 await this.processSingleFolder(path.join(repoPath, specificFolder));
             } else {
                 const folders = await fs.readdir(repoPath);
-                // Sort folders for consistent processing
                 for (const folder of folders.sort()) {
                     await this.processSingleFolder(path.join(repoPath, folder));
                 }
             }
 
-            // Save final results
+            // Save results
             await this.saveMissingContracts();
             await this.saveStats();
-            this.clearAutoSave();
 
             return {
                 stats: this.stats,
@@ -76,7 +75,6 @@ export class ContractFinder {
             };
         } catch (error) {
             logger.error('Error in findMissingContracts:', error);
-            this.clearAutoSave();
             throw error;
         }
     }
@@ -122,8 +120,7 @@ export class ContractFinder {
             for (const file of solFiles) {
                 try {
                     const contractPath = path.join(folderPath, file);
-                    // Get the actual address from our mapping
-                    const contractAddress = this.contractAddresses.get(file);
+                    const contractAddress = this.contractAddresses.get(file.toLowerCase());
 
                     if (!contractAddress) {
                         logger.warn(`No address mapping found for file: ${file}`);
@@ -147,14 +144,14 @@ export class ContractFinder {
 
                     this.stats.processed++;
                     this.stats.lastProcessed = contractAddress;
+
+                    // Log progress periodically
+                    if (this.stats.processed % 100 === 0) {
+                        this.logProgress();
+                    }
                 } catch (error) {
                     logger.error(`Error processing file ${file}:`, error);
                     this.stats.errors++;
-                }
-
-                // Log progress every 100 contracts
-                if (this.stats.processed % 100 === 0) {
-                    this.logProgress();
                 }
             }
         } catch (error) {
@@ -230,5 +227,42 @@ export class ContractFinder {
         const minutes = Math.floor(diff / 60000);
         const hours = Math.floor(minutes / 60);
         return `${hours}h ${minutes % 60}m`;
+    }
+
+    async validateContractSource(source) {
+        // Basic validation checks
+        const minLength = 50; // Minimum reasonable length
+        const requiredElements = [
+            'pragma solidity',  // Must have pragma
+            'contract'          // Must have contract keyword
+        ];
+
+        try {
+            // Check length
+            if (source.length < minLength) {
+                logger.warn('Contract source too short');
+                return false;
+            }
+
+            // Check required elements
+            for (const element of requiredElements) {
+                if (!source.includes(element)) {
+                    logger.warn(`Missing required element: ${element}`);
+                    return false;
+                }
+            }
+
+            // Check pragma version
+            const pragmaMatch = source.match(/pragma solidity (\^?\d+\.\d+\.\d+|>=?\d+\.\d+\.\d+)/);
+            if (!pragmaMatch) {
+                logger.warn('Invalid or missing pragma solidity version');
+                return false;
+            }
+
+            return true;
+        } catch (error) {
+            logger.error('Error validating contract source:', error);
+            return false;
+        }
     }
 }
