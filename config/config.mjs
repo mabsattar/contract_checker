@@ -9,16 +9,20 @@ export class Config {
   }
 
   async load() {
-    const data = await fs.readFile(this.CONFIG_FILE, "utf8");
-    const config = yaml.load(data);
-    return {
-      sourcifyApi: config.sourcify_repo || "https://repo.sourcify.dev/api",
-      chainId: config.chain_id || "1",
-      // ethereumRepo: config.ethereum_repo,
-      contractsFile:
-        config.contracts_file || path.join(process.cwd(), "contracts.json"),
-      batchSize: config.batch_size || 10,
-      maxRetries: config.max_retries || 3,
-    };
+    try {
+      const data = await fs.readFile(this.CONFIG_FILE, "utf8");
+      const config = yaml.load(data);
+
+      return {
+        sourcifyApi: config.sourcify_repo || "https://repo.sourcify.dev/api",
+        ethereumRepo: config.ethereum_repo,
+        chainId: config.chain_id || "1",
+        batchSize: config.batch_size || 10,
+        maxRetries: config.max_retries || 3,
+        verificationDelay: config.verification_delay || 5000
+      };
+    } catch (error) {
+      throw new Error(`Failed to load config: ${error.message}`);
+    }
   }
 }
