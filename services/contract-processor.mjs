@@ -179,6 +179,17 @@ export class ContractProcessor {
                     }
                 })
         );
+
+        // Add progress reporting
+        const progress = {
+            processed: this.progress.processed,
+            total: this.progress.total,
+            successful: this.progress.successful,
+            failed: this.progress.failed,
+            percentage: ((this.progress.processed / this.progress.total) * 100).toFixed(2)
+        };
+
+        logger.info('Progress:', progress);
     }
 
     async processingChain(specificFolder = null) {
@@ -236,9 +247,37 @@ export class ContractProcessor {
                 await this.processContractsInBatches(this.missingContracts);
             }
 
+            // Add checkpoint saving
+            await this.saveCheckpoint({
+                lastProcessedFolder: folder,
+                progress: this.progress
+            });
+
         } catch (error) {
             logger.error("Error in processing chain:", error);
+            // Save current state before throwing
+            await this.saveErrorState(error);
             throw error;
         }
+    }
+
+    async transformContract(contract) {
+        return {
+            address: contract.address,
+            chainId: this.config.chainId,
+            files: {
+                'source.sol': contract.source
+            },
+            compilerVersion: await this.extractCompilerVersion(contract.source)
+        };
+    }
+
+    validateContractSource(source) {
+        if (!source.includes('pragma solidity')) {
+            return false;
+        }
+
+        // Add more validation as needed
+        return true;
     }
 }

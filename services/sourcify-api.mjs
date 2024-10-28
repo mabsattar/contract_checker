@@ -33,19 +33,20 @@ export class SourcifyAPI {
         }
     }
 
-    async submitContract(contractAddress, contractData) {
+    async submitContract(address, contractData) {
+        const formData = new FormData();
+        formData.append('address', address);
+        formData.append('chain', this.config.chainId);
+        formData.append('files', JSON.stringify(contractData.files));
+
         try {
             const response = await fetch(`${this.apiUrl}/verify`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(contractData)
+                method: 'POST',
+                body: formData
             });
-
             return await response.json();
         } catch (error) {
-            logger.error(`Error submitting contract ${contractAddress}:`, error);
+            logger.error(`Error submitting contract ${address}:`, error);
             throw error;
         }
     }
