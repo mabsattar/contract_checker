@@ -11,8 +11,12 @@ export class ContractFinder {
             total: 0,
             processed: 0,
             missing: 0,
-            errors: 0
+            errors: 0,
+            startTime: new Date().toISOString(),
+            lastProcessed: null
         };
+        // For auto-saving
+        this.saveInterval = null;
     }
 
     async findMissingContracts(specificFolder = null) {
@@ -20,18 +24,23 @@ export class ContractFinder {
             const repoPath = this.config.ethereumRepo;
             logger.info(`Starting contract search in: ${repoPath}`);
 
+            // Start auto-save mechanism
+            this.setupAutoSave();
+
             if (specificFolder) {
                 await this.processSingleFolder(path.join(repoPath, specificFolder));
             } else {
                 const folders = await fs.readdir(repoPath);
-                for (const folder of folders) {
+                // Sort folders for consistent processing
+                for (const folder of folders.sort()) {
                     await this.processSingleFolder(path.join(repoPath, folder));
                 }
             }
 
-            // Save results
+            // Save final results
             await this.saveMissingContracts();
             await this.saveStats();
+            this.clearAutoSave();
 
             return {
                 stats: this.stats,
@@ -39,7 +48,28 @@ export class ContractFinder {
             };
         } catch (error) {
             logger.error('Error in findMissingContracts:', error);
+            this.clearAutoSave();
             throw error;
+        }
+    }
+
+    setupAutoSave() {
+        // Auto-save every 5 minutes
+        this.saveInterval = setInterval(async () => {
+            try {
+                await this.saveMissingContracts();
+                await this.saveStats();
+                logger.info('Auto-save completed');
+            } catch (error) {
+                logger.error('Error in auto-save:', error);
+            }
+        }, 5 * 60 * 1000);
+    }
+
+    clearAutoSave() {
+        if (this.saveInterval) {
+            clearInterval(this.saveInterval);
+            this.saveInterval = null;
         }
     }
 
@@ -56,11 +86,26 @@ export class ContractFinder {
                     const contractPath = path.join(folderPath, file);
                     const contractAddress = file.replace('.sol', '').toLowerCase();
 
+                    // Validate Ethereum address format
+                    if (!this.isValidEthereumAddress(contractAddress)) {
+                        logger.warn(`Invalid Ethereum address format: ${contractAddress}`);
+                        this.stats.errors++;
+                        continue;
+                    }
+
                     // Check if contract exists in Sourcify
                     const exists = await this.sourcifyApi.checkContract(contractAddress);
 
                     if (!exists) {
                         const source = await fs.readFile(contractPath, 'utf8');
+
+                        // Validate contract source
+                        if (!this.isValidContractSource(source)) {
+                            logger.warn(`Invalid contract source for ${contractAddress}`);
+                            this.stats.errors++;
+                            continue;
+                        }
+
                         this.missingContracts.push({
                             address: contractAddress,
                             path: contractPath,
@@ -68,20 +113,16 @@ export class ContractFinder {
                             foundAt: new Date().toISOString()
                         });
                         this.stats.missing++;
-
-                        // Save periodically
-                        if (this.missingContracts.length % 100 === 0) {
-                            await this.saveMissingContracts();
-                        }
                     }
 
                     this.stats.processed++;
+                    this.stats.lastProcessed = contractAddress;
                 } catch (error) {
                     logger.error(`Error processing file ${file}:`, error);
                     this.stats.errors++;
                 }
 
-                // Log progress
+                // Log progress every 100 contracts
                 if (this.stats.processed % 100 === 0) {
                     this.logProgress();
                 }
@@ -92,16 +133,51 @@ export class ContractFinder {
         }
     }
 
+    // Validate Ethereum address format
+    isValidEthereumAddress(address) {
+        return /^0x[0-9a-f]{40}$/i.test(address);
+    }
+
+    // Basic validation of contract source
+    isValidContractSource(source) {
+        return source.includes('pragma solidity') &&
+            source.includes('contract ') &&
+            source.length > 0;
+    }
+
     async saveMissingContracts() {
         const filePath = path.join(process.cwd(), 'missing_contracts.json');
-        await fs.writeFile(filePath, JSON.stringify(this.missingContracts, null, 2));
-        logger.info(`Saved ${this.missingContracts.length} missing contracts to ${filePath}`);
+        const backupPath = path.join(process.cwd(), 'missing_contracts.backup.json');
+
+        try {
+            // Create backup of existing file
+            try {
+                await fs.access(filePath);
+                await fs.copyFile(filePath, backupPath);
+            } catch (error) {
+                // File doesn't exist, skip backup
+            }
+
+            await fs.writeFile(filePath, JSON.stringify(this.missingContracts, null, 2));
+            logger.info(`Saved ${this.missingContracts.length} missing contracts to ${filePath}`);
+        } catch (error) {
+            logger.error('Error saving missing contracts:', error);
+            throw error;
+        }
     }
 
     async saveStats() {
         const filePath = path.join(process.cwd(), 'contract_stats.json');
-        await fs.writeFile(filePath, JSON.stringify(this.stats, null, 2));
-        logger.info('Stats saved to', filePath);
+        try {
+            await fs.writeFile(filePath, JSON.stringify({
+                ...this.stats,
+                lastUpdate: new Date().toISOString()
+            }, null, 2));
+            logger.info('Stats saved to', filePath);
+        } catch (error) {
+            logger.error('Error saving stats:', error);
+            throw error;
+        }
     }
 
     logProgress() {
@@ -110,9 +186,19 @@ export class ContractFinder {
             total: this.stats.total,
             missing: this.stats.missing,
             errors: this.stats.errors,
-            percentage: ((this.stats.processed / this.stats.total) * 100).toFixed(2)
+            percentage: ((this.stats.processed / this.stats.total) * 100).toFixed(2),
+            lastProcessed: this.stats.lastProcessed,
+            runningTime: this.getRunningTime()
         };
         logger.info('Progress:', progress);
     }
-}
 
+    getRunningTime() {
+        const startTime = new Date(this.stats.startTime);
+        const now = new Date();
+        const diff = now - startTime;
+        const minutes = Math.floor(diff / 60000);
+        const hours = Math.floor(minutes / 60);
+        return `${hours}h ${minutes % 60}m`;
+    }
+}
