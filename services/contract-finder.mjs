@@ -18,7 +18,8 @@ export class ContractFinder {
             totalProcessed: 0,
             totalMissing: 0,
             totalMatching: 0,
-            totalErrors: 0
+            totalErrors: 0,
+            startTime: new Date().toISOString()
         };
     }
 
@@ -29,7 +30,8 @@ export class ContractFinder {
             missing: 0,
             errors: 0,
             startTime: new Date().toISOString(),
-            lastProcessed: null
+            lastProcessed: null,
+            lastVerified: false
         };
     }
 
@@ -51,6 +53,17 @@ export class ContractFinder {
                     this.folderProgress.processed.push(folder);
                 }
             }
+
+            // Save final results
+            await this.saveMissingContracts();
+            await this.saveStats();
+
+            // Return the results
+            return {
+                stats: this.stats,
+                missingContractsFile: path.join(process.cwd(), 'missing_contracts.json')
+            };
+
         } catch (error) {
             logger.error('Error in findMissingContracts:', error);
             throw error;
@@ -58,12 +71,28 @@ export class ContractFinder {
     }
 
     async resetStats() {
-        // Reset stats file
+        this.stats = this.initializeStats();
+        this.folderProgress = {
+            current: '',
+            processed: [],
+            total: 0
+        };
+        this.overallStats = {
+            totalFiles: 0,
+            totalProcessed: 0,
+            totalMissing: 0,
+            totalMatching: 0,
+            totalErrors: 0,
+            startTime: new Date().toISOString()
+        };
+
+        // Write initial stats to file
         const statsPath = path.join(process.cwd(), 'contract_stats.json');
         await fs.writeFile(
             statsPath,
             JSON.stringify(this.initializeStats(), null, 2)
         );
+
         logger.info('Stats reset successfully');
     }
 
@@ -196,7 +225,7 @@ export class ContractFinder {
     }
 
     getTimeElapsed() {
-        const start = new Date(this.stats.startTime);
+        const start = new Date(this.overallStats.startTime);
         const now = new Date();
         const elapsed = now - start;
 
@@ -215,36 +244,40 @@ export class ContractFinder {
     }
 
     logProgress() {
-        const progress = {
-            overall: {
-                totalFiles: this.overallStats.totalFiles,
-                processed: this.overallStats.totalProcessed,
-                missing: this.overallStats.totalMissing,
-                matching: this.overallStats.totalMatching,
-                errors: this.overallStats.totalErrors,
-                percentage: ((this.overallStats.totalProcessed / this.overallStats.totalFiles) * 100).toFixed(2) + '%'
-            },
-            folders: {
-                current: this.folderProgress.current,
-                processed: this.folderProgress.processed,
-                remaining: this.folderProgress.total - this.folderProgress.processed.length,
-                totalFolders: this.folderProgress.total
-            },
-            currentFolder: {
-                total: this.stats.total,
-                processed: this.stats.processed,
-                missing: this.stats.missing,
-                errors: this.stats.errors,
-                percentage: ((this.stats.processed / this.stats.total) * 100).toFixed(2) + '%'
-            },
-            lastProcessed: {
-                address: this.stats.lastProcessed,
-                verified: this.stats.lastVerified,
-                timestamp: new Date().toISOString()
-            },
-            timeElapsed: this.getTimeElapsed()
-        };
+        try {
+            const progress = {
+                overall: {
+                    totalFiles: this.overallStats.totalFiles,
+                    processed: this.overallStats.totalProcessed,
+                    missing: this.overallStats.totalMissing,
+                    matching: this.overallStats.totalMatching,
+                    errors: this.overallStats.totalErrors,
+                    percentage: ((this.overallStats.totalProcessed / this.overallStats.totalFiles) * 100).toFixed(2) + '%'
+                },
+                folders: {
+                    current: this.folderProgress.current,
+                    processed: this.folderProgress.processed,
+                    remaining: this.folderProgress.total - this.folderProgress.processed.length,
+                    totalFolders: this.folderProgress.total
+                },
+                currentFolder: {
+                    total: this.stats.total,
+                    processed: this.stats.processed,
+                    missing: this.stats.missing,
+                    errors: this.stats.errors,
+                    percentage: ((this.stats.processed / this.stats.total) * 100).toFixed(2) + '%'
+                },
+                lastProcessed: {
+                    address: this.stats.lastProcessed,
+                    verified: this.stats.lastVerified,
+                    timestamp: new Date().toISOString()
+                },
+                timeElapsed: this.getTimeElapsed()
+            };
 
-        logger.info('Progress:', JSON.stringify(progress, null, 2));
+            logger.info('Progress:', JSON.stringify(progress, null, 2));
+        } catch (error) {
+            logger.error('Error in logProgress:', error);
+        }
     }
 }

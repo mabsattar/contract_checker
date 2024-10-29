@@ -38,24 +38,30 @@ export class SourcifyAPI {
         throw error;
     }
 
-    async checkContract(contractAddress, retries = this.maxRetries) {
+    async checkContract(address) {
         try {
-            const response = await this.limiter.schedule(() =>
-                this.client.get(`/files/any/${contractAddress}`)
+            const url = `${this.apiUrl}/check-by-addresses?addresses=${address}&chainIds=1`;
+            logger.debug(`Checking contract ${address} on Sourcify`);
+
+            const response = await this.client.get(url);
+
+            // Log the actual response for debugging
+            logger.debug(`Sourcify response for ${address}:`, response.data);
+
+            // The contract is verified if it's found in the response
+            const isVerified = response.data.some(item =>
+                item.address.toLowerCase() === address.toLowerCase() &&
+                item.status === 'perfect'
             );
-            return response.status === 200;
+
+            if (!isVerified) {
+                logger.info(`Contract ${address} is not verified on Sourcify`);
+            }
+
+            return isVerified;
         } catch (error) {
-            if (error.response?.status === 429 && retries > 0) {
-                logger.warn(`Rate limit hit for ${contractAddress}. Retrying...`);
-                await new Promise(resolve => setTimeout(resolve, 5000));
-                return this.checkContract(contractAddress, retries - 1);
-            }
-            if (error.response?.status === 404) {
-                // Contract not found is an expected case
-                return false;
-            }
-            logger.error(`Error checking contract ${contractAddress}:`, error.message);
-            return false;
+            logger.error(`Error checking contract ${address}:`, error);
+            return false; // Assume not verified if there's an error
         }
     }
 
