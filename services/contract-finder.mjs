@@ -38,7 +38,11 @@ export class ContractFinder {
     async findMissingContracts(specificFolder = null) {
         try {
             await this.resetStats();
-            const repoPath = this.config.ethereumRepo;
+            const repoPath = this.config.ethereum_repo;
+
+            if (!repoPath) {
+                throw new Error('ethereum_repo path not found in config');
+            }
 
             if (specificFolder) {
                 await this.processSingleFolder(path.join(repoPath, specificFolder));

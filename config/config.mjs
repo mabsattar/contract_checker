@@ -13,7 +13,7 @@ export class Config {
       const data = await fs.readFile(this.CONFIG_FILE, "utf8");
       const config = yaml.load(data);
 
-      return {
+      const finalConfig = {
         sourcify_api: config.sourcify_api || "https://sourcify.dev/server",
         sourcify_repo: config.sourcify_repo || "https://repo.sourcify.dev",
         chain_id: config.chain_id || "1",
@@ -22,6 +22,10 @@ export class Config {
         max_retries: config.max_retries || 3,
         verification_delay: config.verification_delay || 5000
       };
+
+      logger.debug('Loaded config:', finalConfig);
+
+      return finalConfig;
     } catch (error) {
       throw new Error(`Failed to load config: ${error.message}`);
     }
