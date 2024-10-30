@@ -46,51 +46,65 @@ export class SourcifyAPI {
 
     async checkContract(address) {
         try {
-            // Use repository endpoint to check if contract exists
-            const url = `${this.apiUrl}/files/any/${this.chainId}/${address}`;
-            logger.debug(`Checking contract ${address} on Sourcify`);
-
+            // 1. First check repository for full matches
+            const repoFullUrl = `${this.repoUrl}/contracts/full_match/${this.chainId}/${address}/metadata.json`;
             try {
-                const response = await this.client.get(url);
+                const fullResponse = await this.client.get(repoFullUrl);
+                if (fullResponse.status === 200) {
+                    logger.debug(`Contract ${address} is fully verified on Sourcify repository`);
+                    return true;
+                }
+            } catch (error) {
+                if (error.response?.status !== 404) {
+                    logger.error(`Error checking full match for ${address}:`, error.message);
+                }
+            }
 
-                // Check response format and matching status
-                if (response.data) {
-                    if (Array.isArray(response.data)) {
-                        // Check for both perfect and partial matches
-                        const isVerified = response.data.some(item =>
+            // 2. Then check repository for partial matches
+            const repoPartialUrl = `${this.repoUrl}/contracts/partial_match/${this.chainId}/${address}/metadata.json`;
+            try {
+                const partialResponse = await this.client.get(repoPartialUrl);
+                if (partialResponse.status === 200) {
+                    logger.debug(`Contract ${address} is partially verified on Sourcify repository`);
+                    return true;
+                }
+            } catch (error) {
+                if (error.response?.status !== 404) {
+                    logger.error(`Error checking partial match for ${address}:`, error.message);
+                }
+            }
+
+            // 3. Finally check API as fallback
+            const apiUrl = `${this.apiUrl}/files/any/${this.chainId}/${address}`;
+            try {
+                const apiResponse = await this.client.get(apiUrl);
+                if (apiResponse.data) {
+                    if (Array.isArray(apiResponse.data)) {
+                        const isVerified = apiResponse.data.some(item =>
                             item.address.toLowerCase() === address.toLowerCase() &&
                             (item.status === 'perfect' || item.status === 'partial')
                         );
-
                         if (isVerified) {
-                            logger.debug(`Contract ${address} is verified on Sourcify (Array response)`);
+                            logger.debug(`Contract ${address} is verified on Sourcify API`);
                             return true;
                         }
                     } else {
-                        // Direct file check succeeded, contract exists
-                        logger.debug(`Contract ${address} is verified on Sourcify (Direct check)`);
+                        logger.debug(`Contract ${address} is verified on Sourcify API (Direct check)`);
                         return true;
                     }
                 }
-
-                logger.info(`Contract ${address} is not verified on Sourcify`);
-                return false;
-
             } catch (error) {
-                // 404 means contract not found
-                if (error.response && error.response.status === 404) {
-                    logger.info(`Contract ${address} is not verified on Sourcify`);
-                    return false;
+                if (error.response?.status !== 404) {
+                    logger.error(`Error checking API for ${address}:`, error.message);
                 }
-                // Other errors should be logged
-                throw error;
             }
+
+            // If we get here, contract is not verified anywhere
+            logger.info(`Contract ${address} is not verified on Sourcify`);
+            return false;
 
         } catch (error) {
-            logger.error(`Error checking contract ${address}:`, error);
-            if (error.response) {
-                logger.error('Error response:', error.response.data);
-            }
+            logger.error(`Unexpected error checking contract ${address}:`, error);
             return false;
         }
     }
