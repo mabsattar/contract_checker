@@ -14,8 +14,8 @@ export class Config {
       const config = yaml.load(data);
 
       return {
-        sourcifyApi: config.sourcify_repo || "https://repo.sourcify.dev/api",
-        ethereumRepo: config.ethereum_repo,
+        sourcifyApi: config.sourcify_api || "https://sourcify.dev/server",
+        ethereumRepo: config.ethereum_repo || "/home/abcode/opensource/smart-contract-sanctuary-ethereum/contracts/mainnet",
         chainId: config.chain_id || "1",
         batchSize: config.batch_size || 10,
         maxRetries: config.max_retries || 3,
