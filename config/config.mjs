@@ -1,6 +1,7 @@
 import yaml from "js-yaml";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { logger } from '../utils/logger.mjs';
 
 export class Config {
   constructor() {
@@ -27,6 +28,7 @@ export class Config {
 
       return finalConfig;
     } catch (error) {
+      logger.error(`Failed to load config: ${error.message}`);
       throw new Error(`Failed to load config: ${error.message}`);
     }
   }
