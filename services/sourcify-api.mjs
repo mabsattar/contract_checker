@@ -20,14 +20,16 @@ export class SourcifyAPI {
         };
 
         // Ensure URLs don't end with slash
-        this.apiUrl = config.sourcify_api.replace(/\/$/, '');
+        this.apiUrl = config.sourcify_api || "https://sourcify.dev/server";
         this.chainId = this.validateChainId(config.chain_id);
         this.maxRetries = config.max_retries || 3;
+        this.verificationDelay = config.verification_delay || 5000;
 
-        // Create axios instance with default config
         this.client = axios.create({
-            timeout: 30000,
-            timeoutErrorMessage: 'Request timed out - the server took too long to respond'
+            timeout: 10000,
+            headers: {
+                'Accept': 'application/json'
+            }
         });
 
         // Setup rate limiting
@@ -76,43 +78,57 @@ export class SourcifyAPI {
 
             logger.debug(`Checking contract ${address} on chain ${this.chainId}...`);
 
-            // Check if contract is verified using the correct API endpoint
-            const checkUrl = `/check-by-addresses?addresses=${address}&chainIds=${this.chainId}`;
+            // Check both full and partial matches using repository API
+            const fullMatchUrl = `${this.repoUrl}/full_match/${this.chainId}/${address}/metadata.json`;
+            const partialMatchUrl = `${this.repoUrl}/partial_match/${this.chainId}/${address}/metadata.json`;
 
             try {
-                const response = await this.client.get(checkUrl);
-
-                if (response.status === 200) {
-                    // The API returns an array of verification status objects
-                    const verificationStatus = response.data;
-
-                    // Check if the contract is verified (either full or partial match)
-                    const isVerified = verificationStatus.some(status =>
-                        status.address.toLowerCase() === address.toLowerCase() &&
-                        (status.status === 'perfect' || status.status === 'partial')
-                    );
-
-                    if (isVerified) {
-                        logger.info(`Contract ${address} is verified on chain ${this.chainId}`);
+                // Try full match first
+                const fullMatchResponse = await this.makeRequest(fullMatchUrl);
+                if (fullMatchResponse.status === 200) {
+                    logger.info(`Contract ${address} has full match verification`);
+                    return true;
+                }
+            } catch (error) {
+                // If full match fails, try partial match
+                try {
+                    const partialMatchResponse = await this.makeRequest(partialMatchUrl);
+                    if (partialMatchResponse.status === 200) {
+                        logger.info(`Contract ${address} has partial match verification`);
                         return true;
                     }
-                }
-
-                logger.debug(`Contract ${address} not found on chain ${this.chainId}`);
-                return false;
-
-            } catch (error) {
-                if (error.response?.status === 404) {
-                    logger.debug(`Contract ${address} not found on chain ${this.chainId}`);
+                } catch (innerError) {
+                    // Both checks failed, contract is not verified
+                    logger.debug(`Contract ${address} is not verified`);
                     return false;
                 }
-                throw error;
             }
+
+            return false;
+
         } catch (error) {
-            logger.error(`Error checking contract ${address} on chain ${this.chainId}:`, error);
+            // Log error but don't throw
+            logger.warn(`Error checking contract ${address}: ${error.message}`);
             return false;
         }
     }
+
+
+    async makeRequest(url, retries = 3, delay = 1000) {
+        for (let i = 0; i < retries; i++) {
+            try {
+                return await this.client.head(url);
+            } catch (error) {
+                if (i === retries - 1) throw error;
+                if (error.response?.status === 429) {
+                    await new Promise(resolve => setTimeout(resolve, delay * (i + 1)));
+                    continue;
+                }
+                throw error;
+            }
+        }
+    }
+
 
     async submitContract(address, contractData) {
         try {
