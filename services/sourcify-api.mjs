@@ -4,13 +4,19 @@ import FormData from 'form-data';
 import { logger } from '../utils/logger.mjs';
 
 export class SourcifyAPI {
-    constructor(apiUrl, maxRetries = 3) {
-        this.apiUrl = apiUrl;
-        this.maxRetries = maxRetries;
+    constructor(config) {
+        // Validate required config
+        if (!config.sourcify_api) throw new Error('sourcify_api is required in config');
+        if (!config.sourcify_repo) throw new Error('sourcify_repo is required in config');
+        if (!config.chain_id) throw new Error('chain_id is required in config');
+
+        this.apiUrl = config.sourcify_api;
+        this.repoUrl = config.sourcify_repo;
+        this.chainId = config.chain_id;
+        this.maxRetries = config.max_retries || 3;
 
         // Create axios instance with default config
         this.client = axios.create({
-            baseURL: apiUrl,
             timeout: 30000, // Increased timeout for large contracts
         });
 
@@ -40,28 +46,52 @@ export class SourcifyAPI {
 
     async checkContract(address) {
         try {
-            const url = `${this.apiUrl}/check-by-addresses?addresses=${address}&chainIds=1`;
+            // Use repository endpoint to check if contract exists
+            const url = `${this.apiUrl}/files/any/${this.chainId}/${address}`;
             logger.debug(`Checking contract ${address} on Sourcify`);
 
-            const response = await this.client.get(url);
+            try {
+                const response = await this.client.get(url);
 
-            // Log the actual response for debugging
-            logger.debug(`Sourcify response for ${address}:`, response.data);
+                // Check response format and matching status
+                if (response.data) {
+                    if (Array.isArray(response.data)) {
+                        // Check for both perfect and partial matches
+                        const isVerified = response.data.some(item =>
+                            item.address.toLowerCase() === address.toLowerCase() &&
+                            (item.status === 'perfect' || item.status === 'partial')
+                        );
 
-            // The contract is verified if it's found in the response
-            const isVerified = response.data.some(item =>
-                item.address.toLowerCase() === address.toLowerCase() &&
-                item.status === 'perfect'
-            );
+                        if (isVerified) {
+                            logger.debug(`Contract ${address} is verified on Sourcify (Array response)`);
+                            return true;
+                        }
+                    } else {
+                        // Direct file check succeeded, contract exists
+                        logger.debug(`Contract ${address} is verified on Sourcify (Direct check)`);
+                        return true;
+                    }
+                }
 
-            if (!isVerified) {
                 logger.info(`Contract ${address} is not verified on Sourcify`);
+                return false;
+
+            } catch (error) {
+                // 404 means contract not found
+                if (error.response && error.response.status === 404) {
+                    logger.info(`Contract ${address} is not verified on Sourcify`);
+                    return false;
+                }
+                // Other errors should be logged
+                throw error;
             }
 
-            return isVerified;
         } catch (error) {
             logger.error(`Error checking contract ${address}:`, error);
-            return false; // Assume not verified if there's an error
+            if (error.response) {
+                logger.error('Error response:', error.response.data);
+            }
+            return false;
         }
     }
 
