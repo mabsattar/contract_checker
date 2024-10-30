@@ -12,7 +12,7 @@ async function main() {
     // Initialize all components
     const config = await new Config().load();
     const cacheManager = new CacheManager();
-    const sourcifyApi = new SourcifyAPI(config.sourcifyApi, config.maxRetries);
+    const sourcifyApi = new SourcifyAPI(config);
     const finder = new ContractFinder(sourcifyApi, config);
 
     // Reset stats before starting

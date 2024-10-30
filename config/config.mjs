@@ -14,12 +14,13 @@ export class Config {
       const config = yaml.load(data);
 
       return {
-        sourcifyApi: config.sourcify_api || "https://sourcify.dev/server",
-        ethereumRepo: config.ethereum_repo || "/home/abcode/opensource/smart-contract-sanctuary-ethereum/contracts/mainnet",
-        chainId: config.chain_id || "1",
-        batchSize: config.batch_size || 10,
-        maxRetries: config.max_retries || 3,
-        verificationDelay: config.verification_delay || 5000
+        sourcify_api: config.sourcify_api || "https://sourcify.dev/server",
+        sourcify_repo: config.sourcify_repo || "https://repo.sourcify.dev",
+        chain_id: config.chain_id || "1",
+        ethereum_repo: config.ethereum_repo || "/home/abcode/opensource/smart-contract-sanctuary-ethereum/contracts/mainnet",
+        batch_size: config.batch_size || 10,
+        max_retries: config.max_retries || 3,
+        verification_delay: config.verification_delay || 5000
       };
     } catch (error) {
       throw new Error(`Failed to load config: ${error.message}`);
