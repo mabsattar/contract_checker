@@ -7,17 +7,27 @@ export class SourcifyAPI {
     constructor(config) {
         // Validate required config
         if (!config.sourcify_api) throw new Error('sourcify_api is required in config');
-        if (!config.sourcify_repo) throw new Error('sourcify_repo is required in config');
         if (!config.chain_id) throw new Error('chain_id is required in config');
 
-        this.apiUrl = config.sourcify_api;
-        this.repoUrl = config.sourcify_repo;
-        this.chainId = config.chain_id;
+        // Chain ID mapping
+        this.chainIds = {
+            'ethereum': '1',      // Ethereum Mainnet
+            'sepolia': '11155111', // Sepolia Testnet
+            'arbitrum': '42161',   // Arbitrum One
+            'celo': '42220',      // Celo Mainnet
+            'optimism': '10',     // Optimism
+            'polygon': '137',     // Polygon Mainnet
+        };
+
+        // Ensure URLs don't end with slash
+        this.apiUrl = config.sourcify_api.replace(/\/$/, '');
+        this.chainId = this.validateChainId(config.chain_id);
         this.maxRetries = config.max_retries || 3;
 
         // Create axios instance with default config
         this.client = axios.create({
-            timeout: 30000, // Increased timeout for large contracts
+            timeout: 30000,
+            timeoutErrorMessage: 'Request timed out - the server took too long to respond'
         });
 
         // Setup rate limiting
@@ -30,6 +40,18 @@ export class SourcifyAPI {
         this.client.interceptors.response.use(
             response => response,
             error => this.handleApiError(error)
+        );
+
+        // Add timeout retry logic
+        this.client.interceptors.response.use(
+            response => response,
+            async error => {
+                if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+                    logger.warn(`Request timed out for ${error.config.url}, retrying...`);
+                    return this.client.request(error.config);
+                }
+                throw error;
+            }
         );
     }
 
@@ -46,93 +68,73 @@ export class SourcifyAPI {
 
     async checkContract(address) {
         try {
-            // 1. First check repository for full matches
-            const repoFullUrl = `${this.repoUrl}/contracts/full_match/${this.chainId}/${address}/metadata.json`;
-            try {
-                const fullResponse = await this.client.get(repoFullUrl);
-                if (fullResponse.status === 200) {
-                    logger.debug(`Contract ${address} is fully verified on Sourcify repository`);
-                    return true;
-                }
-            } catch (error) {
-                if (error.response?.status !== 404) {
-                    logger.error(`Error checking full match for ${address}:`, error.message);
-                }
+            // Ensure address is properly formatted
+            address = address.toLowerCase();
+            if (!address.startsWith('0x')) {
+                address = '0x' + address;
             }
 
-            // 2. Then check repository for partial matches
-            const repoPartialUrl = `${this.repoUrl}/contracts/partial_match/${this.chainId}/${address}/metadata.json`;
-            try {
-                const partialResponse = await this.client.get(repoPartialUrl);
-                if (partialResponse.status === 200) {
-                    logger.debug(`Contract ${address} is partially verified on Sourcify repository`);
-                    return true;
-                }
-            } catch (error) {
-                if (error.response?.status !== 404) {
-                    logger.error(`Error checking partial match for ${address}:`, error.message);
-                }
-            }
+            logger.debug(`Checking contract ${address} on chain ${this.chainId}...`);
 
-            // 3. Finally check API as fallback
-            const apiUrl = `${this.apiUrl}/files/any/${this.chainId}/${address}`;
+            // Check if contract is verified using the correct API endpoint
+            const checkUrl = `/check-by-addresses?addresses=${address}&chainIds=${this.chainId}`;
+
             try {
-                const apiResponse = await this.client.get(apiUrl);
-                if (apiResponse.data) {
-                    if (Array.isArray(apiResponse.data)) {
-                        const isVerified = apiResponse.data.some(item =>
-                            item.address.toLowerCase() === address.toLowerCase() &&
-                            (item.status === 'perfect' || item.status === 'partial')
-                        );
-                        if (isVerified) {
-                            logger.debug(`Contract ${address} is verified on Sourcify API`);
-                            return true;
-                        }
-                    } else {
-                        logger.debug(`Contract ${address} is verified on Sourcify API (Direct check)`);
+                const response = await this.client.get(checkUrl);
+
+                if (response.status === 200) {
+                    // The API returns an array of verification status objects
+                    const verificationStatus = response.data;
+
+                    // Check if the contract is verified (either full or partial match)
+                    const isVerified = verificationStatus.some(status =>
+                        status.address.toLowerCase() === address.toLowerCase() &&
+                        (status.status === 'perfect' || status.status === 'partial')
+                    );
+
+                    if (isVerified) {
+                        logger.info(`Contract ${address} is verified on chain ${this.chainId}`);
                         return true;
                     }
                 }
+
+                logger.debug(`Contract ${address} not found on chain ${this.chainId}`);
+                return false;
+
             } catch (error) {
-                if (error.response?.status !== 404) {
-                    logger.error(`Error checking API for ${address}:`, error.message);
+                if (error.response?.status === 404) {
+                    logger.debug(`Contract ${address} not found on chain ${this.chainId}`);
+                    return false;
                 }
+                throw error;
             }
-
-            // If we get here, contract is not verified anywhere
-            logger.info(`Contract ${address} is not verified on Sourcify`);
-            return false;
-
         } catch (error) {
-            logger.error(`Unexpected error checking contract ${address}:`, error);
+            logger.error(`Error checking contract ${address} on chain ${this.chainId}:`, error);
             return false;
         }
     }
 
     async submitContract(address, contractData) {
-        const formData = new FormData();
-
         try {
-            // 1. Contract Address (from contracts.json)
-            formData.append('address', address);
+            // Format contract data using helper method
+            const formData = this.formatContractData({
+                address: address,
+                source: contractData.source,
+                chainId: this.chainId
+            });
 
-            // 2. Chain ID (from config)
-            formData.append('chain', '1');  // Ethereum mainnet
-
-            // 3. Source Code (from .sol files)
-            formData.append('files', Buffer.from(contractData.source), 'source.sol');
-
-            // 4. Compiler Version (extracted from source)
-            const compilerVersion = this.extractCompilerVersion(contractData.source);
-            if (compilerVersion) {
-                formData.append('compilerVersion', compilerVersion);
-            }
-
-            return await this.client.post('/verify', formData, {
+            // Submit to Sourcify API using the correct endpoint
+            const verifyUrl = `${this.apiUrl}/verify-contract`;
+            const response = await this.client.post(verifyUrl, formData, {
                 headers: {
-                    ...formData.getHeaders()
+                    ...formData.getHeaders(),
+                    'Content-Type': 'multipart/form-data'
                 }
             });
+
+            logger.info(`Successfully submitted contract ${address}`);
+            return response.data;
+
         } catch (error) {
             logger.error(`Failed to submit contract ${address}:`, error);
             throw error;
@@ -155,7 +157,7 @@ export class SourcifyAPI {
         try {
             // Required fields
             formData.append('address', contract.address);
-            formData.append('chain', contract.chainId || '1');
+            formData.append('chain', contract.chainId || this.chainId);
 
             // Source files
             if (contract.source) {
@@ -163,8 +165,9 @@ export class SourcifyAPI {
             }
 
             // Optional metadata
-            if (contract.compilerVersion) {
-                formData.append('compilerVersion', contract.compilerVersion);
+            const compilerVersion = contract.compilerVersion || this.extractCompilerVersion(contract.source);
+            if (compilerVersion) {
+                formData.append('compilerVersion', compilerVersion);
             }
 
             return formData;
@@ -177,13 +180,44 @@ export class SourcifyAPI {
     // Method to check verification status
     async checkVerificationStatus(contractAddresses) {
         try {
-            const response = await this.client.post('/verification-status', {
-                addresses: contractAddresses
+            // Use the check-by-addresses endpoint for batch verification status
+            const response = await this.client.post(`${this.apiUrl}/check-by-addresses`, {
+                addresses: contractAddresses,
+                chainIds: [this.chainId]
             });
-            return response.data;
+
+            // Process and format the response
+            const results = {};
+            if (response.data && Array.isArray(response.data)) {
+                response.data.forEach(result => {
+                    results[result.address] = {
+                        status: result.status,
+                        verified: result.status === 'perfect' || result.status === 'partial'
+                    };
+                });
+            }
+
+            return results;
         } catch (error) {
             logger.error('Failed to check verification status:', error.message);
             throw error;
         }
+    }
+
+    // Add this method to validate and normalize chain ID
+    validateChainId(chainId) {
+        // If chainId is a string name (e.g., 'ethereum', 'sepolia')
+        if (typeof chainId === 'string' && this.chainIds[chainId.toLowerCase()]) {
+            return this.chainIds[chainId.toLowerCase()];
+        }
+
+        // If chainId is already a number or numeric string
+        if (!isNaN(chainId)) {
+            return chainId.toString();
+        }
+
+        // If chainId is invalid
+        logger.error(`Invalid chain ID: ${chainId}`);
+        throw new Error(`Invalid chain ID: ${chainId}. Must be one of: ${Object.keys(this.chainIds).join(', ')} or a valid chain ID number`);
     }
 }

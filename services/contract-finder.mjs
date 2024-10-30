@@ -123,65 +123,82 @@ export class ContractFinder {
     async processSingleFolder(folderPath) {
         try {
             const files = await fs.readdir(folderPath);
-            const solFiles = files.filter(f => f.endsWith('.sol'));
-
-            this.stats.total = solFiles.length;
-            this.overallStats.totalFiles += solFiles.length;
+            const solFiles = files.filter(file => file.endsWith('.sol'));
 
             logger.info(`Processing ${solFiles.length} contracts in ${folderPath}`);
+            this.stats.total += solFiles.length;
 
             for (const file of solFiles) {
                 try {
-                    const contractPath = path.join(folderPath, file);
-
-                    // Extract address and name from filename
-                    const [address, contractName] = file.split('_');
-                    const name = contractName.replace('.sol', '');
-
-                    // Add 0x prefix for Sourcify API
-                    const contractAddress = `0x${address}`;
-
-                    // Validate address format
-                    if (!this.isValidEthereumAddress(contractAddress)) {
-                        logger.warn(`Invalid address format in filename: ${file}`);
+                    // Extract address and contract name from filename
+                    // Pattern: <address>_<contractName>.sol
+                    const match = file.match(/^([a-fA-F0-9]{40})_([^.]+)\.sol$/);
+                    if (!match) {
+                        logger.warn(`Invalid filename format: ${file}`);
                         this.stats.errors++;
-                        this.overallStats.totalErrors++;
                         continue;
                     }
 
-                    // Check if contract exists in Sourcify
-                    const exists = await this.sourcifyApi.checkContract(contractAddress);
+                    const [_, addressWithout0x, contractName] = match;
+                    const address = '0x' + addressWithout0x;
 
-                    if (!exists) {
-                        const source = await fs.readFile(contractPath, 'utf8');
-                        this.missingContracts.push({
-                            address: contractAddress,
-                            path: contractPath,
-                            source,
-                            name,
-                            foundAt: new Date().toISOString()
-                        });
-                        this.stats.missing++;
-                        this.overallStats.totalMissing++;
-                        logger.info(`Found missing contract: ${file}`);
-                    } else {
-                        this.overallStats.totalMatching++;  // Optional
+                    // Validate address format
+                    if (!this.isValidEthereumAddress(address)) {
+                        logger.warn(`Invalid address format in filename: ${file}`);
+                        this.stats.errors++;
+                        continue;
                     }
 
                     this.stats.processed++;
-                    this.overallStats.totalProcessed++;
-                    this.stats.lastProcessed = contractAddress;
+                    this.stats.lastProcessed = address;
+
+                    // Check if contract exists in Sourcify
+                    const isVerified = await this.sourcifyApi.checkContract(address);
+                    this.stats.lastVerified = isVerified;
+
+                    if (!isVerified) {
+                        // Read contract source
+                        const source = await fs.readFile(path.join(folderPath, file), 'utf8');
+
+                        // Validate source code
+                        if (!this.validateContractSource(source)) {
+                            logger.warn(`Invalid source code in file: ${file}`);
+                            this.stats.errors++;
+                            continue;
+                        }
+
+                        // Add to missing contracts
+                        this.missingContracts.push({
+                            address: address,
+                            contractName: contractName,
+                            filename: file,
+                            source: source
+                        });
+
+                        this.stats.missing++;
+                        logger.info(`Found missing contract: ${file}`);
+                        logger.debug(`Contract details: Address=${address}, Name=${contractName}`);
+                    }
+
+                    // Save progress periodically
+                    if (this.stats.processed % 10 === 0) {
+                        await this.saveStats();
+                        await this.saveMissingContracts();
+                        await this.logProgress();
+                    }
 
                 } catch (error) {
                     logger.error(`Error processing file ${file}:`, error);
                     this.stats.errors++;
-                    this.overallStats.totalErrors++;
-                }
-
-                if (this.stats.processed % 100 === 0) {
-                    this.logProgress();
                 }
             }
+
+            // Save final results
+            await this.saveStats();
+            await this.saveMissingContracts();
+            await this.logProgress();
+
+            return this.stats;
         } catch (error) {
             logger.error(`Error processing folder ${folderPath}:`, error);
             throw error;
@@ -193,38 +210,57 @@ export class ContractFinder {
         return /^0x[0-9a-fA-F]{40}$/.test(address);
     }
 
+    // Helper method to validate contract source
+    validateContractSource(source) {
+        if (!source || typeof source !== 'string') {
+            return false;
+        }
+
+        // Check for pragma solidity
+        if (!source.includes('pragma solidity')) {
+            return false;
+        }
+
+        // Check for contract definition
+        if (!source.includes('contract ')) {
+            return false;
+        }
+
+        return true;
+    }
+
+    // Helper method to log progress
+    async logProgress() {
+        const progress = {
+            total: this.stats.total,
+            processed: this.stats.processed,
+            missing: this.stats.missing,
+            errors: this.stats.errors,
+            lastProcessed: this.stats.lastProcessed,
+            lastVerified: this.stats.lastVerified,
+            percentage: ((this.stats.processed / this.stats.total) * 100).toFixed(2) + '%'
+        };
+
+        logger.info('Progress:', JSON.stringify(progress, null, 2));
+    }
+
     async saveMissingContracts() {
         const filePath = path.join(process.cwd(), 'missing_contracts.json');
-        const backupPath = path.join(process.cwd(), 'missing_contracts.backup.json');
-
         try {
-            // Create backup of existing file
-            try {
-                await fs.access(filePath);
-                await fs.copyFile(filePath, backupPath);
-            } catch (error) {
-                // File doesn't exist, skip backup
-            }
-
             await fs.writeFile(filePath, JSON.stringify(this.missingContracts, null, 2));
-            logger.info(`Saved ${this.missingContracts.length} missing contracts to ${filePath}`);
+            logger.debug(`Saved ${this.missingContracts.length} missing contracts to ${filePath}`);
         } catch (error) {
             logger.error('Error saving missing contracts:', error);
-            throw error;
         }
     }
 
     async saveStats() {
         const filePath = path.join(process.cwd(), 'contract_stats.json');
         try {
-            await fs.writeFile(filePath, JSON.stringify({
-                ...this.stats,
-                lastUpdate: new Date().toISOString()
-            }, null, 2));
-            logger.info('Stats saved to', filePath);
+            await fs.writeFile(filePath, JSON.stringify(this.stats, null, 2));
+            logger.debug('Stats saved successfully');
         } catch (error) {
             logger.error('Error saving stats:', error);
-            throw error;
         }
     }
 
@@ -245,43 +281,5 @@ export class ContractFinder {
         timeString += `${seconds}s`;
 
         return timeString;
-    }
-
-    logProgress() {
-        try {
-            const progress = {
-                overall: {
-                    totalFiles: this.overallStats.totalFiles,
-                    processed: this.overallStats.totalProcessed,
-                    missing: this.overallStats.totalMissing,
-                    matching: this.overallStats.totalMatching,
-                    errors: this.overallStats.totalErrors,
-                    percentage: ((this.overallStats.totalProcessed / this.overallStats.totalFiles) * 100).toFixed(2) + '%'
-                },
-                folders: {
-                    current: this.folderProgress.current,
-                    processed: this.folderProgress.processed,
-                    remaining: this.folderProgress.total - this.folderProgress.processed.length,
-                    totalFolders: this.folderProgress.total
-                },
-                currentFolder: {
-                    total: this.stats.total,
-                    processed: this.stats.processed,
-                    missing: this.stats.missing,
-                    errors: this.stats.errors,
-                    percentage: ((this.stats.processed / this.stats.total) * 100).toFixed(2) + '%'
-                },
-                lastProcessed: {
-                    address: this.stats.lastProcessed,
-                    verified: this.stats.lastVerified,
-                    timestamp: new Date().toISOString()
-                },
-                timeElapsed: this.getTimeElapsed()
-            };
-
-            logger.info('Progress:', JSON.stringify(progress, null, 2));
-        } catch (error) {
-            logger.error('Error in logProgress:', error);
-        }
     }
 }
