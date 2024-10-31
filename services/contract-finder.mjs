@@ -29,13 +29,15 @@ export class ContractFinder {
 
     async findMissingContracts(specificFolder = null) {
         try {
-            const repoPath = this.config.ethereum_repo;
+            const repoPath = this.config.repo_path;
             logger.info(`Starting contract search in: ${repoPath}`);
 
             if (specificFolder) {
                 const folderPath = path.join(repoPath, specificFolder);
                 logger.info(`Processing specific folder: ${folderPath}`);
                 await this.processFolder(folderPath);
+            } else {
+                await this.processFolder(repoPath);
             }
 
             await this.saveStats();
@@ -49,7 +51,7 @@ export class ContractFinder {
             };
 
         } catch (error) {
-            logger.error('Error in findMissingContracts:', error);
+            logger.error(`Error in findMissingContracts: ${error.message}`);
             throw error;
         }
     }
