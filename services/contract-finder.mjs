@@ -40,10 +40,12 @@ export class ContractFinder {
 
             await this.saveStats();
             await this.saveMissingContracts();
+            await this.saveMatchingContracts();
 
             return {
                 stats: this.stats,
-                missingContractsFile: path.join(process.cwd(), 'missing_contracts.json')
+                missingContractsFile: path.join(process.cwd(), 'missing_contracts.json'),
+                matchingContractsFile: path.join(process.cwd(), 'matching_contracts.json')
             };
 
         } catch (error) {
@@ -205,6 +207,19 @@ export class ContractFinder {
             logger.debug(`Saved ${this.missingContracts.length} missing contracts to ${filePath}`);
         } catch (error) {
             logger.error('Error saving missing contracts:', error);
+        }
+    }
+
+    async saveMatchingContracts() {
+        const filePath = path.join(process.cwd(), 'matching_contracts.json');
+        try {
+            await fs.writeFile(
+                filePath,
+                JSON.stringify(this.sourcifyApi.verificationStats.matchingContracts, null, 2)
+            );
+            logger.debug(`Saved ${this.sourcifyApi.verificationStats.matchingContracts.length} matching contracts to ${filePath}`);
+        } catch (error) {
+            logger.error('Error saving matching contracts:', error);
         }
     }
 

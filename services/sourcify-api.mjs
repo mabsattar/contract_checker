@@ -18,7 +18,8 @@ export class SourcifyAPI {
             rateLimited: 0,
             malformed: 0,
             lastError: null,
-            lastSuccess: null
+            lastSuccess: null,
+            matchingContracts: []
         };
     }
 
@@ -58,6 +59,11 @@ export class SourcifyAPI {
                 if (isVerified) {
                     this.verificationStats.successful++;
                     this.verificationStats.lastSuccess = address;
+                    this.verificationStats.matchingContracts.push({
+                        address,
+                        status: result.status,
+                        timestamp: new Date().toISOString()
+                    });
                     logger.debug(`Contract ${address} is verified in Sourcify (${result.status})`);
                     return true;
                 }
@@ -70,6 +76,11 @@ export class SourcifyAPI {
                 if (filesResponse.status === 200) {
                     this.verificationStats.successful++;
                     this.verificationStats.lastSuccess = address;
+                    this.verificationStats.matchingContracts.push({
+                        address,
+                        status: 'files exist',
+                        timestamp: new Date().toISOString()
+                    });
                     logger.debug(`Contract ${address} is verified in Sourcify (files exist)`);
                     return true;
                 }
@@ -92,37 +103,46 @@ export class SourcifyAPI {
     async submitContract(contract) {
         try {
             if (!this._validateContractData(contract)) {
-                this.verificationStats.malformed++;
                 throw new Error('Invalid contract data format');
             }
 
             const formData = new FormData();
-            formData.append('address', contract.address);
-            formData.append('chain', this.chainId.toString());
+            formData.append('address', contract.address.toLowerCase());
+            formData.append('chain', this.chainId);
 
-            // Following sourcify-go's file submission format
             const files = {
                 [`${contract.filename}`]: contract.source
             };
-            formData.append('files', JSON.stringify(files));
 
-            const response = await this.client.post('/verify', formData, {
-                headers: {
-                    ...formData.getHeaders()
-                },
-                maxBodyLength: Infinity
-            });
-
-            if (response.data.status === 'success') {
-                this.verificationStats.successful++;
-                this.verificationStats.lastSuccess = contract.address;
-                return response.data;
+            if (contract.metadata) {
+                files['metadata.json'] = JSON.stringify(contract.metadata);
             }
 
-            throw new Error(response.data.message || 'Verification failed');
+            formData.append('files', JSON.stringify(files));
+
+            const response = await axios.post(
+                `${this.apiUrl}/verify`,
+                formData,
+                {
+                    headers: {
+                        ...formData.getHeaders(),
+                        'Content-Type': 'multipart/form-data'
+                    },
+                    maxBodyLength: Infinity
+                }
+            );
+
+            if (response.data.status === 'success') {
+                logger.info(`Successfully verified contract ${contract.address}`);
+                return true;
+            }
+
+            logger.warn(`Verification failed for ${contract.address}: ${response.data.message}`);
+            return false;
+
         } catch (error) {
-            this._handleApiError(error, contract.address);
-            throw error;
+            logger.error(`Error submitting contract ${contract.address}:`, error);
+            return false;
         }
     }
 

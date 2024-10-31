@@ -13,7 +13,8 @@ export class ContractProcessor {
             total: 0,
             processed: 0,
             successful: 0,
-            failed: 0
+            failed: 0,
+            matchingContracts: []
         };
 
         this.missingContracts = [];
@@ -279,5 +280,82 @@ export class ContractProcessor {
 
         // Add more validation as needed
         return true;
+    }
+
+    async processFromFile(missingContractsFile) {
+        try {
+            const contracts = JSON.parse(await fs.readFile(missingContractsFile, 'utf8'));
+            logger.info(`Processing ${contracts.length} contracts from file`);
+
+            for (const contract of contracts) {
+                try {
+                    // Prepare contract data
+                    const contractData = await this.prepareContractData(contract);
+
+                    // Submit to Sourcify
+                    const success = await this.submitContract(contractData);
+
+                    if (success) {
+                        this.progress.successful++;
+                        await this.cacheManager.markVerified(contract.address);
+                    } else {
+                        this.progress.failed++;
+                    }
+
+                } catch (error) {
+                    logger.error(`Error processing contract ${contract.address}:`, error);
+                    this.progress.failed++;
+                }
+
+                this.progress.processed++;
+
+                // Save progress periodically
+                if (this.progress.processed % 10 === 0) {
+                    await this.saveProgress();
+                }
+            }
+
+            logger.info('Contract processing completed:', this.progress);
+            await this.saveProgress();
+
+        } catch (error) {
+            logger.error('Error processing contracts from file:', error);
+            throw error;
+        }
+    }
+
+    async prepareContractData(contract) {
+        // Extract compiler version
+        const compilerVersion = await this.extractCompilerVersion(contract.source);
+        if (!compilerVersion) {
+            throw new Error(`Could not extract compiler version for ${contract.address}`);
+        }
+
+        // Generate metadata
+        const metadata = {
+            language: 'Solidity',
+            compiler: {
+                version: compilerVersion
+            },
+            sources: {
+                [contract.filename]: {
+                    content: contract.source
+                }
+            },
+            settings: {
+                optimizer: {
+                    enabled: true,
+                    runs: 200
+                }
+            }
+        };
+
+        return {
+            address: contract.address,
+            filename: contract.filename,
+            source: contract.source,
+            compilerVersion,
+            metadata
+        };
     }
 }
