@@ -5,18 +5,30 @@ import { SourcifyAPI } from './services/sourcify-api.mjs';
 import { ContractProcessor } from './services/contract-processor.mjs';
 import { ContractFinder } from './services/contract-finder.mjs';
 import { HealthCheck } from './utils/health-check.mjs';
+import path from 'path';
+import fs from 'fs/promises';
 
 async function main() {
   try {
-    logger.info("Starting contract verification process");
+    // Get chain from command line argument or environment variable
+    const chainName = process.argv[2] || process.env.CHAIN || 'ethereum_mainnet';
 
-    // Initialize all components
-    const config = await new Config().load();
-    const cacheManager = new CacheManager();
-    await cacheManager.init(); // Initialize cache directory
+    logger.info(`Starting contract verification process for ${chainName}`);
 
-    const sourcifyApi = new SourcifyAPI(config);
-    const finder = new ContractFinder(sourcifyApi, config, cacheManager);
+    // Initialize config for specific chain
+    const config = new Config();
+    const chainConfig = await config.load(chainName);
+
+    // Create output directory for this chain
+    const chainOutputDir = path.join(process.cwd(), 'output', chainName);
+    await fs.mkdir(chainOutputDir, { recursive: true });
+
+    // Initialize components with chain-specific config
+    const cacheManager = new CacheManager(chainName);
+    await cacheManager.init();
+
+    const sourcifyApi = new SourcifyAPI(chainConfig);
+    const finder = new ContractFinder(sourcifyApi, chainConfig, cacheManager);
 
     const healthCheck = new HealthCheck();
 
@@ -29,7 +41,7 @@ async function main() {
       }
     }, 30000);
 
-    // Reset stats before starting
+    // Reset stats for this chain
     await finder.resetStats();
 
     // Phase 1: Find missing contracts
@@ -64,32 +76,20 @@ async function main() {
   }
 }
 
-// Error handling for unhandled rejections
-process.on('unhandledRejection', (error) => {
-  logger.error("Unhandled rejection:", error);
-  process.exit(1);
-});
-
-// Graceful shutdown handler
-process.on('SIGINT', async () => {
-  logger.info('Received interrupt signal. Saving progress...');
-  try {
-    await finder.saveProgress();
-    process.exit(0);
-  } catch (error) {
-    logger.error('Error during cleanup:', error);
-    process.exit(1);
-  }
-});
-
-// Cleanup function
-async function cleanup() {
-  // Add any cleanup operations here
-  logger.info('Cleanup completed');
+// Add a helper to list available chains
+async function listChains() {
+  const config = new Config();
+  const chains = await config.listAvailableChains();
+  console.log('Available chains:');
+  chains.forEach(chain => console.log(`- ${chain}`));
 }
 
-// Start the application
-main().catch(error => {
-  logger.error("Fatal error in main:", error);
-  process.exit(1);
-});
+// Handle command line arguments
+if (process.argv[2] === '--list-chains') {
+  listChains();
+} else {
+  main().catch(error => {
+    logger.error("Fatal error in main:", error);
+    process.exit(1);
+  });
+}

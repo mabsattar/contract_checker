@@ -1,8 +1,53 @@
-ethereum_repo: "/home/abcode/opensource/smart-contract-sanctuary-ethereum/contracts/mainnet"
-chain_id: "1" # Ethereum Mainnet - must be a string
-sourcify_api: "https://sourcify.dev/server"
-sourcify_repo: "https://repo.sourcify.dev"
-batch_size: 10
-max_retries: 3
-verification_delay: 5000 # ms between verifications
+# Ethereum Mainnet
+ethereum_mainnet:
+  sourcify_api: "https://sourcify.dev/server"
+  chain_id: "1"
+  repo_path: "/home/abcode/opensource/smart-contract-sanctuary-ethereum/contracts/mainnet"
 
+# Ethereum Testnets
+ethereum_goerli:
+  sourcify_api: "https://sourcify.dev/server"
+  chain_id: "5"
+  repo_path: "/home/abcode/opensource/smart-contract-sanctuary-ethereum/contracts/goerli"
+
+ethereum_sepolia:
+  sourcify_api: "https://sourcify.dev/server"
+  chain_id: "11155111"
+  repo_path: "/home/abcode/opensource/smart-contract-sanctuary-ethereum/contracts/sepolia"
+
+# Layer 2 and Sidechains
+arbitrum:
+  sourcify_api: "https://sourcify.dev/server"
+  chain_id: "42161"
+  repo_path: "/home/abcode/opensource/smart-contract-sanctuary-arbitrum/contracts/mainnet"
+
+polygon:
+  sourcify_api: "https://sourcify.dev/server"
+  chain_id: "137"
+  repo_path: "/home/abcode/opensource/smart-contract-sanctuary-polygon/contracts/mainnet"
+
+optimism:
+  sourcify_api: "https://sourcify.dev/server"
+  chain_id: "10"
+  repo_path: "/home/abcode/opensource/smart-contract-sanctuary-optimism/contracts/mainnet"
+
+avalanche:
+  sourcify_api: "https://sourcify.dev/server"
+  chain_id: "43114"
+  repo_path: "/home/abcode/opensource/smart-contract-sanctuary-avalanche/contracts/mainnet"
+
+fantom:
+  sourcify_api: "https://sourcify.dev/server"
+  chain_id: "250"
+  repo_path: "/home/abcode/opensource/smart-contract-sanctuary-fantom/contracts/mainnet"
+
+celo:
+  sourcify_api: "https://sourcify.dev/server"
+  chain_id: "42220"
+  repo_path: "/home/abcode/opensource/smart-contract-sanctuary-celo/contracts/mainnet"
+
+# Default settings for all chains
+default:
+  batch_size: 10
+  max_retries: 3
+  verification_delay: 5000

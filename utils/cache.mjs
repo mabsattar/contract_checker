@@ -3,9 +3,10 @@ import path from "node:path";
 import { logger } from './logger.mjs';
 
 export class CacheManager {
-    constructor() {
-        this.cachePath = path.join(process.cwd(), "cache", "sourcify_cache.json");
-        this.cacheDir = path.join(process.cwd(), "cache");
+    constructor(chainName) {
+        this.chainName = chainName;
+        this.cacheDir = path.join(process.cwd(), 'cache', chainName);
+        this.cachePath = path.join(this.cacheDir, 'sourcify_cache.json');
     }
 
     async init() {
