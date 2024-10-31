@@ -3,14 +3,16 @@ import path from "node:path";
 import { logger } from '../utils/logger.mjs';
 
 export class ContractFinder {
-    constructor(sourcifyApi, config) {
+    constructor(sourcifyApi, config, cacheManager) {
         this.sourcifyApi = sourcifyApi;
         this.config = config;
+        this.cacheManager = cacheManager;
         this.missingContracts = [];
         this.stats = this.initializeStats();
 
         // Add timeout handling
         this.processTimeout = 30000; // 30 seconds timeout for processing each contract
+        this.verificationCache = new Map(); // In-memory cache
     }
 
     initializeStats() {
@@ -107,28 +109,27 @@ export class ContractFinder {
         try {
             this.stats.processed++;
 
-            // Check if contract exists in Sourcify
-            const isVerified = await this.sourcifyApi.checkContract(address);
-
-            if (!isVerified) {
-                // Read contract source
-                const filePath = path.join(folderPath, filename);
-                const source = await fs.readFile(filePath, 'utf8');
-
-                this.missingContracts.push({
-                    address,
-                    contractName,
-                    filename,
-                    source
-                });
-
-                this.stats.missing++;
-                logger.info(`Found missing contract: ${filename}`);
+            // Check cache first
+            const cachedResult = await this.checkCache(address);
+            if (cachedResult !== null) {
+                logger.debug(`Using cached result for ${address}: ${cachedResult}`);
+                if (!cachedResult) {
+                    await this.addMissingContract(address, contractName, filename, folderPath);
+                }
+                return;
             }
 
-            // Save progress periodically
-            if (this.stats.processed % 10 === 0) {
-                await this.saveProgress();
+            // If not in cache, check Sourcify
+            const isVerified = await this.sourcifyApi.checkContract(address);
+
+            // Update cache
+            await this.updateCache(address, isVerified);
+
+            if (!isVerified) {
+                await this.addMissingContract(address, contractName, filename, folderPath);
+                logger.info(`Found missing contract: ${filename}`);
+            } else {
+                logger.debug(`Contract ${filename} is verified`);
             }
 
         } catch (error) {
@@ -137,17 +138,53 @@ export class ContractFinder {
         }
     }
 
+    async checkCache(address) {
+        try {
+            const cache = await this.cacheManager.load();
+            return cache[address] ?? null;
+        } catch (error) {
+            logger.error(`Cache read error for ${address}:`, error);
+            return null;
+        }
+    }
+
+    async updateCache(address, isVerified) {
+        try {
+            const cache = await this.cacheManager.load();
+            cache[address] = isVerified;
+            await this.cacheManager.save(cache);
+        } catch (error) {
+            logger.error(`Cache update error for ${address}:`, error);
+        }
+    }
+
+    async addMissingContract(address, contractName, filename, folderPath) {
+        const filePath = path.join(folderPath, filename);
+        const source = await fs.readFile(filePath, 'utf8');
+
+        this.missingContracts.push({
+            address,
+            contractName,
+            filename,
+            source
+        });
+
+        this.stats.missing++;
+    }
+
     async saveProgress() {
         try {
-            await this.saveStats();
+            // Save missing contracts
             await this.saveMissingContracts();
-            logger.info('Progress Update:', {
-                processed: this.stats.processed,
-                missing: this.stats.missing,
-                errors: this.stats.errors
-            });
+            // Save stats
+            await this.saveStats();
+            // Force cache save
+            if (this.cacheManager) {
+                await this.cacheManager.save(this.verificationCache);
+            }
         } catch (error) {
             logger.error('Error saving progress:', error);
+            throw error;
         }
     }
 

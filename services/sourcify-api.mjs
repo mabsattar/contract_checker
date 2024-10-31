@@ -5,16 +5,11 @@ import { logger } from '../utils/logger.mjs';
 export class SourcifyAPI {
     constructor(config) {
         this.chainId = config.chain_id;
-        this.apiUrl = config.sourcify_api || 'https://sourcify.dev/server';
-        this.repoUrl = config.sourcify_repo || 'https://repo.sourcify.dev';
+        this.apiUrl = config.sourcify_api;
 
-        // Configure axios with base URL and timeouts
-        this.client = axios.create({
-            baseURL: this.apiUrl,
-            timeout: 30000, // 30 seconds
-            headers: {
-                'Accept': 'application/json'
-            }
+        logger.info('SourcifyAPI initialized with:', {
+            chainId: this.chainId,
+            apiUrl: this.apiUrl
         });
 
         this.verificationStats = {
@@ -25,6 +20,12 @@ export class SourcifyAPI {
             lastError: null,
             lastSuccess: null
         };
+    }
+
+    _isValidAddress(address) {
+        // Check if address is a string and matches Ethereum address format
+        return typeof address === 'string' &&
+            /^(0x)?[0-9a-fA-F]{40}$/i.test(address);
     }
 
     async checkContract(address) {
@@ -40,35 +41,51 @@ export class SourcifyAPI {
                 address = '0x' + address;
             }
 
-            // Ensure chainId is a string
-            const chainId = String(this.chainId);
+            // First try the verification check endpoint
+            const verifyUrl = `${this.apiUrl}/check-by-addresses?addresses=${address}&chainIds=${this.chainId}`;
+            logger.debug(`Checking Sourcify verification at: ${verifyUrl}`);
 
-            // Use the correct verified endpoint
-            const response = await this.client.get('/verified', {
-                params: {
-                    address: address,
-                    chainId: chainId
+            const response = await axios.get(verifyUrl);
+            logger.debug(`Sourcify response for ${address}:`, response.data);
+
+            // The API returns an array of results
+            if (Array.isArray(response.data) && response.data.length > 0) {
+                const result = response.data[0];
+
+                // Check if contract is verified (either full or partial match)
+                const isVerified = result.status === 'perfect' || result.status === 'partial';
+
+                if (isVerified) {
+                    this.verificationStats.successful++;
+                    this.verificationStats.lastSuccess = address;
+                    logger.debug(`Contract ${address} is verified in Sourcify (${result.status})`);
+                    return true;
                 }
-            });
+            }
 
-            // Check if contract is verified
-            if (response.data && response.data.verified === true) {
-                this.verificationStats.successful++;
-                this.verificationStats.lastSuccess = address;
-                logger.debug(`Contract ${address} is verified`);
-                return true;
+            // If we get here, try the files endpoint as a fallback
+            const filesUrl = `${this.apiUrl}/files/any/${this.chainId}/${address}`;
+            try {
+                const filesResponse = await axios.head(filesUrl);
+                if (filesResponse.status === 200) {
+                    this.verificationStats.successful++;
+                    this.verificationStats.lastSuccess = address;
+                    logger.debug(`Contract ${address} is verified in Sourcify (files exist)`);
+                    return true;
+                }
+            } catch (error) {
+                if (error.response?.status === 404) {
+                    logger.debug(`Contract ${address} is not verified in Sourcify (no files found)`);
+                    return false;
+                }
+                // For other errors, continue to the main error handler
+                throw error;
             }
 
             return false;
+
         } catch (error) {
-            // If we get a 404, it means the contract is not verified
-            if (error.response?.status === 404) {
-                logger.debug(`Contract ${address} is not verified`);
-                return false;
-            }
-
-            this._handleApiError(error, address);
-            return false;
+            return this._handleApiError(error, address);
         }
     }
 
@@ -109,38 +126,41 @@ export class SourcifyAPI {
         }
     }
 
-    // Helper methods for better error handling and validation
     _handleApiError(error, address) {
-        if (error.response?.status === 429) {
-            this.verificationStats.rateLimited++;
-            logger.warn(`Rate limited while processing ${address}`);
-        } else {
-            this.verificationStats.failed++;
-            logger.error(`API error for ${address}: ${error.message}`);
+        if (error.response) {
+            // Handle rate limiting
+            if (error.response.status === 429) {
+                this.verificationStats.rateLimited++;
+                logger.warn(`Rate limited while checking ${address}`);
+                return false;
+            }
+
+            // Handle 404s (not found)
+            if (error.response.status === 404) {
+                logger.debug(`Contract ${address} not found in Sourcify`);
+                return false;
+            }
         }
 
-        this.verificationStats.lastError = {
-            address,
-            error: error.message,
-            status: error.response?.status,
-            timestamp: new Date().toISOString()
-        };
-    }
-
-    _isValidAddress(address) {
-        return /^(0x)?[0-9a-fA-F]{40}$/.test(address);
+        // Log other errors
+        logger.error(`API error checking ${address}:`, error.message);
+        this.verificationStats.failed++;
+        this.verificationStats.lastError = error.message;
+        return false;
     }
 
     _validateContractData(contract) {
-        return (
-            contract &&
-            typeof contract.address === 'string' &&
-            typeof contract.source === 'string' &&
-            typeof contract.filename === 'string'
-        );
+        // Validate required fields for submission
+        const required = ['address', 'filename', 'source'];
+        return required.every(field => {
+            const hasField = !!contract[field];
+            if (!hasField) {
+                logger.warn(`Missing required field ${field} in contract data`);
+            }
+            return hasField;
+        });
     }
 
-    // Method to get current statistics
     getStats() {
         return {
             ...this.verificationStats,

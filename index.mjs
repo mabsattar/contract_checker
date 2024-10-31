@@ -13,8 +13,10 @@ async function main() {
     // Initialize all components
     const config = await new Config().load();
     const cacheManager = new CacheManager();
+    await cacheManager.init(); // Initialize cache directory
+
     const sourcifyApi = new SourcifyAPI(config);
-    const finder = new ContractFinder(sourcifyApi, config);
+    const finder = new ContractFinder(sourcifyApi, config, cacheManager);
 
     const healthCheck = new HealthCheck();
 
