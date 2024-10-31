@@ -130,7 +130,7 @@ export class SourcifyAPI {
     }
 
     // Helper methods for better error handling and validation
-    _handleApiError(error, address) {
+    handleApiError(error, address) {
         if (error.response?.status === 429) {
             this.verificationStats.rateLimited++;
             logger.warn(`Rate limited while processing ${address}`);
@@ -147,11 +147,11 @@ export class SourcifyAPI {
         };
     }
 
-    _isValidAddress(address) {
+    isValidAddress(address) {
         return /^(0x)?[0-9a-fA-F]{40}$/.test(address);
     }
 
-    _validateContractData(contract) {
+    validateContractData(contract) {
         return (
             contract &&
             typeof contract.address === 'string' &&
