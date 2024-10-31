@@ -70,10 +70,9 @@ process.on('unhandledRejection', (error) => {
 
 // Graceful shutdown handler
 process.on('SIGINT', async () => {
-  logger.info('Received SIGINT. Shutting down gracefully...');
+  logger.info('Received interrupt signal. Saving progress...');
   try {
-    // Add any cleanup operations here
-    await cleanup();
+    await finder.saveProgress();
     process.exit(0);
   } catch (error) {
     logger.error('Error during cleanup:', error);
