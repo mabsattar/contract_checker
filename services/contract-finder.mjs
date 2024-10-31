@@ -21,6 +21,30 @@ export class ContractFinder {
             totalErrors: 0,
             startTime: new Date().toISOString()
         };
+
+        // Add detailed progress tracking
+        this.progress = {
+            currentFolder: '',
+            processedFolders: [],
+            totalFolders: 0,
+            currentBatch: {
+                start: 0,
+                end: 0,
+                total: 0
+            },
+            stats: {
+                processed: 0,
+                verified: 0,
+                failed: 0,
+                skipped: 0,
+                invalid: 0
+            },
+            timing: {
+                startTime: new Date(),
+                lastUpdateTime: new Date(),
+                estimatedTimeRemaining: null
+            }
+        };
     }
 
     initializeStats() {
@@ -231,17 +255,50 @@ export class ContractFinder {
 
     // Helper method to log progress
     async logProgress() {
-        const progress = {
-            total: this.stats.total,
-            processed: this.stats.processed,
-            missing: this.stats.missing,
-            errors: this.stats.errors,
-            lastProcessed: this.stats.lastProcessed,
-            lastVerified: this.stats.lastVerified,
-            percentage: ((this.stats.processed / this.stats.total) * 100).toFixed(2) + '%'
+        const now = new Date();
+        const elapsed = now - this.progress.timing.startTime;
+        const rate = this.progress.stats.processed / (elapsed / 1000); // contracts per second
+
+        // Estimate remaining time
+        const remaining = this.stats.total - this.progress.stats.processed;
+        this.progress.timing.estimatedTimeRemaining = remaining / rate;
+
+        logger.info('Progress Update:', {
+            folder: this.progress.currentFolder,
+            batch: `${this.progress.currentBatch.start}-${this.progress.currentBatch.end}/${this.progress.currentBatch.total}`,
+            processed: this.progress.stats.processed,
+            verified: this.progress.stats.verified,
+            failed: this.progress.stats.failed,
+            skipped: this.progress.stats.skipped,
+            invalid: this.progress.stats.invalid,
+            percentComplete: ((this.progress.stats.processed / this.stats.total) * 100).toFixed(2) + '%',
+            estimatedTimeRemaining: this.formatTime(this.progress.timing.estimatedTimeRemaining),
+            rate: `${rate.toFixed(2)} contracts/sec`
+        });
+
+        // Save progress to file
+        await this.saveProgress();
+    }
+
+    formatTime(seconds) {
+        if (!seconds) return 'calculating...';
+
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const secs = Math.floor(seconds % 60);
+
+        return `${hours}h ${minutes}m ${secs}s`;
+    }
+
+    async saveProgress() {
+        const progressPath = path.join(process.cwd(), 'verification_progress.json');
+        const progressData = {
+            progress: this.progress,
+            sourcifyStats: this.sourcifyApi.getStats(),
+            lastUpdate: new Date().toISOString()
         };
 
-        logger.info('Progress:', JSON.stringify(progress, null, 2));
+        await fs.writeFile(progressPath, JSON.stringify(progressData, null, 2));
     }
 
     async saveMissingContracts() {

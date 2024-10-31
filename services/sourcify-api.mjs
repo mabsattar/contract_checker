@@ -1,239 +1,175 @@
 import axios from 'axios';
-import Bottleneck from "bottleneck";
 import FormData from 'form-data';
+import Bottleneck from 'bottleneck';
 import { logger } from '../utils/logger.mjs';
 
 export class SourcifyAPI {
     constructor(config) {
-        // Validate required config
-        if (!config.sourcify_api) throw new Error('sourcify_api is required in config');
-        if (!config.chain_id) throw new Error('chain_id is required in config');
-
-        // Chain ID mapping
-        this.chainIds = {
-            'ethereum': '1',      // Ethereum Mainnet
-            'sepolia': '11155111', // Sepolia Testnet
-            'arbitrum': '42161',   // Arbitrum One
-            'celo': '42220',      // Celo Mainnet
-            'optimism': '10',     // Optimism
-            'polygon': '137',     // Polygon Mainnet
-        };
-
-        // Ensure URLs don't end with slash
-        this.apiUrl = config.sourcify_api || "https://sourcify.dev/server";
-        this.chainId = this.validateChainId(config.chain_id);
+        this.repoUrl = config.sourcify_repo;
+        this.apiUrl = config.sourcify_api;
+        this.chainId = config.chain_id;
         this.maxRetries = config.max_retries || 3;
         this.verificationDelay = config.verification_delay || 5000;
 
-        this.client = axios.create({
-            timeout: 10000,
-            headers: {
-                'Accept': 'application/json'
-            }
-        });
-
-        // Setup rate limiting
+        // Initialize rate limiter
         this.limiter = new Bottleneck({
-            minTime: 3000,
-            maxConcurrent: 1
+            minTime: 1000, // Minimum time between requests (1 second)
+            maxConcurrent: 1, // Only one request at a time
+            reservoir: 30, // Number of requests per minute
+            reservoirRefreshAmount: 30,
+            reservoirRefreshInterval: 60 * 1000 // 1 minute
         });
 
-        // Add response interceptor for error handling
-        this.client.interceptors.response.use(
-            response => response,
-            error => this.handleApiError(error)
-        );
-
-        // Add timeout retry logic
-        this.client.interceptors.response.use(
-            response => response,
-            async error => {
-                if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
-                    logger.warn(`Request timed out for ${error.config.url}, retrying...`);
-                    return this.client.request(error.config);
-                }
-                throw error;
+        // Add retry mechanism to rate limiter
+        this.limiter.on('failed', async (error, jobInfo) => {
+            if (jobInfo.retryCount < this.maxRetries - 1) {
+                logger.warn(`Request failed, retrying (${jobInfo.retryCount + 1}/${this.maxRetries})`);
+                return this.verificationDelay; // Wait before retry
             }
-        );
-    }
+        });
 
-    async handleApiError(error) {
-        if (error.response) {
-            logger.error(`API Error: ${error.response.status} - ${JSON.stringify(error.response.data)}`);
-        } else if (error.request) {
-            logger.error('No response received from API');
-        } else {
-            logger.error('Error setting up request:', error.message);
-        }
-        throw error;
+        // Add verification status tracking
+        this.verificationStats = {
+            successful: 0,
+            failed: 0,
+            rateLimited: 0,
+            malformed: 0,
+            lastError: null,
+            lastSuccess: null
+        };
     }
 
     async checkContract(address) {
         try {
-            // Ensure address is properly formatted
+            // Normalize and validate address
+            if (!this.isValidAddress(address)) {
+                logger.warn(`Invalid address format: ${address}`);
+                return false;
+            }
+
             address = address.toLowerCase();
             if (!address.startsWith('0x')) {
                 address = '0x' + address;
             }
 
-            logger.debug(`Checking contract ${address} on chain ${this.chainId}...`);
+            logger.debug(`Checking contract ${address} on chain ${this.chainId}`);
 
-            // Check both full and partial matches using repository API
-            const fullMatchUrl = `${this.repoUrl}/full_match/${this.chainId}/${address}/metadata.json`;
-            const partialMatchUrl = `${this.repoUrl}/partial_match/${this.chainId}/${address}/metadata.json`;
-
+            // Enhanced error handling for API responses
             try {
-                // Try full match first
-                const fullMatchResponse = await this.makeRequest(fullMatchUrl);
-                if (fullMatchResponse.status === 200) {
-                    logger.info(`Contract ${address} has full match verification`);
+                const [fullMatch, partialMatch] = await Promise.allSettled([
+                    this.limiter.schedule(() => this.makeRequest(`${this.repoUrl}/contracts/full_match/${this.chainId}/${address}/metadata.json`)),
+                    this.limiter.schedule(() => this.makeRequest(`${this.repoUrl}/contracts/partial_match/${this.chainId}/${address}/metadata.json`))
+                ]);
+
+                if (fullMatch.status === 'fulfilled' && fullMatch.value.status === 200) {
+                    this.verificationStats.successful++;
+                    this.verificationStats.lastSuccess = address;
+                    logger.debug(`Contract ${address} has full match verification`);
                     return true;
                 }
-            } catch (error) {
-                // If full match fails, try partial match
-                try {
-                    const partialMatchResponse = await this.makeRequest(partialMatchUrl);
-                    if (partialMatchResponse.status === 200) {
-                        logger.info(`Contract ${address} has partial match verification`);
-                        return true;
-                    }
-                } catch (innerError) {
-                    // Both checks failed, contract is not verified
-                    logger.debug(`Contract ${address} is not verified`);
-                    return false;
+
+                if (partialMatch.status === 'fulfilled' && partialMatch.value.status === 200) {
+                    this.verificationStats.successful++;
+                    this.verificationStats.lastSuccess = address;
+                    logger.debug(`Contract ${address} has partial match verification`);
+                    return true;
                 }
+
+                return false;
+            } catch (error) {
+                this.handleApiError(error, address);
+                return false;
             }
-
-            return false;
-
         } catch (error) {
-            // Log error but don't throw
-            logger.warn(`Error checking contract ${address}: ${error.message}`);
+            logger.error(`Unexpected error checking contract ${address}: ${error.message}`);
+            this.verificationStats.failed++;
+            this.verificationStats.lastError = {
+                address,
+                error: error.message,
+                timestamp: new Date().toISOString()
+            };
             return false;
         }
     }
 
-
-    async makeRequest(url, retries = 3, delay = 1000) {
-        for (let i = 0; i < retries; i++) {
-            try {
-                return await this.client.head(url);
-            } catch (error) {
-                if (i === retries - 1) throw error;
-                if (error.response?.status === 429) {
-                    await new Promise(resolve => setTimeout(resolve, delay * (i + 1)));
-                    continue;
-                }
-                throw error;
-            }
-        }
-    }
-
-
-    async submitContract(address, contractData) {
+    async submitContract(contract) {
         try {
-            // Format contract data using helper method
-            const formData = this.formatContractData({
-                address: address,
-                source: contractData.source,
-                chainId: this.chainId
-            });
+            // Validate contract data
+            if (!this.validateContractData(contract)) {
+                this.verificationStats.malformed++;
+                throw new Error('Invalid contract data format');
+            }
 
-            // Submit to Sourcify API using the correct endpoint
-            const verifyUrl = `${this.apiUrl}/verify-contract`;
-            const response = await this.client.post(verifyUrl, formData, {
-                headers: {
-                    ...formData.getHeaders(),
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+            const formData = new FormData();
+            formData.append('address', contract.address);
+            formData.append('chain', this.chainId.toString());
 
-            logger.info(`Successfully submitted contract ${address}`);
+            const files = {
+                [`${contract.filename}`]: contract.source
+            };
+            formData.append('files', JSON.stringify(files));
+
+            const response = await this.limiter.schedule(() =>
+                axios.post(`${this.apiUrl}/verify`, formData, {
+                    headers: {
+                        ...formData.getHeaders(),
+                        'Accept': 'application/json'
+                    },
+                    maxBodyLength: Infinity
+                })
+            );
+
+            this.verificationStats.successful++;
+            this.verificationStats.lastSuccess = contract.address;
             return response.data;
 
         } catch (error) {
-            logger.error(`Failed to submit contract ${address}:`, error);
+            this.handleApiError(error, contract.address);
             throw error;
         }
     }
 
-    // Helper to extract compiler version from source code
-    extractCompilerVersion(source) {
-        const pragmaMatch = source.match(/pragma solidity (\^?\d+\.\d+\.\d+)/);
-        if (pragmaMatch) {
-            return pragmaMatch[1];
+    // Helper methods for better error handling and validation
+    _handleApiError(error, address) {
+        if (error.response?.status === 429) {
+            this.verificationStats.rateLimited++;
+            logger.warn(`Rate limited while processing ${address}`);
+        } else {
+            this.verificationStats.failed++;
+            logger.error(`API error for ${address}: ${error.message}`);
         }
-        return null;
+
+        this.verificationStats.lastError = {
+            address,
+            error: error.message,
+            status: error.response?.status,
+            timestamp: new Date().toISOString()
+        };
     }
 
-    // Helper method to format contract data
-    formatContractData(contract) {
-        const formData = new FormData();
-
-        try {
-            // Required fields
-            formData.append('address', contract.address);
-            formData.append('chain', contract.chainId || this.chainId);
-
-            // Source files
-            if (contract.source) {
-                formData.append('files', Buffer.from(contract.source), 'source.sol');
-            }
-
-            // Optional metadata
-            const compilerVersion = contract.compilerVersion || this.extractCompilerVersion(contract.source);
-            if (compilerVersion) {
-                formData.append('compilerVersion', compilerVersion);
-            }
-
-            return formData;
-        } catch (error) {
-            logger.error('Error formatting contract data:', error);
-            throw error;
-        }
+    _isValidAddress(address) {
+        return /^(0x)?[0-9a-fA-F]{40}$/.test(address);
     }
 
-    // Method to check verification status
-    async checkVerificationStatus(contractAddresses) {
-        try {
-            // Use the check-by-addresses endpoint for batch verification status
-            const response = await this.client.post(`${this.apiUrl}/check-by-addresses`, {
-                addresses: contractAddresses,
-                chainIds: [this.chainId]
-            });
-
-            // Process and format the response
-            const results = {};
-            if (response.data && Array.isArray(response.data)) {
-                response.data.forEach(result => {
-                    results[result.address] = {
-                        status: result.status,
-                        verified: result.status === 'perfect' || result.status === 'partial'
-                    };
-                });
-            }
-
-            return results;
-        } catch (error) {
-            logger.error('Failed to check verification status:', error.message);
-            throw error;
-        }
+    _validateContractData(contract) {
+        return (
+            contract &&
+            typeof contract.address === 'string' &&
+            typeof contract.source === 'string' &&
+            typeof contract.filename === 'string'
+        );
     }
 
-    // Add this method to validate and normalize chain ID
-    validateChainId(chainId) {
-        // If chainId is a string name (e.g., 'ethereum', 'sepolia')
-        if (typeof chainId === 'string' && this.chainIds[chainId.toLowerCase()]) {
-            return this.chainIds[chainId.toLowerCase()];
-        }
+    // Method to get current statistics
+    getStats() {
+        return {
+            ...this.verificationStats,
+            timestamp: new Date().toISOString()
+        };
+    }
 
-        // If chainId is already a number or numeric string
-        if (!isNaN(chainId)) {
-            return chainId.toString();
-        }
-
-        // If chainId is invalid
-        logger.error(`Invalid chain ID: ${chainId}`);
-        throw new Error(`Invalid chain ID: ${chainId}. Must be one of: ${Object.keys(this.chainIds).join(', ')} or a valid chain ID number`);
+    // Helper method for rate-limited requests
+    async makeRequest(url) {
+        return this.limiter.schedule(() => axios.head(url));
     }
 }

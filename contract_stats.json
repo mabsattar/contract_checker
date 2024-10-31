@@ -1,9 +1,9 @@
 {
   "total": 1601,
-  "processed": 40,
-  "missing": 40,
-  "errors": 0,
-  "startTime": "2024-10-30T16:20:27.752Z",
-  "lastProcessed": "0x0000000000220203551ac16f0e2acc221a7857cd",
+  "processed": 60,
+  "missing": 59,
+  "errors": 1,
+  "startTime": "2024-10-30T16:34:36.737Z",
+  "lastProcessed": "0x00000000008d4f01d63beee04b849eff60de7517",
   "lastVerified": false
 }

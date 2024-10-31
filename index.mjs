@@ -4,6 +4,7 @@ import { CacheManager } from './utils/cache.mjs';
 import { SourcifyAPI } from './services/sourcify-api.mjs';
 import { ContractProcessor } from './services/contract-processor.mjs';
 import { ContractFinder } from './services/contract-finder.mjs';
+import { HealthCheck } from './utils/health-check.mjs';
 
 async function main() {
   try {
@@ -14,6 +15,17 @@ async function main() {
     const cacheManager = new CacheManager();
     const sourcifyApi = new SourcifyAPI(config);
     const finder = new ContractFinder(sourcifyApi, config);
+
+    const healthCheck = new HealthCheck();
+
+    // Add periodic health checks
+    const healthCheckInterval = setInterval(() => {
+      const status = healthCheck.updateStatus(sourcifyApi.getStats());
+      if (!status.healthy) {
+        logger.error('Unhealthy status detected:', status);
+        // Implement recovery logic if needed
+      }
+    }, 30000);
 
     // Reset stats before starting
     await finder.resetStats();
@@ -41,6 +53,9 @@ async function main() {
     }
 
     logger.info("Process completed successfully");
+
+    // Cleanup
+    clearInterval(healthCheckInterval);
   } catch (error) {
     logger.error("Fatal error:", error);
     process.exit(1);
