@@ -34,19 +34,25 @@ export class SourcifyAPI {
                 return false;
             }
 
-            // Using the check-by-addresses endpoint as documented in sourcify-go
-            const response = await this.client.get('/check-by-addresses', {
+            // Normalize address to lowercase
+            address = address.toLowerCase();
+            if (!address.startsWith('0x')) {
+                address = '0x' + address;
+            }
+
+            // Ensure chainId is a string
+            const chainId = String(this.chainId);
+
+            // Use the correct verified endpoint
+            const response = await this.client.get('/verified', {
                 params: {
-                    addresses: address,
-                    chainIds: this.chainId
+                    address: address,
+                    chainId: chainId
                 }
             });
 
-            const isVerified = response.data.some(result =>
-                result.status === 'perfect' || result.status === 'partial'
-            );
-
-            if (isVerified) {
+            // Check if contract is verified
+            if (response.data && response.data.verified === true) {
                 this.verificationStats.successful++;
                 this.verificationStats.lastSuccess = address;
                 logger.debug(`Contract ${address} is verified`);
@@ -55,6 +61,12 @@ export class SourcifyAPI {
 
             return false;
         } catch (error) {
+            // If we get a 404, it means the contract is not verified
+            if (error.response?.status === 404) {
+                logger.debug(`Contract ${address} is not verified`);
+                return false;
+            }
+
             this._handleApiError(error, address);
             return false;
         }

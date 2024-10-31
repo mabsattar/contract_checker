@@ -1,9 +1,9 @@
 {
   "total": 0,
-  "processed": 0,
-  "missing": 0,
+  "processed": 540,
+  "missing": 452,
   "errors": 0,
-  "startTime": "2024-10-31T07:54:13.145Z",
+  "startTime": "2024-10-31T09:34:58.568Z",
   "lastProcessed": null,
   "lastVerified": false
 }

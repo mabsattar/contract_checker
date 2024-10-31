@@ -1,5 +1,5 @@
 ethereum_repo: "/home/abcode/opensource/smart-contract-sanctuary-ethereum/contracts/mainnet"
-chain_id: 1 # Ethereum Mainnet
+chain_id: "1" # Ethereum Mainnet - must be a string
 sourcify_api: "https://sourcify.dev/server"
 sourcify_repo: "https://repo.sourcify.dev"
 batch_size: 10

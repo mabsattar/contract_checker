@@ -189,4 +189,26 @@ export class ContractFinder {
 
         return timeString;
     }
+
+    async resetStats() {
+        try {
+            this.stats = this.initializeStats();
+            await this.saveStats();
+            logger.info("Stats reset successfully");
+        } catch (error) {
+            logger.error("Error resetting stats:", error);
+            throw error;
+        }
+    }
+
+    // Add this method to check if we're parsing addresses correctly
+    extractAddressFromFilename(filename) {
+        // The address should be the part before the first underscore
+        const match = filename.match(/^(0x?[a-fA-F0-9]{40})_/);
+        if (!match) return null;
+
+        // Ensure address is properly formatted with 0x prefix
+        const address = match[1].toLowerCase();
+        return address.startsWith('0x') ? address : `0x${address}`;
+    }
 }
