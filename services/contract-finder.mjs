@@ -13,6 +13,9 @@ export class ContractFinder {
         // Add timeout handling
         this.processTimeout = 30000; // 30 seconds timeout for processing each contract
         this.verificationCache = new Map(); // In-memory cache
+
+        // Add in-memory index for faster lookups
+        this.contractIndex = new Map();
     }
 
     initializeStats() {
@@ -289,5 +292,16 @@ export class ContractFinder {
         // Ensure address is properly formatted with 0x prefix
         const address = match[1].toLowerCase();
         return address.startsWith('0x') ? address : `0x${address}`;
+    }
+
+    async indexContract(address, data) {
+        this.contractIndex.set(address.toLowerCase(), data);
+    }
+
+    async processBatch(contracts, batchSize = 100) {
+        for (let i = 0; i < contracts.length; i += batchSize) {
+            const batch = contracts.slice(i, i + batchSize);
+            await Promise.all(batch.map(contract => this.processContract(contract)));
+        }
     }
 }
