@@ -244,9 +244,34 @@ export class ContractFinder {
 
     async resetStats() {
         try {
+            // Reset stats object
             this.stats = this.initializeStats();
-            await this.saveStats();
-            logger.info("Stats reset successfully");
+
+            // Reset contracts arrays
+            this.missingContracts = [];
+            this.sourcifyApi.verificationStats.matchingContracts = [];
+
+            // Clear/reset all JSON files
+            const files = [
+                'missing_contracts.json',
+                'matching_contracts.json',
+                'contract_stats.json'
+            ];
+
+            for (const file of files) {
+                const filePath = path.join(process.cwd(), file);
+                try {
+                    // Write empty arrays/objects to files
+                    await fs.writeFile(filePath, JSON.stringify([], null, 2));
+                    logger.debug(`Reset ${file}`);
+                } catch (error) {
+                    if (error.code !== 'ENOENT') { // Ignore if file doesn't exist
+                        logger.error(`Error resetting ${file}:`, error);
+                    }
+                }
+            }
+
+            logger.info("Stats and files reset successfully");
         } catch (error) {
             logger.error("Error resetting stats:", error);
             throw error;
