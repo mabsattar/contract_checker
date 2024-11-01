@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { logger } from '../utils/logger.mjs';
+import { SubmittedContractsManager } from './submitted-contracts-manager.mjs';
 
 export class ContractFinder {
     constructor(sourcifyApi, config, cacheManager) {
@@ -9,6 +10,14 @@ export class ContractFinder {
         this.cacheManager = cacheManager;
         this.missingContracts = [];
         this.matchingContracts = [];
+
+        // Initialize the output directory path
+        this.chainOutputDir = path.join(
+            process.cwd(),
+            'chains',
+            this.config.output_dir
+        );
+
         this.stats = this.initializeStats();
 
         // Add timeout handling
@@ -17,6 +26,8 @@ export class ContractFinder {
 
         // Add in-memory index for faster lookups
         this.contractIndex = new Map();
+
+        this.submittedContractsManager = new SubmittedContractsManager(this.chainOutputDir);
     }
 
     initializeStats() {
@@ -126,7 +137,7 @@ export class ContractFinder {
             this.stats.processed++;
             this.stats.lastProcessed = filename;
 
-            // Add this line for cache debugging
+            // Check cache first
             const cachedResult = await this.checkCache(address);
             if (cachedResult !== null) {
                 logger.debug(`Cache hit for ${filename}: ${cachedResult ? 'verified' : 'missing'}`);
@@ -143,8 +154,11 @@ export class ContractFinder {
             // If not in cache, check Sourcify
             const isVerified = await this.sourcifyApi.checkContract(address);
 
-            // Update cache
-            await this.updateCache(address, isVerified);
+            // Only update cache for verified contracts
+            // Missing contracts will only be cached after successful submission
+            if (isVerified) {
+                await this.updateCache(address, true);
+            }
 
             if (!isVerified) {
                 await this.addMissingContract(address, contractName, filename, folderPath);
@@ -287,8 +301,11 @@ export class ContractFinder {
 
             // Clear cache
             if (this.cacheManager) {
-                await this.cacheManager.clear(); // We'll add this method to CacheManager
+                await this.cacheManager.clear();
             }
+
+            // Ensure output directory exists
+            await fs.mkdir(this.chainOutputDir, { recursive: true });
 
             // Clear/reset all JSON files
             const files = [
@@ -309,6 +326,9 @@ export class ContractFinder {
                     }
                 }
             }
+
+            // Reset submission tracking
+            await this.submittedContractsManager.reset();
 
             logger.info("Stats, cache, and files reset successfully");
         } catch (error) {
@@ -336,6 +356,25 @@ export class ContractFinder {
         for (let i = 0; i < contracts.length; i += batchSize) {
             const batch = contracts.slice(i, i + batchSize);
             await Promise.all(batch.map(contract => this.processContract(contract)));
+        }
+    }
+
+    async submitContract(contract) {
+        try {
+            const result = await this.sourcifyApi.submitContract(contract);
+
+            // Track submission
+            await this.submittedContractsManager.addSubmittedContract(contract, result);
+
+            if (result.success) {
+                // Only cache after successful submission
+                await this.updateCache(contract.address, true);
+            }
+
+            return result;
+        } catch (error) {
+            logger.error(`Error submitting contract ${contract.address}:`, error);
+            throw error;
         }
     }
 }
