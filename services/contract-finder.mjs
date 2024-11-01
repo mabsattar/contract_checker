@@ -126,10 +126,10 @@ export class ContractFinder {
             this.stats.processed++;
             this.stats.lastProcessed = filename;
 
-            // Check cache first
+            // Add this line for cache debugging
             const cachedResult = await this.checkCache(address);
             if (cachedResult !== null) {
-                logger.debug(`Using cached result for ${address}: ${cachedResult}`);
+                logger.debug(`Cache hit for ${filename}: ${cachedResult ? 'verified' : 'missing'}`);
                 if (!cachedResult) {
                     await this.addMissingContract(address, contractName, filename, folderPath);
                 } else {
@@ -138,19 +138,20 @@ export class ContractFinder {
                 return;
             }
 
+            logger.debug(`Cache miss for ${filename}, checking Sourcify...`);
+
             // If not in cache, check Sourcify
             const isVerified = await this.sourcifyApi.checkContract(address);
 
-            // Update cache and stats
+            // Update cache
             await this.updateCache(address, isVerified);
-            this.stats.lastVerified = isVerified;
 
             if (!isVerified) {
                 await this.addMissingContract(address, contractName, filename, folderPath);
                 logger.info(`Found missing contract: ${filename}`);
             } else {
                 await this.addMatchingContract(address, contractName, filename, folderPath);
-                logger.debug(`Contract ${filename} is verified`);
+                logger.debug(`Found matching contract: ${filename}`);
             }
 
         } catch (error) {
@@ -283,7 +284,11 @@ export class ContractFinder {
             // Reset contracts arrays
             this.missingContracts = [];
             this.matchingContracts = [];
-            this.sourcifyApi.verificationStats.matchingContracts = [];
+
+            // Clear cache
+            if (this.cacheManager) {
+                await this.cacheManager.clear(); // We'll add this method to CacheManager
+            }
 
             // Clear/reset all JSON files
             const files = [
@@ -293,7 +298,7 @@ export class ContractFinder {
             ];
 
             for (const file of files) {
-                const filePath = path.join(process.cwd(), file);
+                const filePath = path.join(this.chainOutputDir, file);
                 try {
                     // Write empty arrays/objects to files
                     await fs.writeFile(filePath, JSON.stringify([], null, 2));
@@ -305,7 +310,7 @@ export class ContractFinder {
                 }
             }
 
-            logger.info("Stats and files reset successfully");
+            logger.info("Stats, cache, and files reset successfully");
         } catch (error) {
             logger.error("Error resetting stats:", error);
             throw error;

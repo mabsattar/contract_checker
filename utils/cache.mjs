@@ -41,4 +41,18 @@ export class CacheManager {
             logger.error("Error saving cache:", error);
         }
     }
+
+    async clear() {
+        try {
+            // Reset cache file to empty object
+            await fs.writeFile(this.cachePath, JSON.stringify({}, null, 2));
+            logger.info("Cache cleared successfully");
+        } catch (error) {
+            if (error.code !== 'ENOENT') {
+                logger.error("Error clearing cache:", error);
+                throw error;
+            }
+            // If file doesn't exist, that's fine - it's effectively cleared
+        }
+    }
 }
