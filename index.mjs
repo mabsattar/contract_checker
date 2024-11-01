@@ -46,8 +46,8 @@ async function main() {
 
     // Phase 1: Find missing contracts
     logger.info("Starting Phase 1: Finding missing contracts");
-    const testFolder = '00'; // Remove this if you want to scan all folders
-    const { stats, missingContractsFile } = await finder.findMissingContracts(testFolder);
+    //const testFolder = '00'; // Remove this if you want to scan all folders
+    const { stats, missingContractsFile } = await finder.findMissingContracts(/*testFolder*/);
 
     logger.info('Contract finding phase completed:', stats);
 

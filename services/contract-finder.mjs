@@ -8,6 +8,7 @@ export class ContractFinder {
         this.config = config;
         this.cacheManager = cacheManager;
         this.missingContracts = [];
+        this.matchingContracts = [];
         this.stats = this.initializeStats();
 
         // Add timeout handling
@@ -23,6 +24,7 @@ export class ContractFinder {
             total: 0,
             processed: 0,
             missing: 0,
+            matching: 0,
             errors: 0,
             startTime: new Date().toISOString(),
             lastProcessed: null,
@@ -40,21 +42,28 @@ export class ContractFinder {
                 logger.info(`Processing specific folder: ${folderPath}`);
                 await this.processFolder(folderPath);
             } else {
-                await this.processFolder(repoPath);
+                // Process all folders
+                const folders = await fs.readdir(repoPath);
+                for (const folder of folders) {
+                    const folderPath = path.join(repoPath, folder);
+                    const stat = await fs.stat(folderPath);
+
+                    if (stat.isDirectory()) {
+                        await this.processFolder(folderPath);
+                    }
+                }
             }
 
-            await this.saveStats();
-            await this.saveMissingContracts();
-            await this.saveMatchingContracts();
+            await this.saveProgress();
 
             return {
                 stats: this.stats,
-                missingContractsFile: path.join(process.cwd(), 'missing_contracts.json'),
-                matchingContractsFile: path.join(process.cwd(), 'matching_contracts.json')
+                missingContractsFile: path.join(this.chainOutputDir, 'missing_contracts.json'),
+                matchingContractsFile: path.join(this.chainOutputDir, 'matching_contracts.json')
             };
 
         } catch (error) {
-            logger.error(`Error in findMissingContracts: ${error.message}`);
+            logger.error('Error in findMissingContracts:', error);
             throw error;
         }
     }
@@ -115,6 +124,7 @@ export class ContractFinder {
     async processContract(address, contractName, filename, folderPath) {
         try {
             this.stats.processed++;
+            this.stats.lastProcessed = filename;
 
             // Check cache first
             const cachedResult = await this.checkCache(address);
@@ -122,6 +132,8 @@ export class ContractFinder {
                 logger.debug(`Using cached result for ${address}: ${cachedResult}`);
                 if (!cachedResult) {
                     await this.addMissingContract(address, contractName, filename, folderPath);
+                } else {
+                    await this.addMatchingContract(address, contractName, filename, folderPath);
                 }
                 return;
             }
@@ -129,13 +141,15 @@ export class ContractFinder {
             // If not in cache, check Sourcify
             const isVerified = await this.sourcifyApi.checkContract(address);
 
-            // Update cache
+            // Update cache and stats
             await this.updateCache(address, isVerified);
+            this.stats.lastVerified = isVerified;
 
             if (!isVerified) {
                 await this.addMissingContract(address, contractName, filename, folderPath);
                 logger.info(`Found missing contract: ${filename}`);
             } else {
+                await this.addMatchingContract(address, contractName, filename, folderPath);
                 logger.debug(`Contract ${filename} is verified`);
             }
 
@@ -179,10 +193,27 @@ export class ContractFinder {
         this.stats.missing++;
     }
 
+    async addMatchingContract(address, contractName, filename, folderPath) {
+        const filePath = path.join(folderPath, filename);
+        const source = await fs.readFile(filePath, 'utf8');
+
+        this.matchingContracts.push({
+            address,
+            contractName,
+            filename,
+            source,
+            verifiedAt: new Date().toISOString()
+        });
+
+        this.stats.matching++;
+    }
+
     async saveProgress() {
         try {
             // Save missing contracts
             await this.saveMissingContracts();
+            // Save matching contracts
+            await this.saveMatchingContracts();
             // Save stats
             await this.saveStats();
             // Force cache save
@@ -216,13 +247,10 @@ export class ContractFinder {
     }
 
     async saveMatchingContracts() {
-        const filePath = path.join(process.cwd(), 'matching_contracts.json');
+        const filePath = path.join(this.chainOutputDir, 'matching_contracts.json');
         try {
-            await fs.writeFile(
-                filePath,
-                JSON.stringify(this.sourcifyApi.verificationStats.matchingContracts, null, 2)
-            );
-            logger.debug(`Saved ${this.sourcifyApi.verificationStats.matchingContracts.length} matching contracts to ${filePath}`);
+            await fs.writeFile(filePath, JSON.stringify(this.matchingContracts, null, 2));
+            logger.debug(`Saved ${this.matchingContracts.length} matching contracts to ${filePath}`);
         } catch (error) {
             logger.error('Error saving matching contracts:', error);
         }
@@ -254,6 +282,7 @@ export class ContractFinder {
 
             // Reset contracts arrays
             this.missingContracts = [];
+            this.matchingContracts = [];
             this.sourcifyApi.verificationStats.matchingContracts = [];
 
             // Clear/reset all JSON files
