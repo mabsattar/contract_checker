@@ -358,4 +358,19 @@ export class ContractProcessor {
             metadata
         };
     }
+
+    async saveProgress() {
+        try {
+            const outputDir = path.join(process.cwd(), 'output', this.config.chain_name);
+            await fs.mkdir(outputDir, { recursive: true });
+
+            // Save progress stats
+            const statsPath = path.join(outputDir, 'processing_stats.json');
+            await fs.writeFile(statsPath, JSON.stringify(this.progress, null, 2));
+
+            logger.debug('Progress saved successfully');
+        } catch (error) {
+            logger.error('Error saving progress:', error);
+        }
+    }
 }
