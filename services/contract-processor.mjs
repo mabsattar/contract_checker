@@ -341,15 +341,38 @@ export class ContractProcessor {
         return true;
     }
 
-    async processFromFile(missingContractsFile) {
+    async processFromFile(filePath) {
         try {
-            const contracts = JSON.parse(await fs.readFile(missingContractsFile, 'utf8'));
+            const data = await fs.readFile(filePath, 'utf8');
+            const contracts = JSON.parse(data);
+
             logger.info(`Processing ${contracts.length} contracts from file`);
 
-            for (const contract of contracts) {
+            // Validate contract format before processing
+            const validContracts = contracts.filter(contract => {
+                return contract &&
+                    contract.address &&
+                    contract.contractName &&
+                    contract.source &&
+                    typeof contract.source === 'string';
+            });
+
+            if (validContracts.length !== contracts.length) {
+                logger.warn(`Found ${contracts.length - validContracts.length} invalid contracts`);
+            }
+
+            // Process each valid contract
+            for (const contract of validContracts) {
                 try {
-                    // Prepare contract data
-                    const contractData = await this.prepareContractData(contract);
+                    // Extract pragma version from source
+                    const version = this.extractPragmaVersion(contract);
+                    if (!version) {
+                        logger.warn(`Could not extract pragma version for ${contract.address}`);
+                        continue;
+                    }
+
+                    // Transform contract data for submission
+                    const contractData = await this.transformContract(contract);
 
                     // Submit to Sourcify
                     const success = await this.submitContract(contractData);
@@ -359,27 +382,21 @@ export class ContractProcessor {
                         await this.cacheManager.markVerified(contract.address);
                     } else {
                         this.progress.failed++;
+                        logger.warn(`Failed to verify contract ${contract.address}`);
                     }
 
-                } catch (error) {
-                    logger.error(`Error processing contract ${contract.address}:`, error);
+                } catch (err) {
+                    logger.error(`Error processing contract ${contract.address}: ${err.message}`);
                     this.progress.failed++;
-                }
-
-                this.progress.processed++;
-
-                // Save progress periodically
-                if (this.progress.processed % 10 === 0) {
-                    await this.saveProgress();
                 }
             }
 
-            logger.info('Contract processing completed:', this.progress);
-            await this.saveProgress();
+            // Update total processed count
+            this.progress.processed += validContracts.length;
 
-        } catch (error) {
-            logger.error('Error processing contracts from file:', error);
-            throw error;
+        } catch (err) {
+            logger.error(`Error reading/parsing contracts file: ${err.message}`);
+            throw err;
         }
     }
 
@@ -420,7 +437,11 @@ export class ContractProcessor {
 
     async saveProgress() {
         try {
-            const outputDir = path.join(process.cwd(), 'output', this.config.chain_name);
+            // Split chain name into network parts (e.g. "ethereum_mainnet" -> ["ethereum", "mainnet"])
+            const [chain, network] = this.config.chain_name.split('_');
+
+            // Construct proper path following chains/{chain}/{network} structure
+            const outputDir = path.join(process.cwd(), 'chains', chain, network);
             await fs.mkdir(outputDir, { recursive: true });
 
             // Save progress stats

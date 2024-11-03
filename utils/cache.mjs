@@ -4,9 +4,15 @@ import { logger } from './logger.mjs';
 
 export class CacheManager {
     constructor(chainName) {
-        this.chainName = chainName;
-        this.cacheDir = path.join(process.cwd(), 'chains', chainName, 'cache');
-        this.cachePath = path.join(this.cacheDir, 'sourcify_cache.json');
+        // Split chain name into network parts (e.g. "ethereum_mainnet" -> ["ethereum", "mainnet"])
+        const [chain, network] = chainName.split('_');
+
+        // Construct proper path following chains/{chain}/{network} structure
+        this.cacheDir = path.join(process.cwd(), 'chains', chain, network);
+        this.cachePath = path.join(this.cacheDir, 'verification_cache.json');
+
+        // Ensure cache directory exists
+        fs.mkdirSync(this.cacheDir, { recursive: true });
     }
 
     async init() {
