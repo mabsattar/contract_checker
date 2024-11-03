@@ -8,6 +8,11 @@ import { HealthCheck } from './utils/health-check.mjs';
 import path from 'path';
 import fs from 'fs/promises';
 
+function parseFolderOption(args) {
+  const folderIndex = args.indexOf('--folder');
+  return folderIndex !== -1 ? args[folderIndex + 1] : null;
+}
+
 async function main() {
   try {
     // Get chain from command line argument or environment variable
@@ -15,21 +20,20 @@ async function main() {
 
     logger.info(`Starting contract verification process for ${chainName}`);
 
-    // Initialize config for specific chain
+    // Initialize components
     const config = new Config();
     const chainConfig = await config.load(chainName);
+    const cacheManager = new CacheManager(chainName);
+    const sourcifyApi = new SourcifyAPI(chainConfig);
 
     // Create output directory for this chain
     const chainOutputDir = path.join(process.cwd(), 'output', chainName);
     await fs.mkdir(chainOutputDir, { recursive: true });
 
     // Initialize components with chain-specific config
-    const cacheManager = new CacheManager(chainName);
     await cacheManager.init();
 
-    const sourcifyApi = new SourcifyAPI(chainConfig);
-    const finder = new ContractFinder(sourcifyApi, chainConfig, cacheManager);
-
+    // Initialize health check
     const healthCheck = new HealthCheck();
 
     // Add periodic health checks
@@ -37,39 +41,46 @@ async function main() {
       const status = healthCheck.updateStatus(sourcifyApi.getStats());
       if (!status.healthy) {
         logger.error('Unhealthy status detected:', status);
-        // Implement recovery logic if needed
       }
     }, 30000);
 
-    // Reset stats for this chain
+    // Check if we're in submission mode
+    if (process.env.AUTO_SUBMIT === 'true') {
+      logger.info('Starting submission phase...');
+      const missingContractsFile = path.join(process.cwd(), 'missing_contracts.json');
+
+      try {
+        // Check if file exists
+        await fs.access(missingContractsFile);
+
+        // Process submissions
+        const processor = new ContractProcessor(sourcifyApi, cacheManager, chainConfig);
+        await processor.processFromFile(missingContractsFile);
+
+        // Clear interval before returning
+        clearInterval(healthCheckInterval);
+        return;
+      } catch (error) {
+        logger.error('Could not find missing_contracts.json. Run finding phase first.');
+        clearInterval(healthCheckInterval);
+        process.exit(1);
+      }
+    }
+
+    // If not in submission mode, run finding phase
+    logger.info('Starting finding phase...');
+    const finder = new ContractFinder(sourcifyApi, chainConfig, cacheManager);
     await finder.resetStats();
 
-    // Phase 1: Find missing contracts
-    logger.info("Starting Phase 1: Finding missing contracts");
-    const testFolder = '00'; // Remove this if you want to scan all folders
-    const { stats, missingContractsFile } = await finder.findMissingContracts(testFolder);
+    const folderOption = parseFolderOption(process.argv);
+    const { stats } = await finder.findMissingContracts(folderOption);
 
     logger.info('Contract finding phase completed:', stats);
+    logger.info('To submit contracts, run: AUTO_SUBMIT=true node index.mjs ethereum_mainnet');
 
-    // Check if we should proceed with submission
-    if (process.env.AUTO_SUBMIT !== 'true') {
-      logger.info('Review missing_contracts.json and set AUTO_SUBMIT=true to proceed with submission');
-      return;
-    }
-
-    // Phase 2: Submit missing contracts
-    if (stats.missing > 0) {
-      logger.info(`Starting Phase 2: Submitting ${stats.missing} missing contracts`);
-      const processor = new ContractProcessor(sourcifyApi, cacheManager, config);
-      await processor.processFromFile(missingContractsFile);
-    } else {
-      logger.info('No missing contracts found to submit');
-    }
-
-    logger.info("Process completed successfully");
-
-    // Cleanup
+    // Clear interval before exiting
     clearInterval(healthCheckInterval);
+
   } catch (error) {
     logger.error("Fatal error:", error);
     process.exit(1);

@@ -252,7 +252,7 @@ export class ContractFinder {
     }
 
     async saveMissingContracts() {
-        const filePath = path.join(process.cwd(), 'missing_contracts.json');
+        const filePath = path.join(this.chainOutputDir, 'missing_contracts.json');
         try {
             await fs.writeFile(filePath, JSON.stringify(this.missingContracts, null, 2));
             logger.debug(`Saved ${this.missingContracts.length} missing contracts to ${filePath}`);
