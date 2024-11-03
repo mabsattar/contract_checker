@@ -26,8 +26,8 @@ async function main() {
     const cacheManager = new CacheManager(chainName);
     const sourcifyApi = new SourcifyAPI(chainConfig);
 
-    // Create output directory for this chain
-    const chainOutputDir = path.join(process.cwd(), 'output', chainName);
+    // Create chain-specific directory structure
+    const chainOutputDir = path.join(process.cwd(), 'chain', chainConfig.output_dir);
     await fs.mkdir(chainOutputDir, { recursive: true });
 
     // Initialize components with chain-specific config
@@ -47,7 +47,7 @@ async function main() {
     // Check if we're in submission mode
     if (process.env.AUTO_SUBMIT === 'true') {
       logger.info('Starting submission phase...');
-      const missingContractsFile = path.join(process.cwd(), 'missing_contracts.json');
+      const missingContractsFile = path.join(chainOutputDir, 'missing_contracts.json');
 
       try {
         // Check if file exists
@@ -61,9 +61,28 @@ async function main() {
         clearInterval(healthCheckInterval);
         return;
       } catch (error) {
-        logger.error('Could not find missing_contracts.json. Run finding phase first.');
-        clearInterval(healthCheckInterval);
-        process.exit(1);
+        // If file doesn't exist, create it with an empty array
+        if (error.code === 'ENOENT') {
+          await fs.writeFile(missingContractsFile, JSON.stringify([], null, 2));
+          logger.info(`Created new missing_contracts.json in ${chainOutputDir}`);
+
+          // Also create other necessary files
+          const files = {
+            'matching_contracts.json': [],
+            'submission_stats.json': {},
+            'submitted_contracts.json': []
+          };
+
+          for (const [filename, initialData] of Object.entries(files)) {
+            const filePath = path.join(chainOutputDir, filename);
+            await fs.writeFile(filePath, JSON.stringify(initialData, null, 2));
+            logger.info(`Created ${filename} in ${chainOutputDir}`);
+          }
+        } else {
+          logger.error(`Error accessing ${missingContractsFile}:`, error);
+          clearInterval(healthCheckInterval);
+          process.exit(1);
+        }
       }
     }
 
