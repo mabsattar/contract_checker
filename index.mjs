@@ -27,7 +27,7 @@ async function main() {
     const sourcifyApi = new SourcifyAPI(chainConfig);
 
     // Create chain-specific directory structure
-    const chainOutputDir = path.join(process.cwd(), 'chain', chainConfig.output_dir);
+    const chainOutputDir = path.join(process.cwd(), 'chains', chainConfig.output_dir);
     await fs.mkdir(chainOutputDir, { recursive: true });
 
     // Initialize components with chain-specific config

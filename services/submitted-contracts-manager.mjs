@@ -4,9 +4,7 @@ import { logger } from '../utils/logger.mjs';
 
 export class SubmittedContractsManager {
     constructor(chainOutputDir) {
-        this.chainOutputDir = chainOutputDir.startsWith('chain/')
-            ? chainOutputDir
-            : `chain/${chainOutputDir}`;
+        this.chainOutputDir = path.join(process.cwd(), 'chains', chainOutputDir);
         this.submittedContracts = [];
         this.stats = {
             total: 0,

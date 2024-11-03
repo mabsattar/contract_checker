@@ -5,7 +5,7 @@ import { logger } from './logger.mjs';
 export class CacheManager {
     constructor(chainName) {
         this.chainName = chainName;
-        this.cacheDir = path.join(process.cwd(), 'chain', chainName, 'cache');
+        this.cacheDir = path.join(process.cwd(), 'chains', chainName, 'cache');
         this.cachePath = path.join(this.cacheDir, 'sourcify_cache.json');
     }
 
