@@ -453,4 +453,22 @@ export class ContractProcessor {
             logger.error('Error saving progress:', error);
         }
     }
+
+    extractPragmaVersion(contract) {
+        // Look for pragma solidity statement in source
+        const pragmaRegex = /pragma solidity (?:\^|>=|~)?(0\.[0-9]+\.[0-9]+)/;
+        const pragmaMatch = contract.source.match(pragmaRegex);
+
+        if (pragmaMatch) {
+            return pragmaMatch[1];
+        }
+
+        // Fallback to metadata if available
+        if (contract.metadata?.compiler?.version) {
+            return contract.metadata.compiler.version;
+        }
+
+        // Default fallback version
+        return "0.8.10";
+    }
 }
