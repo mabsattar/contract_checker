@@ -15,8 +15,14 @@ function parseFolderOption(args) {
 
 async function main() {
   try {
-    // Get chain from command line argument or environment variable
-    const chainName = process.argv[2] || process.env.CHAIN || 'ethereum_mainnet';
+    // Remove default value and require explicit chain specification
+    const chainName = process.argv[2] || process.env.CHAIN;
+
+    if (!chainName) {
+      logger.error('No chain specified. Please specify a chain (e.g., ethereum_mainnet, ethereum_sepolia)');
+      logger.info('To see available chains, run: node index.mjs --list-chains');
+      process.exit(1);
+    }
 
     logger.info(`Starting contract verification process for ${chainName}`);
 
