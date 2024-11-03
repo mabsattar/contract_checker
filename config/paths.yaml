@@ -3,7 +3,7 @@ ethereum_mainnet:
   sourcify_api: "https://sourcify.dev/server"
   chain_id: "1"
   repo_path: "${ETH_REPO_PATH}/contracts/mainnet"
-  output_dir: "ethereum/mainnet"
+  output_dir: "chain/ethereum/mainnet"
 
 # Ethereum Testnets
 ethereum_goerli:
@@ -23,13 +23,13 @@ arbitrum:
   sourcify_api: "https://sourcify.dev/server"
   chain_id: "42161"
   repo_path: "${ARBITRUM_REPO_PATH}/contracts/mainnet"
-  output_dir: "arbitrum/mainnet"
+  output_dir: "chain/arbitrum/mainnet"
 
 polygon:
   sourcify_api: "https://sourcify.dev/server"
   chain_id: "137"
   repo_path: "${POLYGON_REPO_PATH}/contracts/mainnet"
-  output_dir: "polygon/mainnet"
+  output_dir: "chain/polygon/mainnet"
 
 optimism:
   sourcify_api: "https://sourcify.dev/server"
