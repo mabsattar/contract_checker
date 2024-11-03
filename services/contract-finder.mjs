@@ -242,7 +242,7 @@ export class ContractFinder {
     }
 
     async saveStats() {
-        const filePath = path.join(process.cwd(), 'contract_stats.json');
+        const filePath = path.join(this.chainOutputDir, 'contract_stats.json');
         try {
             await fs.writeFile(filePath, JSON.stringify(this.stats, null, 2));
             logger.debug('Stats saved successfully');
