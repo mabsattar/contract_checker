@@ -8,15 +8,27 @@ export class ContractFinder {
         this.sourcifyApi = sourcifyApi;
         this.config = config;
         this.cacheManager = cacheManager;
+
+        // Use the full path directly instead of trying to make it relative
+        this.repoPath = this.config.repo_path;
+
+        // Ensure output directory is relative to project root
+        const [chain, network] = this.config.chain_name.split('_');
+        this.chainOutputDir = path.join('./chains', chain, network);
+
+        this.stats = {
+            total: 0,
+            processed: 0,
+            missing: 0,
+            matching: 0,
+            errors: 0
+        };
+
         this.missingContracts = [];
         this.matchingContracts = [];
 
         // Initialize the output directory path
-        this.chainOutputDir = path.join(
-            process.cwd(),
-            'chains',
-            this.config.output_dir
-        );
+        this.chainOutputDir = path.join('chains', this.config.output_dir);
 
         this.stats = this.initializeStats();
 
@@ -43,20 +55,21 @@ export class ContractFinder {
         };
     }
 
-    async findMissingContracts(specificFolder = null) {
+    async findMissingContracts(folderOption) {
         try {
-            const repoPath = this.config.repo_path;
-            logger.info(`Starting contract search in: ${repoPath}`);
+            // Ensure we're using relative paths
+            const searchPath = folderOption || this.repoPath;
+            logger.info(`Starting contract search in: ${searchPath}`);
 
-            if (specificFolder) {
-                const folderPath = path.join(repoPath, specificFolder);
+            if (folderOption) {
+                const folderPath = path.join(searchPath, folderOption);
                 logger.info(`Processing specific folder: ${folderPath}`);
                 await this.processFolder(folderPath);
             } else {
                 // Process all folders
-                const folders = await fs.readdir(repoPath);
+                const folders = await fs.readdir(searchPath);
                 for (const folder of folders) {
-                    const folderPath = path.join(repoPath, folder);
+                    const folderPath = path.join(searchPath, folder);
                     const stat = await fs.stat(folderPath);
 
                     if (stat.isDirectory()) {
@@ -74,7 +87,7 @@ export class ContractFinder {
             };
 
         } catch (error) {
-            logger.error('Error in findMissingContracts:', error);
+            logger.error('Error in contract search:', error);
             throw error;
         }
     }

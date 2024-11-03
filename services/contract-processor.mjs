@@ -167,22 +167,30 @@ export class ContractProcessor {
     }
 
 
-    async submitContract(contract) {
+    async submitContract(contractData) {
         try {
-            const compilerVersion = await this.extractCompilerVersion(contract.source);
-            const contractData = {
-                address: `0x${contract.address}`,
-                contractName: path.basename(contract.path || ''),
-                source: contract.source,
-                compiler: "solidity",
-                compilerVersion: compilerVersion || "0.8.10",
-                network: "mainnet"
-            };
+            if (!contractData || !contractData.address || !contractData.source) {
+                logger.warn(`Invalid contract data for submission: ${contractData?.address}`);
+                return { success: false, error: 'Invalid contract data' };
+            }
 
-            return await this.sourcifyApi.submitContract(contractData.address, contractData);
+            // Transform the contract data if it hasn't been transformed yet
+            const transformedData = contractData.compiler ?
+                contractData :
+                await this.transformContract(contractData);
+
+            const response = await this.sourcifyApi.submitContract(transformedData);
+
+            return {
+                success: response,
+                error: response ? null : 'Submission failed'
+            };
         } catch (error) {
-            logger.error(`Error submitting contract ${contract.address}:`, error);
-            throw error;
+            logger.error(`Error submitting contract ${contractData?.address}:`, error);
+            return {
+                success: false,
+                error: error.message
+            };
         }
     }
 
@@ -322,13 +330,23 @@ export class ContractProcessor {
     }
 
     async transformContract(contract) {
+        if (!contract || !contract.address || !contract.source) {
+            logger.warn(`Invalid contract data for transformation: ${contract?.address}`);
+            throw new Error('Invalid contract data');
+        }
+
+        // Ensure address is properly formatted
+        const address = contract.address.toLowerCase();
+        const formattedAddress = address.startsWith('0x') ? address : `0x${address}`;
+
         return {
-            address: contract.address,
-            chainId: this.config.chainId,
-            files: {
-                'source.sol': contract.source
-            },
-            compilerVersion: await this.extractCompilerVersion(contract.source)
+            address: formattedAddress,
+            contractName: contract.contractName || path.basename(contract.path || ''),
+            filename: `${formattedAddress}.sol`,
+            source: contract.source,
+            compiler: "solidity",
+            compilerVersion: await this.extractCompilerVersion(contract.source) || "0.8.10",
+            network: "mainnet"
         };
     }
 
@@ -348,11 +366,10 @@ export class ContractProcessor {
 
             logger.info(`Processing ${contracts.length} contracts from file`);
 
-            // Validate contract format before processing
+            // Validate contract format
             const validContracts = contracts.filter(contract => {
                 return contract &&
                     contract.address &&
-                    contract.contractName &&
                     contract.source &&
                     typeof contract.source === 'string';
             });
@@ -364,13 +381,6 @@ export class ContractProcessor {
             // Process each valid contract
             for (const contract of validContracts) {
                 try {
-                    // Extract pragma version from source
-                    const version = this.extractPragmaVersion(contract);
-                    if (!version) {
-                        logger.warn(`Could not extract pragma version for ${contract.address}`);
-                        continue;
-                    }
-
                     // Transform contract data for submission
                     const contractData = await this.transformContract(contract);
 
@@ -454,21 +464,40 @@ export class ContractProcessor {
         }
     }
 
+    extractCompilerVersion(source) {
+        if (!source) {
+            logger.warn('No source code provided for compiler version extraction');
+            return null;
+        }
+
+        try {
+            // Look for pragma solidity statement in source
+            const pragmaRegex = /pragma solidity (?:\^|>=|~)?(0\.[0-9]+\.[0-9]+)/;
+            const pragmaMatch = source.match(pragmaRegex);
+
+            if (pragmaMatch) {
+                return pragmaMatch[1];
+            }
+
+            logger.warn('No pragma version found in source code');
+            return null;
+        } catch (error) {
+            logger.error('Error extracting compiler version:', error);
+            return null;
+        }
+    }
+
     extractPragmaVersion(contract) {
-        // Look for pragma solidity statement in source
-        const pragmaRegex = /pragma solidity (?:\^|>=|~)?(0\.[0-9]+\.[0-9]+)/;
-        const pragmaMatch = contract.source.match(pragmaRegex);
-
-        if (pragmaMatch) {
-            return pragmaMatch[1];
+        if (!contract || !contract.source) {
+            logger.warn(`Invalid contract data for address ${contract?.address}`);
+            return null;
         }
 
-        // Fallback to metadata if available
-        if (contract.metadata?.compiler?.version) {
-            return contract.metadata.compiler.version;
+        try {
+            return this.extractCompilerVersion(contract.source) || "0.8.10";
+        } catch (error) {
+            logger.error(`Error extracting pragma version for ${contract?.address}: ${error.message}`);
+            return "0.8.10"; // Default fallback
         }
-
-        // Default fallback version
-        return "0.8.10";
     }
 }

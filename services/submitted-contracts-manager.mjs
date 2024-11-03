@@ -4,7 +4,11 @@ import { logger } from '../utils/logger.mjs';
 
 export class SubmittedContractsManager {
     constructor(chainOutputDir) {
-        this.chainOutputDir = path.join(process.cwd(), 'chains', chainOutputDir);
+        this.chainOutputDir = chainOutputDir.includes('chains')
+            ? chainOutputDir.split('chains/')[1]
+            : chainOutputDir;
+
+        this.chainOutputDir = path.join('chains', this.chainOutputDir);
         this.submittedContracts = [];
         this.stats = {
             total: 0,
@@ -47,7 +51,14 @@ export class SubmittedContractsManager {
 
             // Save submitted contracts
             const contractsPath = path.join(this.chainOutputDir, 'submitted_contracts.json');
-            await fs.writeFile(contractsPath, JSON.stringify(this.submittedContracts, null, 2));
+
+            // When saving, ensure paths are relative
+            const contractsToSave = this.submittedContracts.map(contract => ({
+                ...contract,
+                filename: contract.filename?.split('opensource/')[1] || contract.filename
+            }));
+
+            await fs.writeFile(contractsPath, JSON.stringify(contractsToSave, null, 2));
 
             // Save submission stats
             const statsPath = path.join(this.chainOutputDir, 'submission_stats.json');

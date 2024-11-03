@@ -2,57 +2,57 @@
 ethereum_mainnet:
   sourcify_api: "https://sourcify.dev/server"
   chain_id: "1"
-  repo_path: "${ETH_REPO_PATH}/contracts/mainnet"
+  repo_path: "${ETH_REPO_PATH}/mainnet"
   output_dir: "ethereum/mainnet"
 
 # Ethereum Testnets
 ethereum_goerli:
   sourcify_api: "https://sourcify.dev/server"
   chain_id: "5"
-  repo_path: "${ETH_REPO_PATH}/contracts/goerli"
+  repo_path: "${ETH_REPO_PATH}"
   output_dir: "ethereum/goerli"
 
 ethereum_sepolia:
   sourcify_api: "https://sourcify.dev/server"
   chain_id: "11155111"
-  repo_path: "${ETH_REPO_PATH}/contracts/sepolia"
+  repo_path: "${ETH_REPO_PATH}"
   output_dir: "ethereum/sepolia"
 
 # Layer 2 and Sidechains
 arbitrum:
   sourcify_api: "https://sourcify.dev/server"
   chain_id: "42161"
-  repo_path: "${ARBITRUM_REPO_PATH}/contracts/mainnet"
+  repo_path: "${ARBITRUM_REPO_PATH}"
   output_dir: "arbitrum/mainnet"
 
 polygon:
   sourcify_api: "https://sourcify.dev/server"
   chain_id: "137"
-  repo_path: "${POLYGON_REPO_PATH}/contracts/mainnet"
+  repo_path: "${POLYGON_REPO_PATH}"
   output_dir: "polygon/mainnet"
 
 optimism:
   sourcify_api: "https://sourcify.dev/server"
   chain_id: "10"
-  repo_path: "${ETH_REPO_PATH}/contracts/optimism"
+  repo_path: "${ETH_REPO_PATH}"
   output_dir: "optimism/mainnet"
 
 avalanche:
   sourcify_api: "https://sourcify.dev/server"
   chain_id: "43114"
-  repo_path: "${ETH_REPO_PATH}/contracts/avalanche"
+  repo_path: "${ETH_REPO_PATH}"
   output_dir: "avalanche/mainnet"
 
 fantom:
   sourcify_api: "https://sourcify.dev/server"
   chain_id: "250"
-  repo_path: "${ETH_REPO_PATH}/contracts/fantom"
+  repo_path: "${ETH_REPO_PATH}"
   output_dir: "fantom/mainnet"
 
 celo:
   sourcify_api: "https://sourcify.dev/server"
   chain_id: "42220"
-  repo_path: "${ETH_REPO_PATH}/contracts/celo"
+  repo_path: "${ETH_REPO_PATH}"
   output_dir: "celo/mainnet"
 
 # Default settings for all chains
