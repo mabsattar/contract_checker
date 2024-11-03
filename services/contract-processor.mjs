@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { logger } from '../utils/logger.mjs';
+import solc from 'solc';
 
 logger.info("Starting contract verification process");
 
@@ -18,6 +19,64 @@ export class ContractProcessor {
         };
 
         this.missingContracts = [];
+    }
+
+    async processContract(contractData) {
+        // Validate required fields
+        if (!contractData.address || !contractData.contractName || !contractData.source) {
+            throw new Error('Missing required contract fields');
+        }
+
+        // Format filename consistently
+        const filename = `${contractData.address.toLowerCase()}_${contractData.contractName}.sol`;
+
+        // Ensure source code has SPDX identifier
+        let source = contractData.source;
+        if (!source.includes('SPDX-License-Identifier')) {
+            source = '// SPDX-License-Identifier: UNLICENSED\n' + source;
+        }
+
+        try {
+            // Create input for solc
+            const input = {
+                language: 'Solidity',
+                sources: {
+                    [filename]: {
+                        content: source
+                    }
+                },
+                settings: {
+                    outputSelection: {
+                        '*': {
+                            '*': ['*']
+                        }
+                    }
+                }
+            };
+
+            // Format and validate using solc
+            const output = JSON.parse(solc.compile(JSON.stringify(input)));
+
+            // Check for errors
+            if (output.errors) {
+                const errors = output.errors.filter(error => error.severity === 'error');
+                if (errors.length > 0) {
+                    logger.error(`Compilation errors in ${filename}:`, errors);
+                    throw new Error('Contract compilation failed');
+                }
+            }
+
+            return {
+                address: contractData.address.toLowerCase(),
+                contractName: contractData.contractName,
+                filename: filename,
+                source: source,
+                compilerVersion: await this.extractCompilerVersion(source)
+            };
+        } catch (error) {
+            logger.error(`Failed to process contract ${filename}: ${error.message}`);
+            throw error;
+        }
     }
 
     async extractCompilerVersion(sourceCode) {
