@@ -179,17 +179,33 @@ export class ContractProcessor {
                 contractData :
                 await this.transformContract(contractData);
 
+            // Add debug logging
+            logger.debug(`Submitting contract ${transformedData.address} with data:`, {
+                compiler: transformedData.compiler,
+                version: transformedData.compilerVersion,
+                hasSource: !!transformedData.source
+            });
+
             const response = await this.sourcifyApi.submitContract(transformedData);
+
+            // Add response logging
+            logger.debug(`Sourcify API response for ${transformedData.address}:`, response);
 
             return {
                 success: response,
                 error: response ? null : 'Submission failed'
             };
         } catch (error) {
-            logger.error(`Error submitting contract ${contractData?.address}:`, error);
+            // Enhanced error logging
+            logger.error(`Error submitting contract ${contractData?.address}:`, {
+                error: error.message,
+                response: error.response?.data,
+                status: error.response?.status
+            });
             return {
                 success: false,
-                error: error.message
+                error: error.message,
+                details: error.response?.data
             };
         }
     }
@@ -262,20 +278,20 @@ export class ContractProcessor {
 
     async processingChain(specificFolder = null) {
         try {
-            const repoPath = this.config.ethereumRepo || path.join(process.cwd(), "..", "..", "smart-contract-sanctuary-ethereum", "contracts", "mainnet");
+            const repoPath = this.config.repo_path;
             const cache = await this.cacheManager.load();
 
             logger.info("Starting contract processing from:", repoPath);
 
             if (specificFolder) {
                 const folderPath = path.join(repoPath, specificFolder);
-
                 try {
                     const stat = await fs.stat(folderPath);
                     if (stat.isDirectory()) {
                         logger.info(`processing specific folder: ${specificFolder}`);
                         await this.processContractFolder(folderPath, cache);
                         await this.cacheManager.save(cache);
+                        return;
                     } else {
                         throw new Error(`${specificFolder} is not a valid folder path`);
                     }

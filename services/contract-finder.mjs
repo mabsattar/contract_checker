@@ -57,29 +57,33 @@ export class ContractFinder {
 
     async findMissingContracts(folderOption) {
         try {
-            // Ensure we're using relative paths
             const searchPath = folderOption || this.repoPath;
             logger.info(`Starting contract search in: ${searchPath}`);
 
             if (folderOption) {
-                const folderPath = path.join(searchPath, folderOption);
+                const folderPath = path.join(this.repoPath, folderOption);
                 logger.info(`Processing specific folder: ${folderPath}`);
                 await this.processFolder(folderPath);
-            } else {
-                // Process all folders
-                const folders = await fs.readdir(searchPath);
-                for (const folder of folders) {
-                    const folderPath = path.join(searchPath, folder);
-                    const stat = await fs.stat(folderPath);
 
-                    if (stat.isDirectory()) {
-                        await this.processFolder(folderPath);
-                    }
+                await this.saveProgress();
+                return {
+                    stats: this.stats,
+                    missingContractsFile: path.join(this.chainOutputDir, 'missing_contracts.json'),
+                    matchingContractsFile: path.join(this.chainOutputDir, 'matching_contracts.json')
+                };
+            }
+
+            const folders = await fs.readdir(searchPath);
+            for (const folder of folders) {
+                const folderPath = path.join(searchPath, folder);
+                const stat = await fs.stat(folderPath);
+
+                if (stat.isDirectory()) {
+                    await this.processFolder(folderPath);
                 }
             }
 
             await this.saveProgress();
-
             return {
                 stats: this.stats,
                 missingContractsFile: path.join(this.chainOutputDir, 'missing_contracts.json'),

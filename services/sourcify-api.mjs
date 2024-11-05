@@ -110,15 +110,13 @@ export class SourcifyAPI {
             formData.append('address', contract.address.toLowerCase());
             formData.append('chain', this.chainId);
 
-            const files = {
-                [`${contract.filename}`]: contract.source
-            };
+            // Create the source file with proper name
+            formData.append('files', contract.source, contract.filename);
 
+            // If metadata exists, append it as a separate file
             if (contract.metadata) {
-                files['metadata.json'] = JSON.stringify(contract.metadata);
+                formData.append('files', JSON.stringify(contract.metadata), 'metadata.json');
             }
-
-            formData.append('files', JSON.stringify(files));
 
             const response = await axios.post(
                 `${this.apiUrl}/verify`,
@@ -132,16 +130,23 @@ export class SourcifyAPI {
                 }
             );
 
+            // Add detailed logging
+            logger.debug(`Sourcify API response for ${contract.address}:`, response.data);
+
             if (response.data.status === 'success') {
                 logger.info(`Successfully verified contract ${contract.address}`);
                 return true;
             }
 
-            logger.warn(`Verification failed for ${contract.address}: ${response.data.message}`);
+            logger.warn(`Verification failed for ${contract.address}: ${JSON.stringify(response.data)}`);
             return false;
 
         } catch (error) {
-            logger.error(`Error submitting contract ${contract.address}:`, error);
+            logger.error(`Error submitting contract ${contract.address}:`, {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status
+            });
             return false;
         }
     }
