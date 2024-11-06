@@ -14,3 +14,10 @@ output/
 
 # Node modules
 node_modules/
+
+# Generated files
+**/missing_contracts.json
+**/matching_contracts.json
+**/submission_stats.json
+**/submitted_contracts.json
+**/verification_cache.json

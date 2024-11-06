@@ -36,12 +36,14 @@ export class Config {
       }
 
       const config = await this.loadConfig();
-
-      // Debug lines to help troubleshoot
-      console.log('Environment ETH_REPO_PATH:', process.env.ETH_REPO_PATH);
-      console.log('Resolved repo_path:', config[chainName]?.repo_path);
-
       const chainConfig = config[chainName];
+
+      // Debug logging for environment variables and paths
+      logger.debug('Configuration values:', {
+        ETH_REPO_PATH: process.env.ETH_REPO_PATH,
+        resolved_repo_path: chainConfig?.repo_path,
+        chain_name: chainName
+      });
 
       // Validate chain exists in config
       if (!chainConfig) {
@@ -51,6 +53,10 @@ export class Config {
       // Merge with default config and add chain name
       return {
         ...config.default,
+        sourcify: {
+          ...config.default.sourcify,
+          url: chainConfig.sourcify_api
+        },
         ...chainConfig,
         chain_name: chainName
       };

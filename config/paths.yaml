@@ -60,3 +60,9 @@ default:
   batch_size: 10
   max_retries: 3
   verification_delay: 5000
+  sourcify:
+    attempts:
+      full_match: true
+      partial_match: true
+    retries: 3
+    timeout: 30000

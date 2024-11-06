@@ -6,6 +6,8 @@ export class SourcifyAPI {
     constructor(config) {
         this.chainId = config.chain_id;
         this.apiUrl = config.sourcify_api;
+        this.shouldTryPartialMatch = config.sourcify.attempts.partial_match;
+        this.timeout = config.sourcify.timeout;
 
         logger.info('SourcifyAPI initialized with:', {
             chainId: this.chainId,
@@ -20,6 +22,13 @@ export class SourcifyAPI {
             lastError: null,
             lastSuccess: null,
             matchingContracts: []
+        };
+
+        this.stats = {
+            ...this.stats,
+            fullMatches: 0,
+            partialMatches: 0,
+            failed: 0
         };
     }
 
