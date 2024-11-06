@@ -110,35 +110,68 @@ export class SourcifyAPI {
             formData.append('address', contract.address.toLowerCase());
             formData.append('chain', this.chainId);
 
-            // Create the source file with proper name
-            formData.append('files', contract.source, contract.filename);
+            // Add source files with proper structure
+            const sourceFileName = contract.filename;
+            formData.append('files', Buffer.from(contract.source), sourceFileName);
 
-            // If metadata exists, append it as a separate file
-            if (contract.metadata) {
-                formData.append('files', JSON.stringify(contract.metadata), 'metadata.json');
+            // Try to create metadata if not present
+            if (!contract.metadata) {
+                // Create basic metadata structure
+                const metadata = {
+                    language: "Solidity",
+                    sources: {
+                        [sourceFileName]: {
+                            content: contract.source
+                        }
+                    },
+                    settings: {
+                        optimizer: {
+                            enabled: true,
+                            runs: 200
+                        }
+                    }
+                };
+                formData.append('files', Buffer.from(JSON.stringify(metadata)), 'metadata.json');
+            } else {
+                formData.append('files', Buffer.from(contract.metadata), 'metadata.json');
             }
 
-            const response = await axios.post(
+            // First try full match
+            logger.debug(`Attempting full match for ${contract.address}`);
+            const fullMatchResponse = await axios.post(
                 `${this.apiUrl}/verify`,
                 formData,
                 {
-                    headers: {
-                        ...formData.getHeaders(),
-                        'Content-Type': 'multipart/form-data'
-                    },
-                    maxBodyLength: Infinity
+                    headers: { ...formData.getHeaders() },
+                    params: { chainId: this.chainId }
                 }
             );
 
-            // Add detailed logging
-            logger.debug(`Sourcify API response for ${contract.address}:`, response.data);
-
-            if (response.data.status === 'success') {
-                logger.info(`Successfully verified contract ${contract.address}`);
+            if (fullMatchResponse.data.status === 'success') {
+                logger.info(`Full match successful for ${contract.address}`);
                 return true;
             }
 
-            logger.warn(`Verification failed for ${contract.address}: ${JSON.stringify(response.data)}`);
+            // If full match fails, try partial match
+            logger.debug(`Attempting partial match for ${contract.address}`);
+            const partialMatchResponse = await axios.post(
+                `${this.apiUrl}/verify`,
+                formData,
+                {
+                    headers: { ...formData.getHeaders() },
+                    params: {
+                        chainId: this.chainId,
+                        partial: true
+                    }
+                }
+            );
+
+            if (partialMatchResponse.data.status === 'success') {
+                logger.info(`Partial match successful for ${contract.address}`);
+                return true;
+            }
+
+            logger.warn(`Both full and partial matches failed for ${contract.address}`);
             return false;
 
         } catch (error) {
