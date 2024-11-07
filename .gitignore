@@ -21,3 +21,4 @@ node_modules/
 **/submission_stats.json
 **/submitted_contracts.json
 **/verification_cache.json
+**/verification_progress.json

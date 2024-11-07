@@ -1,6 +1,9 @@
 import axios from 'axios';
 import FormData from 'form-data';
 import { logger } from '../utils/logger.mjs';
+import path from 'path';
+import fs from 'fs/promises';
+import { keccak256 } from 'crypto-js';
 
 export class SourcifyAPI {
     constructor(config) {
@@ -116,81 +119,169 @@ export class SourcifyAPI {
             }
 
             const formData = new FormData();
+
+            // Add required fields
             formData.append('address', contract.address.toLowerCase());
             formData.append('chain', this.chainId);
 
-            // Add source files with proper structure
-            const sourceFileName = contract.filename;
-            formData.append('files', Buffer.from(contract.source), sourceFileName);
+            // Add source file
+            formData.append('files', Buffer.from(contract.source), contract.filename);
 
-            // Try to create metadata if not present
-            if (!contract.metadata) {
-                // Create basic metadata structure
-                const metadata = {
-                    language: "Solidity",
-                    sources: {
-                        [sourceFileName]: {
-                            content: contract.source
-                        }
-                    },
-                    settings: {
-                        optimizer: {
-                            enabled: true,
-                            runs: 200
-                        }
-                    }
-                };
-                formData.append('files', Buffer.from(JSON.stringify(metadata)), 'metadata.json');
-            } else {
-                formData.append('files', Buffer.from(contract.metadata), 'metadata.json');
-            }
+            // Add metadata using the helper method
+            const metadata = this._createMetadata(contract);
+            formData.append('files', Buffer.from(JSON.stringify(metadata)), 'metadata.json');
 
             // First try full match
-            logger.debug(`Attempting full match for ${contract.address}`);
-            const fullMatchResponse = await axios.post(
-                `${this.apiUrl}/verify`,
-                formData,
-                {
-                    headers: { ...formData.getHeaders() },
-                    params: { chainId: this.chainId }
-                }
-            );
-
-            if (fullMatchResponse.data.status === 'success') {
-                logger.info(`Full match successful for ${contract.address}`);
-                return true;
-            }
-
-            // If full match fails, try partial match
-            logger.debug(`Attempting partial match for ${contract.address}`);
-            const partialMatchResponse = await axios.post(
-                `${this.apiUrl}/verify`,
-                formData,
-                {
-                    headers: { ...formData.getHeaders() },
-                    params: {
-                        chainId: this.chainId,
-                        partial: true
+            try {
+                const fullMatchResponse = await axios.post(
+                    `${this.apiUrl}/verify`,
+                    formData,
+                    {
+                        headers: formData.getHeaders(),
+                        maxBodyLength: Infinity
                     }
-                }
-            );
+                );
 
-            if (partialMatchResponse.data.status === 'success') {
-                logger.info(`Partial match successful for ${contract.address}`);
-                return true;
+                if (fullMatchResponse.data.status === 'success') {
+                    this.stats.fullMatches++;
+                    logger.info(`Full match successful for ${contract.address}`);
+                    return {
+                        success: true,
+                        response: fullMatchResponse.data
+                    };
+                }
+            } catch (error) {
+                logger.debug(`Full match failed for ${contract.address}:`, {
+                    status: error.response?.status,
+                    data: error.response?.data
+                });
             }
 
-            logger.warn(`Both full and partial matches failed for ${contract.address}`);
-            return false;
+            // If configured and full match failed, try partial match
+            if (this.shouldTryPartialMatch) {
+                try {
+                    const partialMatchResponse = await axios.post(
+                        `${this.apiUrl}/verify`,
+                        formData,
+                        {
+                            headers: formData.getHeaders(),
+                            maxBodyLength: Infinity,
+                            params: { partial: true }
+                        }
+                    );
+
+                    if (partialMatchResponse.data.status === 'success') {
+                        this.stats.partialMatches++;
+                        logger.info(`Partial match successful for ${contract.address}`);
+                        return {
+                            success: true,
+                            response: partialMatchResponse.data
+                        };
+                    }
+                } catch (error) {
+                    logger.debug(`Partial match failed for ${contract.address}:`, {
+                        status: error.response?.status,
+                        data: error.response?.data
+                    });
+                }
+            }
+
+            this.stats.failed++;
+            return {
+                success: false,
+                error: 'Both full and partial matches failed'
+            };
 
         } catch (error) {
+            this.stats.failed++;
             logger.error(`Error submitting contract ${contract.address}:`, {
                 message: error.message,
-                response: error.response?.data,
-                status: error.response?.status
+                response: error.response?.data
             });
-            return false;
+            return {
+                success: false,
+                error: error.message,
+                response: error.response?.data
+            };
         }
+    }
+
+    _extractCompilerSettings(source) {
+        // Extract pragma solidity version
+        const pragmaMatch = source.match(/pragma solidity (\^?\d+\.\d+\.\d+|[\^\~]\d+\.\d+)/);
+        const compilerVersion = pragmaMatch ? pragmaMatch[1] : '0.8.17';
+
+        // Extract SPDX license
+        const licenseMatch = source.match(/SPDX-License-Identifier: (.*)/);
+        const license = licenseMatch ? licenseMatch[1].trim() : 'UNLICENSED';
+
+        return {
+            compilerVersion,
+            license
+        };
+    }
+
+    _createMetadata(contract) {
+        // Use existing metadata if present
+        if (contract.metadata) {
+            return contract.metadata;
+        }
+
+        // Extract settings from source
+        const { compilerVersion, license } = this._extractCompilerSettings(contract.source);
+
+        // Get chain-specific EVM version
+        const evmVersionMap = {
+            1: 'london',    // Ethereum Mainnet
+            137: 'paris',   // Polygon
+            56: 'london',   // BSC
+        };
+
+        const evmVersion = evmVersionMap[this.chainId] || 'london';
+
+        return {
+            compiler: {
+                version: compilerVersion,
+            },
+            language: "Solidity",
+            output: {
+                abi: [], // Empty ABI since we don't have it
+                devdoc: {
+                    kind: "dev",
+                    methods: {},
+                    version: 1
+                },
+                userdoc: {
+                    kind: "user",
+                    methods: {},
+                    version: 1
+                }
+            },
+            settings: {
+                compilationTarget: {
+                    [contract.filename]: contract.contractName
+                },
+                evmVersion: evmVersion,
+                libraries: {},
+                metadata: {
+                    bytecodeHash: "ipfs",
+                    useLiteralContent: true
+                },
+                optimizer: {
+                    enabled: true,
+                    runs: 200
+                },
+                remappings: []
+            },
+            sources: {
+                [contract.filename]: {
+                    content: contract.source,
+                    keccak256: `0x${keccak256(contract.source)}`,
+                    license: license
+                }
+            },
+            version: 1
+        };
     }
 
     _handleApiError(error, address) {
@@ -233,5 +324,46 @@ export class SourcifyAPI {
             ...this.verificationStats,
             timestamp: new Date().toISOString()
         };
+    }
+
+    async submitMissingContracts(chainId) {
+        const missingContractsPath = path.join('chains', 'ethereum', 'mainnet', 'missing_contracts.json');
+
+        try {
+            // Read missing contracts
+            const missingContracts = JSON.parse(await fs.readFile(missingContractsPath, 'utf8'));
+            logger.info(`Processing ${missingContracts.length} contracts from file`);
+
+            for (const contract of missingContracts) {
+                try {
+                    // Format contract data for submission
+                    const contractData = {
+                        address: contract.address,
+                        contractName: contract.contractName,
+                        source: contract.source,
+                        filename: contract.filename
+                    };
+
+                    // Submit to Sourcify
+                    const result = await this.submitContract(contractData);
+
+                    if (result) {
+                        logger.info(`Successfully verified ${contract.address}`);
+                    } else {
+                        logger.error(`Failed to verify ${contract.address}`);
+                    }
+
+                    // Optional: Add delay between submissions to avoid rate limiting
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+
+                } catch (error) {
+                    logger.error(`Error submitting contract ${contract.address}:`, error.message);
+                }
+            }
+
+        } catch (error) {
+            logger.error('Error processing missing contracts:', error);
+            throw error;
+        }
     }
 }
