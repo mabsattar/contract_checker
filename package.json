@@ -3,6 +3,7 @@
     "axios": "^1.7.7",
     "bottleneck": "^2.19.5",
     "dotenv": "^16.4.5",
+    "ethereum-cryptography": "^3.0.0",
     "form-data": "^4.0.1",
     "js-yaml": "^4.1.0",
     "p-limit": "^6.1.0",

@@ -3,7 +3,8 @@ import FormData from 'form-data';
 import { logger } from '../utils/logger.mjs';
 import path from 'path';
 import fs from 'fs/promises';
-import { keccak256 } from 'crypto-js';
+import { keccak256 } from 'ethereum-cryptography/keccak';
+import { utf8ToBytes } from 'ethereum-cryptography/utils';
 
 export class SourcifyAPI {
     constructor(config) {
@@ -276,7 +277,7 @@ export class SourcifyAPI {
             sources: {
                 [contract.filename]: {
                     content: contract.source,
-                    keccak256: `0x${keccak256(contract.source)}`,
+                    keccak256: `0x${Buffer.from(keccak256(utf8ToBytes(contract.source))).toString('hex')}`,
                     license: license
                 }
             },
