@@ -367,4 +367,24 @@ export class SourcifyAPI {
             throw error;
         }
     }
+
+    async saveMetadata(contract, metadata) {
+        const metadataPath = path.join(
+            'chains',
+            this.chainId.toString(),
+            'metadata',
+            `${contract.address}.json`
+        );
+
+        try {
+            await fs.mkdir(path.dirname(metadataPath), { recursive: true });
+            await fs.writeFile(
+                metadataPath,
+                JSON.stringify(metadata, null, 2)
+            );
+            logger.debug(`Saved metadata for ${contract.address}`);
+        } catch (error) {
+            logger.error(`Error saving metadata for ${contract.address}:`, error);
+        }
+    }
 }
