@@ -11,6 +11,7 @@ export class SourcifyAPI {
         this.chainId = config.chain_id;
         this.apiUrl = config.sourcify_api;
         this.shouldTryPartialMatch = config.sourcify.attempts.partial_match;
+        this.shouldTryFullMatch = config.sourcify.attempts.full_match;
         this.timeout = config.sourcify.timeout;
 
         logger.info('SourcifyAPI initialized with:', {
@@ -133,29 +134,32 @@ export class SourcifyAPI {
             formData.append('files', Buffer.from(JSON.stringify(metadata)), 'metadata.json');
 
             // First try full match
-            try {
-                const fullMatchResponse = await axios.post(
-                    `${this.apiUrl}/verify`,
-                    formData,
-                    {
-                        headers: formData.getHeaders(),
-                        maxBodyLength: Infinity
-                    }
-                );
+            if (this.shouldTryFullMatch) {
 
-                if (fullMatchResponse.data.status === 'success') {
-                    this.stats.fullMatches++;
-                    logger.info(`Full match successful for ${contract.address}`);
-                    return {
-                        success: true,
-                        response: fullMatchResponse.data
-                    };
+                try {
+                    const fullMatchResponse = await axios.post(
+                        `${this.apiUrl}/verify`,
+                        formData,
+                        {
+                            headers: formData.getHeaders(),
+                            maxBodyLength: Infinity
+                        }
+                    );
+
+                    if (fullMatchResponse.data.status === 'success') {
+                        this.stats.fullMatches++;
+                        logger.info(`Full match successful for ${contract.address}`);
+                        return {
+                            success: true,
+                            response: fullMatchResponse.data
+                        };
+                    }
+                } catch (error) {
+                    logger.debug(`Full match failed for ${contract.address}:`, {
+                        status: error.response?.status,
+                        data: error.response?.data
+                    });
                 }
-            } catch (error) {
-                logger.debug(`Full match failed for ${contract.address}:`, {
-                    status: error.response?.status,
-                    data: error.response?.data
-                });
             }
 
             // If configured and full match failed, try partial match
