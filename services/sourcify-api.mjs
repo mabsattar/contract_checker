@@ -116,6 +116,8 @@ export class SourcifyAPI {
 
     async submitContract(contract) {
         try {
+            logger.debug('Creating metadata for contract:', contract.address);
+
             if (!this._validateContractData(contract)) {
                 throw new Error('Invalid contract data format');
             }
@@ -129,48 +131,49 @@ export class SourcifyAPI {
             // Add source file
             formData.append('files', Buffer.from(contract.source), contract.filename);
 
+            logger.debug('Creating metadata...');
             // Add metadata using the helper method
             const metadata = this._createMetadata(contract);
             formData.append('files', Buffer.from(JSON.stringify(metadata)), 'metadata.json');
 
+            logger.debug('Attempting full match verification...');
             // First try full match
-            if (this.shouldTryFullMatch) {
-
-                try {
-                    const fullMatchResponse = await axios.post(
-                        `${this.apiUrl}/verify`,
-                        formData,
-                        {
-                            headers: formData.getHeaders(),
-                            maxBodyLength: Infinity
-                        }
-                    );
-
-                    if (fullMatchResponse.data.status === 'success') {
-                        this.stats.fullMatches++;
-                        logger.info(`Full match successful for ${contract.address}`);
-                        return {
-                            success: true,
-                            response: fullMatchResponse.data
-                        };
+            try {
+                const fullMatchResponse = await axios.post(
+                    `${this.apiUrl}/verify`,
+                    formData,
+                    {
+                        headers: formData.getHeaders(),
+                        maxBodyLength: Infinity,
+                        timeout: 30000 // 30 second timeout
                     }
-                } catch (error) {
-                    logger.debug(`Full match failed for ${contract.address}:`, {
-                        status: error.response?.status,
-                        data: error.response?.data
-                    });
+                );
+
+                if (fullMatchResponse.data.status === 'success') {
+                    this.stats.fullMatches++;
+                    logger.info(`Full match successful for ${contract.address}`);
+                    return {
+                        success: true,
+                        response: fullMatchResponse.data
+                    };
                 }
+            } catch (error) {
+                logger.debug(`Full match failed for ${contract.address}:`, {
+                    status: error.response?.status,
+                    data: error.response?.data
+                });
             }
 
             // If configured and full match failed, try partial match
             if (this.shouldTryPartialMatch) {
+                logger.debug('Attempting partial match verification...');
                 try {
                     const partialMatchResponse = await axios.post(
                         `${this.apiUrl}/verify`,
                         formData,
                         {
                             headers: formData.getHeaders(),
-                            maxBodyLength: Infinity,
+                            maxBodyLength: Infinity, // 30 second timeout
                             params: { partial: true }
                         }
                     );
@@ -331,16 +334,18 @@ export class SourcifyAPI {
         };
     }
 
-    async submitMissingContracts(chainId) {
-        const missingContractsPath = path.join('chains', 'ethereum', 'mainnet', 'missing_contracts.json');
+    async submitMissingContracts() {
+        const missingContractsPath = path.join(this.chainOutputDir, 'missing_contracts.json');
 
         try {
-            // Read missing contracts
+            logger.debug(`Reading missing contracts from ${missingContractsPath}`);
             const missingContracts = JSON.parse(await fs.readFile(missingContractsPath, 'utf8'));
-            logger.info(`Processing ${missingContracts.length} contracts from file`);
+            logger.info(`Processing ${missingContracts.length} contracts for chain ${this.chainId}`);
 
-            for (const contract of missingContracts) {
+            for (const [index, contract] of missingContracts.entries()) {
                 try {
+                    logger.info(`Processing contract ${index + 1}/${missingContracts.length}: ${contract.address}`);
+
                     // Format contract data for submission
                     const contractData = {
                         address: contract.address,
@@ -349,25 +354,34 @@ export class SourcifyAPI {
                         filename: contract.filename
                     };
 
+                    logger.debug('Submitting contract to Sourcify...', {
+                        address: contract.address,
+                        name: contract.contractName
+                    });
+
                     // Submit to Sourcify
                     const result = await this.submitContract(contractData);
 
-                    if (result) {
+                    if (result.success) {
                         logger.info(`Successfully verified ${contract.address}`);
                     } else {
-                        logger.error(`Failed to verify ${contract.address}`);
+                        logger.error(`Failed to verify ${contract.address}:`, result.error);
                     }
 
-                    // Optional: Add delay between submissions to avoid rate limiting
-                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    // Add delay between submissions to avoid rate limiting
+                    await new Promise(resolve => setTimeout(resolve, 2000));
 
                 } catch (error) {
-                    logger.error(`Error submitting contract ${contract.address}:`, error.message);
+                    logger.error(`Error processing contract ${contract.address}:`, error);
+                    // Continue with next contract even if this one fails
+                    continue;
                 }
             }
 
+            logger.info('Finished processing all contracts');
+
         } catch (error) {
-            logger.error('Error processing missing contracts:', error);
+            logger.error(`Error reading missing contracts for chain ${this.chainId}:`, error);
             throw error;
         }
     }
