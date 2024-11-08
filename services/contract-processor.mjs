@@ -430,7 +430,8 @@ export class ContractProcessor {
         // Extract compiler version
         const compilerVersion = await this.extractCompilerVersion(contract.source);
         if (!compilerVersion) {
-            throw new Error(`Could not extract compiler version for ${contract.address}`);
+            //using the default compiler version if none is found
+            compilerVersion = "0.8.10";
         }
 
         // Generate metadata
