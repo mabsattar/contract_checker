@@ -343,58 +343,66 @@ export class SourcifyAPI {
             const totalContracts = missingContracts.length;
 
             logger.info(`Starting verification of ${totalContracts} contracts`);
-            logger.info(`Estimated time: ${Math.round(totalContracts * 2 / 60)} minutes (with 2s delay between submissions)`);
-
+            
+            // Process in batches of 5 contracts concurrently
+            const batchSize = 5;
             let successCount = 0;
             let failureCount = 0;
 
-            for (const [index, contract] of missingContracts.entries()) {
-                const progress = ((index + 1) / totalContracts * 100).toFixed(2);
-                logger.info(`[${progress}%] Processing contract ${index + 1}/${totalContracts}: ${contract.address}`);
+            for (let i = 0; i < missingContracts.length; i += batchSize) {
+                const batch = missingContracts.slice(i, i + batchSize);
+                const batchPromises = batch.map(async (contract) => {
+                    try {
+                        const contractData = {
+                            address: contract.address,
+                            contractName: contract.contractName,
+                            source: this._validateSourceCode(contract.source),
+                            filename: contract.filename
+                        };
 
-                try {
-                    // Format contract data for submission
-                    const contractData = {
-                        address: contract.address,
-                        contractName: contract.contractName,
-                        source: contract.source,
-                        filename: contract.filename
-                    };
+                        logger.info(`🔄 Submitting contract ${contract.address}`);
+                        const result = await this.submitContract(contractData);
 
-                    const result = await this.submitContract(contractData);
-
-                    if (result.success) {
-                        successCount++;
-                        logger.info(`✅ Successfully verified ${contract.address}`);
-                    } else {
+                        if (result.success) {
+                            successCount++;
+                            logger.info(`✅ Successfully verified ${contract.address}`);
+                            return true;
+                        } else {
+                            failureCount++;
+                            logger.error(`❌ Failed to verify ${contract.address}: ${result.error}`);
+                            return false;
+                        }
+                    } catch (error) {
                         failureCount++;
-                        logger.error(`❌ Failed to verify ${contract.address}: ${result.error}`);
+                        logger.error(`❌ Error processing ${contract.address}:`, error);
+                        return false;
                     }
+                });
 
-                    // Log progress summary every 10 contracts
-                    if ((index + 1) % 10 === 0) {
-                        logger.info(`Progress Summary:
-                            Processed: ${index + 1}/${totalContracts}
-                            Success: ${successCount}
-                            Failed: ${failureCount}
-                            Remaining: ${totalContracts - (index + 1)}
-                            Time Elapsed: ${Math.round((Date.now() - startTime) / 1000 / 60)} minutes`);
-                    }
+                await Promise.all(batchPromises);
+                
+                // Progress update after each batch
+                const processed = i + batchSize;
+                const progress = Math.min((processed / totalContracts * 100), 100).toFixed(1);
+                const timeElapsed = Math.round((Date.now() - startTime) / 1000 / 60);
+                
+                logger.info(`
+Progress: ${progress}% (${processed}/${totalContracts})
+✅ Success: ${successCount} | ❌ Failed: ${failureCount}
+⏱️ Time Elapsed: ${timeElapsed} minutes
+                `);
 
-                    await new Promise(resolve => setTimeout(resolve, 2000));
-
-                } catch (error) {
-                    failureCount++;
-                    logger.error(`Error processing ${contract.address}:`, error);
-                    continue;
-                }
+                // Small delay between batches to prevent rate limiting
+                await new Promise(resolve => setTimeout(resolve, 500));
             }
 
-            logger.info(`Verification Complete!
-                Total Contracts: ${totalContracts}
-                Successful: ${successCount}
-                Failed: ${failureCount}
-                Total Time: ${Math.round((Date.now() - startTime) / 1000 / 60)} minutes`);
+            logger.info(`
+=== Verification Complete ===
+Total Contracts: ${totalContracts}
+✅ Successful: ${successCount}
+❌ Failed: ${failureCount}
+⏱️ Total Time: ${Math.round((Date.now() - startTime) / 1000 / 60)} minutes
+            `);
 
         } catch (error) {
             logger.error('Error processing contracts:', error);
@@ -420,5 +428,13 @@ export class SourcifyAPI {
         } catch (error) {
             logger.error(`Error saving metadata for ${contract.address}:`, error);
         }
+    }
+
+    _validateSourceCode(source) {
+        if (!source.includes('pragma solidity')) {
+            // Add pragma if missing
+            source = '// SPDX-License-Identifier: UNLICENSED\npragma solidity ^0.8.0;\n' + source;
+        }
+        return source;
     }
 }
