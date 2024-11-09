@@ -336,16 +336,23 @@ export class SourcifyAPI {
 
     async submitMissingContracts() {
         const missingContractsPath = path.join(this.chainOutputDir, 'missing_contracts.json');
+        const startTime = Date.now();
 
         try {
-            logger.debug(`Reading missing contracts from ${missingContractsPath}`);
             const missingContracts = JSON.parse(await fs.readFile(missingContractsPath, 'utf8'));
-            logger.info(`Processing ${missingContracts.length} contracts for chain ${this.chainId}`);
+            const totalContracts = missingContracts.length;
+
+            logger.info(`Starting verification of ${totalContracts} contracts`);
+            logger.info(`Estimated time: ${Math.round(totalContracts * 2 / 60)} minutes (with 2s delay between submissions)`);
+
+            let successCount = 0;
+            let failureCount = 0;
 
             for (const [index, contract] of missingContracts.entries()) {
-                try {
-                    logger.info(`Processing contract ${index + 1}/${missingContracts.length}: ${contract.address}`);
+                const progress = ((index + 1) / totalContracts * 100).toFixed(2);
+                logger.info(`[${progress}%] Processing contract ${index + 1}/${totalContracts}: ${contract.address}`);
 
+                try {
                     // Format contract data for submission
                     const contractData = {
                         address: contract.address,
@@ -354,34 +361,43 @@ export class SourcifyAPI {
                         filename: contract.filename
                     };
 
-                    logger.debug('Submitting contract to Sourcify...', {
-                        address: contract.address,
-                        name: contract.contractName
-                    });
-
-                    // Submit to Sourcify
                     const result = await this.submitContract(contractData);
 
                     if (result.success) {
-                        logger.info(`Successfully verified ${contract.address}`);
+                        successCount++;
+                        logger.info(`✅ Successfully verified ${contract.address}`);
                     } else {
-                        logger.error(`Failed to verify ${contract.address}:`, result.error);
+                        failureCount++;
+                        logger.error(`❌ Failed to verify ${contract.address}: ${result.error}`);
                     }
 
-                    // Add delay between submissions to avoid rate limiting
+                    // Log progress summary every 10 contracts
+                    if ((index + 1) % 10 === 0) {
+                        logger.info(`Progress Summary:
+                            Processed: ${index + 1}/${totalContracts}
+                            Success: ${successCount}
+                            Failed: ${failureCount}
+                            Remaining: ${totalContracts - (index + 1)}
+                            Time Elapsed: ${Math.round((Date.now() - startTime) / 1000 / 60)} minutes`);
+                    }
+
                     await new Promise(resolve => setTimeout(resolve, 2000));
 
                 } catch (error) {
-                    logger.error(`Error processing contract ${contract.address}:`, error);
-                    // Continue with next contract even if this one fails
+                    failureCount++;
+                    logger.error(`Error processing ${contract.address}:`, error);
                     continue;
                 }
             }
 
-            logger.info('Finished processing all contracts');
+            logger.info(`Verification Complete!
+                Total Contracts: ${totalContracts}
+                Successful: ${successCount}
+                Failed: ${failureCount}
+                Total Time: ${Math.round((Date.now() - startTime) / 1000 / 60)} minutes`);
 
         } catch (error) {
-            logger.error(`Error reading missing contracts for chain ${this.chainId}:`, error);
+            logger.error('Error processing contracts:', error);
             throw error;
         }
     }
