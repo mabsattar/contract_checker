@@ -227,7 +227,7 @@ export class ContractFinder {
 
   async addMatchingContract(address, contractName, filename, folderPath) {
     const filePath = path.join(folderPath, filename);
-    
+
     await fs.readFile(filePath, 'utf8');
 
     this.matchingContracts.push({

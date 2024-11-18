@@ -2,7 +2,7 @@
 ethereum_mainnet:
   sourcify_api: "https://sourcify.dev/server"
   chain_id: "1"
-  repo_path: "${ETH_REPO_PATH}/mainnet"
+  repo_path: "${ETH_REPO_PATH}"
   output_dir: "ethereum/mainnet"
 
 # Ethereum Testnets
