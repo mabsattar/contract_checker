@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { logger } from '../utils/logger.mjs';
-import { ContractFinder } from '../contract-finder.mjs';
+import solc from 'solc';
 
 logger.info("Starting contract verification process");
 
