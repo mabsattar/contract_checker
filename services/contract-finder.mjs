@@ -375,23 +375,4 @@ export class ContractFinder {
       await Promise.all(batch.map(contract => this.processContract(contract)));
     }
   }
-
-  /*async submitContract(contract) {
-      try {
-          const result = await this.sourcifyApi.submitContract(contract);
-
-          // Track submission
-          await this.submittedContractsManager.addSubmittedContract(contract, result);
-
-          if (result.success) {
-              // Only cache after successful submission
-              await this.updateCache(contract.address, true);
-          }
-
-          return result;
-      } catch (error) {
-          logger.error(`Error submitting contract ${contract.address}:`, error);
-          throw error;
-      }
-  }*/
 }
