@@ -10,5 +10,8 @@
     "solc": "^0.8.28",
     "winston": "^3.15.0"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-verify": "^2.0.12"
+  }
 }
