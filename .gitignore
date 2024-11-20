@@ -22,3 +22,6 @@ chains/**/submitted_contracts.json
 chains/**/verification_cache.json
 chains/**/verification_progress.json
 chains/**/submission_stats.json
+
+#notes
+notes.md

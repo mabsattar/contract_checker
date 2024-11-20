@@ -48,7 +48,7 @@ export class ContractProcessor {
         settings: {
           outputSelection: {
             '*': {
-              '*': ['*']
+              '*': ['metadata', 'abi', 'devdoc', 'userdoc']
             }
           }
         }
@@ -167,7 +167,7 @@ export class ContractProcessor {
   }
 
 
-  /*async submitContract(contractData) {
+  async submitContract(contractData) {
       try {
           if (!contractData || !contractData.address || !contractData.source) {
               logger.warn(`Invalid contract data for submission: ${contractData?.address}`);
@@ -208,7 +208,7 @@ export class ContractProcessor {
               details: error.response?.data
           };
       }
-  }*/
+  }
 
   async processContractFolder(folderPath, cache) {
     const contractFiles = await fs.readdir(folderPath);
