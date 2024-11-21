@@ -149,7 +149,7 @@ export class ContractFinder {
     }
   }
 
-  async processContract(address, contractName, filename, folderPath) {
+  async processContract(address, contractName, filename, filepath) {
     try {
       this.stats.processed++;
       this.stats.lastProcessed = filename;
@@ -159,9 +159,9 @@ export class ContractFinder {
       if (cachedResult !== null) {
         logger.debug(`Cache hit for ${filename}: ${cachedResult ? 'verified' : 'missing'}`);
         if (!cachedResult) {
-          await this.addMissingContract(address, contractName, filename, folderPath);
+          await this.addMissingContract(address, contractName, filename, filepath);
         } else {
-          await this.addMatchingContract(address, contractName, filename, folderPath);
+          await this.addMatchingContract(address, contractName, filename, filepath);
         }
         return;
       }
@@ -178,10 +178,10 @@ export class ContractFinder {
       }
 
       if (!isVerified) {
-        await this.addMissingContract(address, contractName, filename, folderPath);
+        await this.addMissingContract(address, contractName, filename, filepath);
         logger.info(`Found missing contract: ${filename}`);
       } else {
-        await this.addMatchingContract(address, contractName, filename, folderPath);
+        await this.addMatchingContract(address, contractName, filename, filepath);
         logger.debug(`Found matching contract: ${filename}`);
       }
 
