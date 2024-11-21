@@ -1,17 +1,14 @@
 import axios from 'axios';
-import FormData from 'form-data';
 import { logger } from '../utils/logger.mjs';
 import path from 'path';
 import fs from 'fs/promises';
 import { keccak256 } from 'ethereum-cryptography/keccak';
 import { utf8ToBytes } from 'ethereum-cryptography/utils';
 
-export class SourcifyAPI {
+export class sourcifyApi {
   constructor(config) {
     this.chainId = config.chain_id;
     this.apiUrl = config.sourcify_api;
-    this.shouldTryPartialMatch = config.sourcify.attempts.partial_match;
-    this.shouldTryFullMatch = config.sourcify.attempts.full_match;
     this.timeout = config.sourcify.timeout;
 
     logger.info('SourcifyAPI initialized with:', {
@@ -113,106 +110,6 @@ export class SourcifyAPI {
       return this._handleApiError(error, address);
     }
   }
-
-  /*async submitContract(contract) {
-      try {
-          logger.debug('Creating metadata for contract:', contract.address);
-
-          if (!this._validateContractData(contract)) {
-              throw new Error('Invalid contract data format');
-          }
-
-          const formData = new FormData();
-
-          // Add required fields
-          formData.append('address', contract.address.toLowerCase());
-          formData.append('chain', this.chainId);
-
-          // Add source file
-          formData.append('files', Buffer.from(contract.source), contract.filename);
-
-          logger.debug('Creating metadata...');
-          // Add metadata using the helper method
-          const metadata = this._createMetadata(contract);
-          formData.append('files', Buffer.from(JSON.stringify(metadata)), 'metadata.json');
-
-          logger.debug('Attempting full match verification...');
-          // First try full match
-          try {
-              const contractVerification = await axios.post(
-                  `${this.apiUrl}/verify`,
-                  formData,
-                  {
-                      headers: formData.getHeaders(),
-                      maxBodyLength: Infinity,
-                      timeout: 30000 // 30 second timeout
-                  }
-              );
-
-              if (fullMatch.data.status === 'success') {
-                  this.stats.fullMatches++;
-                  logger.info(`Full match successful for ${contract.address}`);
-                  return {
-                      success: true,
-                      response: fullMatchResponse.data
-                  };
-              }
-          } catch (error) {
-              logger.debug(`Full match failed for ${contract.address}:`, {
-                  status: error.response?.status,
-                  data: error.response?.data
-              });
-          }
-
-          // If configured and full match failed, try partial match
-          if (this.shouldTryPartialMatch) {
-              logger.debug('Attempting partial match verification...');
-              try {
-                  const partialMatchResponse = await axios.post(
-                      `${this.apiUrl}/verify`,
-                      formData,
-                      {
-                          headers: formData.getHeaders(),
-                          maxBodyLength: Infinity, // 30 second timeout
-                          params: { partial: true }
-                      }
-                  );
-
-                  if (partialMatchResponse.data.status === 'success') {
-                      this.stats.partialMatches++;
-                      logger.info(`Partial match successful for ${contract.address}`);
-                      return {
-                          success: true,
-                          response: partialMatchResponse.data
-                      };
-                  }
-              } catch (error) {
-                  logger.debug(`Partial match failed for ${contract.address}:`, {
-                      status: error.response?.status,
-                      data: error.response?.data
-                  });
-              }
-          }
-
-          this.stats.failed++;
-          return {
-              success: false,
-              error: 'Both full and partial matches failed'
-          };
-
-      } catch (error) {
-          this.stats.failed++;
-          logger.error(`Error submitting contract ${contract.address}:`, {
-              message: error.message,
-              response: error.response?.data
-          });
-          return {
-              success: false,
-              error: error.message,
-              response: error.response?.data
-          };
-      }
-  }*/
 
   _extractCompilerSettings(source) {
     // Extract pragma solidity version
