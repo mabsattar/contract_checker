@@ -21,43 +21,60 @@ export class ContractProcessor {
     this.missingContracts = [];
   }
 
-  async processContract(contractData) {
+  getMissingContractsFilePath(chain, network) {
+    return path.join(process.cwd(), 'chains', chain, network, 'missing_contracts.json')
+  }
+
+  async processContract(contractData, chain, network, outputDir) {
     // Validate required fields
-    if (!contractData.address || !contractData.contractName || !contractData.source) {
+    if (!contractData.address || !contractData.contractName || !contractData.filePath) {
       throw new Error('Missing required contract fields');
     }
 
-    // Format filename consistently
-    const filename = `${contractData.address.toLowerCase()}_${contractData.contractName}.sol`;
-
-    // Ensure source code has SPDX identifier
-    let source = contractData.source;
-    if (!source.includes('SPDX-License-Identifier')) {
-      source = '// SPDX-License-Identifier: UNLICENSED\n' + source;
-    }
-
     try {
-      // Create input for solc
-      const input = {
-        language: 'Solidity',
-        sources: {
-          [filename]: {
-            content: source
-          }
-        },
-        settings: {
-          outputSelection: {
-            '*': {
-              '*': ['abi', 'evm.bytecode', 'evm.deployedBytecode', 'metadata']
+      const missingContracts = JSON.parse(await fs.readFile(missingContractsFile, 'utf-8'));
+      for (const contract of missingContracts) {
+        const { address, contractName, filePath } = contract;
+
+
+        const config = new Config();
+        const chainConfig = await config.load(chainName);
+
+        const missingContractsFile = path.join(chainConfig.repo_path, "missing_contracts.json");
+        const outputDir = path.join(chainConfig.repo_path, "output");
+
+        console.log(`Processing contract: ${contratName} (${address})`);
+
+        // Reading the source code from the file
+        const sourceCode = await fs.readfile(filePath, 'utf-8');
+
+        // Create input for solc
+        const input = {
+          language: 'Solidity',
+          sources: {
+            [filename]: {
+              content: source
             }
           },
-          optimizer: {
-            enable: true,
-            runs: 200
+          settings: {
+            outputSelection: {
+              '*': {
+                '*': ['abi', 'evm.bytecode', 'evm.deployedBytecode', 'metadata']
+              }
+            },
+            optimizer: {
+              enable: true,
+              runs: 200
+            }
           }
         }
       };
 
+      // Ensure source code has SPDX identifier
+      let source = contractData.source;
+      if (!source.includes('SPDX-License-Identifier')) {
+        source = '// SPDX-License-Identifier: UNLICENSED\n' + source;
+      }
       // Format and validate using solc
       const output = JSON.parse(solc.compile(JSON.stringify(input)));
 
@@ -392,41 +409,6 @@ export class ContractProcessor {
     }
   }
 
-  async prepareContractData(contract) {
-    // Extract compiler version
-    const compilerVersion = await this.extractCompilerVersion(contract.source);
-    if (!compilerVersion) {
-      //using the default compiler version if none is found
-      compilerVersion = "0.8.10";
-    }
-
-    // Generate metadata
-    const metadata = {
-      language: 'Solidity',
-      compiler: {
-        version: compilerVersion
-      },
-      sources: {
-        [contract.filename]: {
-          content: contract.source
-        }
-      },
-      settings: {
-        optimizer: {
-          enabled: true,
-          runs: 200
-        }
-      }
-    };
-
-    return {
-      address: contract.address,
-      filename: contract.filename,
-      source: contract.source,
-      compilerVersion,
-      metadata
-    };
-  }
 
   async saveProgress() {
     try {
