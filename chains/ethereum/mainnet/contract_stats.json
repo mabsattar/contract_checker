@@ -1,1 +1,10 @@
-[]
+{
+  "total": 0,
+  "processed": 1601,
+  "missing": 1081,
+  "matching": 520,
+  "errors": 0,
+  "startTime": "2024-11-22T15:00:44.227Z",
+  "lastProcessed": "00ff71ed73d37b00839244e176a095727ad0acf7_ASTARIA.sol",
+  "lastVerified": false
+}
