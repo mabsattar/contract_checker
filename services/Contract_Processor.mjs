@@ -48,14 +48,23 @@ export class ContractProcessor {
         settings: {
           outputSelection: {
             '*': {
-              '*': ['metadata', 'abi', 'devdoc', 'userdoc']
+              '*': ['abi', 'evm.bytecode', 'evm.deployedBytecode', 'metadata']
             }
+          },
+          optimizer: {
+            enable: true,
+            runs: 200
           }
         }
       };
 
       // Format and validate using solc
       const output = JSON.parse(solc.compile(JSON.stringify(input)));
+
+      // Extract contract details
+      const contractKey = Object.keys(output.contracts[filename])[0];
+      const contract = output.contracts[filename][contractKey];
+
 
       // Check for errors
       if (output.errors) {
@@ -166,49 +175,6 @@ export class ContractProcessor {
     }
   }
 
-
-  async submitContract(contractData) {
-    try {
-      if (!contractData || !contractData.address || !contractData.source) {
-        logger.warn(`Invalid contract data for submission: ${contractData?.address}`);
-        return { success: false, error: 'Invalid contract data' };
-      }
-
-      // Transform the contract data if it hasn't been transformed yet
-      const transformedData = contractData.compiler ?
-        contractData :
-        await this.transformContract(contractData);
-
-      // Add debug logging
-      logger.debug(`Submitting contract ${transformedData.address} with data:`, {
-        compiler: transformedData.compiler,
-        version: transformedData.compilerVersion,
-        hasSource: !!transformedData.source
-      });
-
-      const response = await this.sourcifyApi.submitContract(transformedData);
-
-      // Add response logging
-      logger.debug(`Sourcify API response for ${transformedData.address}:`, response);
-
-      return {
-        success: response,
-        error: response ? null : 'Submission failed'
-      };
-    } catch (error) {
-      // Enhanced error logging
-      logger.error(`Error submitting contract ${contractData?.address}:`, {
-        error: error.message,
-        response: error.response?.data,
-        status: error.response?.status
-      });
-      return {
-        success: false,
-        error: error.message,
-        details: error.response?.data
-      };
-    }
-  }
 
   async processContractFolder(folderPath, cache) {
     const contractFiles = await fs.readdir(folderPath);
