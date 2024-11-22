@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { logger } from '../utils/logger.mjs';
-import { SubmittedContractsManager } from './submitted-contracts-manager.mjs';
+import { SubmittedContractsManager } from './Submitted_Contracts_Manager.mjs';
 
 export class ContractFinder {
   constructor(sourcifyApi, config, cacheManager) {
@@ -213,13 +213,14 @@ export class ContractFinder {
 
   async addMissingContract(address, contractName, filename, folderPath) {
     const filePath = path.join(folderPath, filename);
-    const source = await fs.readFile(filePath, 'utf8');
+    
+    await fs.readFile(filePath, 'utf8');
 
     this.missingContracts.push({
       address,
       contractName,
       filename,
-      source
+      filePath
     });
 
     this.stats.missing++;

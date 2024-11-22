@@ -5,13 +5,13 @@ import fs from 'fs/promises';
 import { keccak256 } from 'ethereum-cryptography/keccak';
 import { utf8ToBytes } from 'ethereum-cryptography/utils';
 
-export class sourcifyApi {
+export class SourcifyAPI {
   constructor(config) {
     this.chainId = config.chain_id;
     this.apiUrl = config.sourcify_api;
     this.timeout = config.sourcify.timeout;
 
-    logger.info('SourcifyAPI initialized with:', {
+    logger.info('sourcifyApi initialized with:', {
       chainId: this.chainId,
       apiUrl: this.apiUrl
     });
