@@ -12,7 +12,7 @@ export class Config {
     const __dirname = dirname(__filename);
 
     this.BASE_PATH = __dirname;
-    this.CONFIG_FILE = path.join(this.BASE_PATH, "paths.yaml");
+    this.CONFIG_FILE = path.resolve(this.BASE_PATH, "paths.yaml");
     dotenv.config();
   }
   async listAvailableChains() {
@@ -68,7 +68,7 @@ export class Config {
 
   _replaceEnvVars(config) {
     const replaceEnvInString = (str) => {
-      return str.replace(/\${([^}]+)}/g, (_, envVar) => {
+      const replaced = str.replace(/\${([^}]+)}/g, (_, envVar) => {
         const value = process.env[envVar];
         if (!value) {
           logger.warn(`Environment variable ${envVar} not found`);
@@ -76,6 +76,8 @@ export class Config {
         }
         return value;
       });
+
+      return path.normalize(replaced); // normalize the resulting path
     };
 
     // Deep clone and replace env vars
