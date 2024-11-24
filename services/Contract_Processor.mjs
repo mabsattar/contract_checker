@@ -39,7 +39,7 @@ export class ContractProcessor {
     }
   }
 
-  async processContract(contractData) {
+  async processContract(contractData, chain, network) {
     // Validate required fields
     if (!contractData.address || !contractData.contractName || !contractData.filePath || !contractData.fileName) {
       throw new Error('Missing required contract fields');
@@ -48,10 +48,13 @@ export class ContractProcessor {
     try {
       const missingContracts = await this.readMissingContracts(chain, network);
 
+      //collecting processed contract results here
+      const processedContracts = [];
+
       for (const contract of missingContracts) {
         const { address, contractName, filePath, fileName } = contract;
 
-        const config = new config();
+        const config = new Config();
         const chainConfig = await config.load(chainName);
 
         const missingContractsFile = path.join(chainConfig.repo_path, "missing_contracts.json");
@@ -60,7 +63,10 @@ export class ContractProcessor {
         console.log(`Processing contract: ${fileName}`);
 
         // Reading the source code from the file
-        const sourceCode = await fs.readfile(filePath, 'utf-8');
+        const fullPath = path.join(baseDirectory, fileName);
+        console.log("Reading contract source from:", filePath);
+
+        const sourceCode = await fs.readFile(filePath, 'utf-8');
 
         // Create input for solc
         const input = {
@@ -84,7 +90,7 @@ export class ContractProcessor {
         }
 
         // Ensure source code has SPDX identifier
-        let source = contract.source;
+        sourceCode = contract.source;
         if (!source.includes('SPDX-License-Identifier')) {
           source = '// SPDX-License-Identifier: UNLICENSED\n' + source;
         }
@@ -99,19 +105,21 @@ export class ContractProcessor {
         if (output.errors) {
           const errors = output.errors.filter(error => error.severity === 'error');
           if (errors.length > 0) {
-            logger.error(`Compilation errors in ${filename}: `, errors);
+            logger.error(`Compilation errors in ${fileName}: `, errors);
             throw new Error('Contract compilation failed');
           }
         }
 
-        return {
+        //adding processed contracts to the results array
+        processedContracts.push({
           address: contractData.address.toLowerCase(),
           contractName: contractData.contractName,
-          filename: filename,
-          source: source,
+          filename: fileName,
+          source: sourceCode,
           compilerVersion: await this.extractCompilerVersion(source)
-        };
+        });
       }
+      return processedContracts;
     } catch (error) {
       logger.error(`Failed to process contract  ${error.message}`);
       throw error;
