@@ -4716,12 +4716,6 @@
     "filePath": "/home/absystem/opensource/smart-contract-sanctuary-ethereum/contracts/mainnet/00/00E8BB09268403AcB7D22f64dF40d71072829a39_TokenTimelock.sol"
   },
   {
-    "address": "0x00E8d71bE1edE7823319dCD8d80A406772D8BB08",
-    "contractName": "H1VE6",
-    "filename": "00E8d71bE1edE7823319dCD8d80A406772D8BB08_H1VE6.sol",
-    "filePath": "/home/absystem/opensource/smart-contract-sanctuary-ethereum/contracts/mainnet/00/00E8d71bE1edE7823319dCD8d80A406772D8BB08_H1VE6.sol"
-  },
-  {
     "address": "0x00E9303e0fA754751C417E33FdBC031F0cc01360",
     "contractName": "TokenPool",
     "filename": "00E9303e0fA754751C417E33FdBC031F0cc01360_TokenPool.sol",
@@ -4888,6 +4882,12 @@
     "contractName": "BNIToken",
     "filename": "00a4A3e9279678CA1b564Bca66396bb5801192dA_BNIToken.sol",
     "filePath": "/home/absystem/opensource/smart-contract-sanctuary-ethereum/contracts/mainnet/00/00a4A3e9279678CA1b564Bca66396bb5801192dA_BNIToken.sol"
+  },
+  {
+    "address": "0x00E8d71bE1edE7823319dCD8d80A406772D8BB08",
+    "contractName": "H1VE6",
+    "filename": "00E8d71bE1edE7823319dCD8d80A406772D8BB08_H1VE6.sol",
+    "filePath": "/home/absystem/opensource/smart-contract-sanctuary-ethereum/contracts/mainnet/00/00E8d71bE1edE7823319dCD8d80A406772D8BB08_H1VE6.sol"
   },
   {
     "address": "0x00a4EA2DF2Aeaf7B0C3Dc865dEF00197361aF527",

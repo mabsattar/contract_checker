@@ -2,6 +2,9 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { logger } from '../utils/logger.mjs';
 import solc from 'solc';
+import { keccak256 } from 'ethereum-cryptography/keccak';
+import { utf8ToBytes } from 'ethereum-cryptography/utils';
+
 
 logger.info("Starting contract verification process");
 
@@ -54,7 +57,7 @@ export class ContractProcessor {
       for (const contract of missingContracts) {
         const { address, contractName, filePath, fileName } = contract;
 
-        const config = new Config();
+        const config = new config();
         const chainConfig = await config.load(chainName);
 
         const missingContractsFile = path.join(chainConfig.repo_path, "missing_contracts.json");
@@ -68,25 +71,77 @@ export class ContractProcessor {
 
         const sourceCode = await fs.readFile(filePath, 'utf-8');
 
+          // Extract pragma solidity version
+          const pragmaMatch = sourceCode.match(/pragma solidity (\^?\d+\.\d+\.\d+|[\^\~]\d+\.\d+)/);
+          const compilerVersion = pragmaMatch ? pragmaMatch[1] : '0.8.17';
+      
+          // Extract SPDX license
+          const licenseMatch = source.match(/SPDX-License-Identifier: (.*)/);
+          const license = licenseMatch ? licenseMatch[1].trim() : 'UNLICENSED';
+                  
+            // Get chain-specific EVM version
+          const evmVersionMap = {
+              1: 'london',    // Ethereum Mainnet
+              137: 'paris',   // Polygon
+              56: 'london',   // BSC
+            };
+        
+          const evmVersion = evmVersionMap[this.chainId] || 'london';
+        
+
         // Create input for solc
         const input = {
           language: 'Solidity',
           sources: {
-            [filePath]: {
-              content: source
+            [contract.filePath]: {
+              content: contract.sourceCode,
+              keccak256: `0x${Buffer.from(keccak256(utf8ToBytes(contract.source))).toString('hex')}`,
+              license: license
             }
           },
+          version: 1,          
           settings: {
+            optimizer: {
+              enable: true,
+              runs: 200
+            },
             outputSelection: {
               '*': {
                 '*': ['abi', 'evm.bytecode', 'evm.deployedBytecode', 'metadata']
               }
             },
-            optimizer: {
-              enable: true,
-              runs: 200
-            }
-          }
+            output: {
+              abi: [], // Empty ABI since we don't have it
+              devdoc: {
+                kind: "dev",
+                methods: {},
+                version: 1
+              },
+              userdoc: {
+                kind: "user",
+                methods: {},
+                version: 1
+              }
+            },
+
+            compilationTarget: {
+              [contract.fileName]: contract.contractName,
+            },
+          },
+          compiler: {
+            version: compilerSettings.compilerVersion,
+          },
+          evmVersion: evmVersion,
+          libraries: {},
+          metadata: {
+            bytecodeHash: "ipfs",
+            useLiteralContent: true
+          },
+          optimizer: {
+            enabled: true,
+            runs: 200
+          },
+          remappings: []
         }
 
         // Ensure source code has SPDX identifier
@@ -140,7 +195,6 @@ export class ContractProcessor {
       }
     }
   }
-
 
   isValidContract(source) {
     const lowerCaseSource = source.toLowerCase();

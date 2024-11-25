@@ -2,8 +2,6 @@ import axios from 'axios';
 import { logger } from '../utils/logger.mjs';
 import path from 'path';
 import fs from 'fs/promises';
-import { keccak256 } from 'ethereum-cryptography/keccak';
-import { utf8ToBytes } from 'ethereum-cryptography/utils';
 
 export class SourcifyAPI {
   constructor(config) {
@@ -111,83 +109,6 @@ export class SourcifyAPI {
     }
   }
 
-  _extractCompilerSettings(source) {
-    // Extract pragma solidity version
-    const pragmaMatch = source.match(/pragma solidity (\^?\d+\.\d+\.\d+|[\^\~]\d+\.\d+)/);
-    const compilerVersion = pragmaMatch ? pragmaMatch[1] : '0.8.17';
-
-    // Extract SPDX license
-    const licenseMatch = source.match(/SPDX-License-Identifier: (.*)/);
-    const license = licenseMatch ? licenseMatch[1].trim() : 'UNLICENSED';
-
-    return {
-      compilerVersion,
-      license
-    };
-  }
-
-  _createMetadata(contract) {
-    // Use existing metadata if present
-    if (contract.metadata) {
-      return contract.metadata;
-    }
-
-    // Extract settings from source
-    const { compilerVersion, license } = this._extractCompilerSettings(contract.source);
-
-    // Get chain-specific EVM version
-    const evmVersionMap = {
-      1: 'london',    // Ethereum Mainnet
-      137: 'paris',   // Polygon
-      56: 'london',   // BSC
-    };
-
-    const evmVersion = evmVersionMap[this.chainId] || 'london';
-
-    return {
-      compiler: {
-        version: compilerVersion,
-      },
-      language: "Solidity",
-      output: {
-        abi: [], // Empty ABI since we don't have it
-        devdoc: {
-          kind: "dev",
-          methods: {},
-          version: 1
-        },
-        userdoc: {
-          kind: "user",
-          methods: {},
-          version: 1
-        }
-      },
-      settings: {
-        compilationTarget: {
-          [contract.filename]: contract.contractName
-        },
-        evmVersion: evmVersion,
-        libraries: {},
-        metadata: {
-          bytecodeHash: "ipfs",
-          useLiteralContent: true
-        },
-        optimizer: {
-          enabled: true,
-          runs: 200
-        },
-        remappings: []
-      },
-      sources: {
-        [contract.filename]: {
-          content: contract.source,
-          keccak256: `0x${Buffer.from(keccak256(utf8ToBytes(contract.source))).toString('hex')}`,
-          license: license
-        }
-      },
-      version: 1
-    };
-  }
 
   _handleApiError(error, address) {
     if (error.response) {
@@ -231,81 +152,6 @@ export class SourcifyAPI {
     };
   }
 
-  async submitMissingContracts() {
-    const missingContractsPath = path.join(this.chainOutputDir, 'missing_contracts.json');
-    const startTime = Date.now();
-
-    try {
-      const missingContracts = JSON.parse(await fs.readFile(missingContractsPath, 'utf8'));
-      const totalContracts = missingContracts.length;
-
-      logger.info(`Starting verification of ${totalContracts} contracts`);
-
-      // Process in batches of 5 contracts concurrently
-      const batchSize = 5;
-      let successCount = 0;
-      let failureCount = 0;
-
-      for (let i = 0; i < missingContracts.length; i += batchSize) {
-        const batch = missingContracts.slice(i, i + batchSize);
-        const batchPromises = batch.map(async (contract) => {
-          try {
-            const contractData = {
-              address: contract.address,
-              contractName: contract.contractName,
-              source: this._validateSourceCode(contract.source),
-              filename: contract.filename
-            };
-
-            logger.info(`🔄 Submitting contract ${contract.address}`);
-            const result = await this.submitContract(contractData);
-
-            if (result.success) {
-              successCount++;
-              logger.info(`✅ Successfully verified ${contract.address}`);
-              return true;
-            } else {
-              failureCount++;
-              logger.error(`❌ Failed to verify ${contract.address}: ${result.error}`);
-              return false;
-            }
-          } catch (error) {
-            failureCount++;
-            logger.error(`❌ Error processing ${contract.address}:`, error);
-            return false;
-          }
-        });
-
-        await Promise.all(batchPromises);
-
-        // Progress update after each batch
-        const processed = i + batchSize;
-        const progress = Math.min((processed / totalContracts * 100), 100).toFixed(1);
-        const timeElapsed = Math.round((Date.now() - startTime) / 1000 / 60);
-
-        logger.info(`
-Progress: ${progress}% (${processed}/${totalContracts})
-✅ Success: ${successCount} | ❌ Failed: ${failureCount}
-⏱️ Time Elapsed: ${timeElapsed} minutes
-                `);
-
-        // Small delay between batches to prevent rate limiting
-        await new Promise(resolve => setTimeout(resolve, 500));
-      }
-
-      logger.info(`
-=== Verification Complete ===
-Total Contracts: ${totalContracts}
-✅ Successful: ${successCount}
-❌ Failed: ${failureCount}
-⏱️ Total Time: ${Math.round((Date.now() - startTime) / 1000 / 60)} minutes
-            `);
-
-    } catch (error) {
-      logger.error('Error processing contracts:', error);
-      throw error;
-    }
-  }
 
   async saveMetadata(contract, metadata) {
     const metadataPath = path.join(
