@@ -9,7 +9,7 @@ import { utf8ToBytes } from 'ethereum-cryptography/utils';
 logger.info("Starting contract verification process");
 
 export class ContractProcessor {
-  constructor(sourcifyApi, cacheManager, config) {
+  constructor(sourcifyApi, cacheManager, config, ContractFinder) {
     this.sourcifyApi = sourcifyApi;
     this.cacheManager = cacheManager;
     this.config = config;
@@ -71,23 +71,23 @@ export class ContractProcessor {
 
         const sourceCode = await fs.readFile(filePath, 'utf-8');
 
-          // Extract pragma solidity version
-          const pragmaMatch = sourceCode.match(/pragma solidity (\^?\d+\.\d+\.\d+|[\^\~]\d+\.\d+)/);
-          const compilerVersion = pragmaMatch ? pragmaMatch[1] : '0.8.17';
-      
-          // Extract SPDX license
-          const licenseMatch = source.match(/SPDX-License-Identifier: (.*)/);
-          const license = licenseMatch ? licenseMatch[1].trim() : 'UNLICENSED';
-                  
-            // Get chain-specific EVM version
-          const evmVersionMap = {
-              1: 'london',    // Ethereum Mainnet
-              137: 'paris',   // Polygon
-              56: 'london',   // BSC
-            };
-        
-          const evmVersion = evmVersionMap[this.chainId] || 'london';
-        
+        // Extract pragma solidity version
+        const pragmaMatch = sourceCode.match(/pragma solidity (\^?\d+\.\d+\.\d+|[\^\~]\d+\.\d+)/);
+        const compilerVersion = pragmaMatch ? pragmaMatch[1] : '0.8.17';
+
+        // Extract SPDX license
+        const licenseMatch = source.match(/SPDX-License-Identifier: (.*)/);
+        const license = licenseMatch ? licenseMatch[1].trim() : 'UNLICENSED';
+
+        // Get chain-specific EVM version
+        const evmVersionMap = {
+          1: 'london',    // Ethereum Mainnet
+          137: 'paris',   // Polygon
+          56: 'london',   // BSC
+        };
+
+        const evmVersion = evmVersionMap[this.chainId] || 'london';
+
 
         // Create input for solc
         const input = {
@@ -99,7 +99,7 @@ export class ContractProcessor {
               license: license
             }
           },
-          version: 1,          
+          version: 1,
           settings: {
             optimizer: {
               enable: true,

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { logger } from '../utils/logger.mjs';
 import path from 'path';
 import fs from 'fs/promises';
+import { ContractProcessor } from './Contract_Processor.mjs';
 
 export class SourcifyAPI {
   constructor(config) {
@@ -22,13 +23,6 @@ export class SourcifyAPI {
       lastError: null,
       lastSuccess: null,
       matchingContracts: []
-    };
-
-    this.stats = {
-      ...this.stats,
-      fullMatches: 0,
-      partialMatches: 0,
-      failed: 0
     };
   }
 
