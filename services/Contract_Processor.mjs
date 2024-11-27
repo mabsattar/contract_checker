@@ -9,7 +9,7 @@ import { utf8ToBytes } from 'ethereum-cryptography/utils';
 logger.info("Starting contract verification process");
 
 export class ContractProcessor {
-  constructor(sourcifyApi, cacheManager, config, ContractFinder) {
+  constructor(sourcifyApi, cacheManager, config) {
     this.sourcifyApi = sourcifyApi;
     this.cacheManager = cacheManager;
     this.config = config;
@@ -178,6 +178,16 @@ export class ContractProcessor {
     } catch (error) {
       logger.error(`Failed to process contract  ${error.message}`);
       throw error;
+    }
+  }
+
+  async saveProcessedcontract(processedContracts, chain, network){
+    const outputPath = path.join(proces.cwd(), 'chains', chain, network, 'formatted_contracts.json');
+    try {
+      await fs.writeFile(outputPath, JSON.stringify(processedContracts, null, 2));
+      logger.info(`{rpcessed contracts saved to ${outputPath}`);
+    } catch (error) {
+      logger.error(`Error saving processec contracts: ${error.message}`);
     }
   }
 

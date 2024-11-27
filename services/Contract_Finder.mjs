@@ -213,7 +213,7 @@ export class ContractFinder {
 
   async addMissingContract(address, contractName, filename, folderPath) {
     const filePath = path.join(folderPath, filename);
-    
+
     await fs.readFile(filePath, 'utf8');
 
     this.missingContracts.push({
