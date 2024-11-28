@@ -58,7 +58,7 @@ export class ContractProcessor {
         const { address, contractName, filePath, fileName } = contract;
 
         const config = new config();
-        const chainConfig = await config.load(chainName);
+        const chainConfig = await this.config.load(chainName);
 
         const missingContractsFile = path.join(chainConfig.repo_path, "missing_contracts.json");
         const outputDir = path.join(chainConfig.repo_path, "output");
@@ -76,7 +76,7 @@ export class ContractProcessor {
         const compilerVersion = pragmaMatch ? pragmaMatch[1] : '0.8.17';
 
         // Extract SPDX license
-        const licenseMatch = source.match(/SPDX-License-Identifier: (.*)/);
+        const licenseMatch = contractData.source.match(/SPDX-License-Identifier: (.*)/);
         const license = licenseMatch ? licenseMatch[1].trim() : 'UNLICENSED';
 
         // Get chain-specific EVM version
@@ -93,8 +93,8 @@ export class ContractProcessor {
         const input = {
           language: 'Solidity',
           sources: {
-            [contract.filePath]: {
-              content: contract.sourceCode,
+            [contractData.filePath]: {
+              content: contractData.sourceCode,
               keccak256: `0x${Buffer.from(keccak256(utf8ToBytes(contract.source))).toString('hex')}`,
               license: license
             }
@@ -189,7 +189,7 @@ export class ContractProcessor {
   }
 
   validateContract(contractData) {
-    const required = ['address', 'source', 'compilerVersion'];
+    const required = ['address', 'source', 'compilerVersion', 'filePath', 'fileName'];
     for (const field of required) {
       if (!contractData[field]) {
         throw new Error(`Missing required field: ${field}`);
