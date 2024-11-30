@@ -2,7 +2,7 @@ import axios from 'axios';
 import { logger } from '../utils/logger.mjs';
 import path from 'path';
 import fs from 'fs/promises';
-import { ContractProcessor } from './Contract_Processor.mjs';
+import FormData from 'form-data';
 
 export class SourcifyAPI {
   constructor(config) {
@@ -25,6 +25,28 @@ export class SourcifyAPI {
       matchingContracts: []
     };
   }
+
+   /**
+   * Validates the contract data.
+   * @param {Object} contract - Contract object to validate.
+   * @returns {boolean} - True if valid, false otherwise.
+   */
+   _validateContractData(contract) {
+    return (
+      contract &&
+      contract.address &&
+      contract.contractName &&
+      contract.compilerVersion &&
+      contract.source
+    );
+  }
+
+  /**
+   * Handles API errors.
+   * @param {Error} error - Error object.
+   * @param {string} address - Contract address.
+   * @returns {boolean} - Always returns false to indicate failure.
+   */
 
   _isValidAddress(address) {
     // Check if address is a string and matches Ethereum address format
@@ -127,18 +149,6 @@ export class SourcifyAPI {
     return false;
   }
 
-  _validateContractData(contract) {
-    // Validate required fields for submission
-    const required = ['address', 'filename', 'source'];
-    return required.every(field => {
-      const hasField = !!contract[field];
-      if (!hasField) {
-        logger.warn(`Missing required field ${field} in contract data`);
-      }
-      return hasField;
-    });
-  }
-
   getStats() {
     return {
       ...this.verificationStats,
@@ -174,4 +184,64 @@ export class SourcifyAPI {
     }
     return source;
   }
+
+  async contractSubmission(contract) {
+    try {
+      // Validate contract data
+      if (!this._validateContractData(contract)) {
+        throw new Error(`Invalid contract data for address: ${contract.address}`);
+      }
+  
+      // Prepare submission payload
+      const payload = new FormData();
+      payload.append('address', contract.address);
+      payload.append('chain', this.chainId.toString());
+      payload.append('contractName', contract.contractName);
+      payload.append('compilerVersion', contract.compilerVersion);
+      payload.append('source', contract.source);
+  
+      // Handle additional metadata (optional)
+      if (contract.metadata) {
+        payload.append('metadata', JSON.stringify(contract.metadata));
+      }
+  
+      // Define endpoint
+      const submissionUrl = `${this.apiUrl}/input-files`;
+  
+      // Submit to Sourcify
+      const response = await axios.post(submissionUrl, payload, {
+        headers: {
+          ...payload.getHeaders(),
+        },
+        timeout: this.timeout,
+      });
+  
+      if (response.status === 200 || response.status === 201) {
+        // Submission successful
+        logger.info(`Successfully submitted contract: ${contract.address}`);
+        this.verificationStats.successful++;
+        this.verificationStats.matchingContracts.push({
+          address: contract.address,
+          status: 'submitted',
+          timestamp: new Date().toISOString(),
+        });
+  
+        // Optionally save metadata
+        if (response.data.metadata) {
+          await this.saveMetadata(contract, response.data.metadata);
+        }
+  
+        return true;
+      } else {
+        // Handle unexpected responses
+        logger.warn(`Unexpected response from Sourcify for ${contract.address}:`, response.statusText);
+        this.verificationStats.failed++;
+        return false;
+      }
+    } catch (error) {
+      return this._handleApiError(error, contract.address);
+    }
+  }
 }
+
+
