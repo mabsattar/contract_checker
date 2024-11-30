@@ -45,7 +45,7 @@ export class ContractProcessor {
   }
 
   async processMissingContracts(chain, network) {
-      try {
+    try {
       const missingContracts = await this.readMissingContracts(chain, network);
 
       if (missingContracts.length === 0) {
@@ -160,8 +160,8 @@ export class ContractProcessor {
         //adding processed contracts to the results array
         processedContracts.push({
           address: contract.address.toLowerCase(),
-          contractName: contract.contractName,
-          filename: fileName,
+          contractname: contract.contractName,
+          filename: contract.fileName,
           source: sourceCode,
           compilerVersion: await this.extractCompilerVersion(sourceCode)
         });
@@ -181,7 +181,7 @@ export class ContractProcessor {
   }
 
   validateContract(contract) {
-    const required = ['address', 'source', 'compilerVersion', 'filePath', 'fileName'];
+    const required = ['address', 'sourceCode', 'compilerVersion', 'filePath', 'fileName'];
     for (const field of required) {
       if (!contract[field]) {
         throw new Error(`Missing required field: ${field}`);
@@ -217,10 +217,10 @@ export class ContractProcessor {
   }
 
 
-  async saveProcessedcontract(processedContracts, chain, network){
+  async saveProcessedcontracts(processMissingContracts, chain, network) {
     const outputPath = path.join(process.cwd(), 'chains', chain, network, 'formatted_contracts.json');
     try {
-      await fs.writeFile(outputPath, JSON.stringify(processedContracts, null, 2));
+      await fs.writeFile(outputPath, JSON.stringify(processMissingContracts, null, 2));
       logger.info(`{rpcessed contracts saved to ${outputPath}`);
     } catch (error) {
       logger.error(`Error saving processec contracts: ${error.message}`);
