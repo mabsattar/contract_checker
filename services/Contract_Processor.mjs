@@ -22,6 +22,8 @@ export class ContractProcessor {
     };
 
     this.missingContracts = [];
+
+    this.processedContracts = [];
   }
 
   getMissingContractsFilePath(chain, network) {
@@ -51,17 +53,11 @@ export class ContractProcessor {
     try {
       const missingContracts = await this.readMissingContracts(chain, network);
 
-      //collecting processed contract results here
-      const processedContracts = [];
-
       for (const contract of missingContracts) {
         const { address, contractName, filePath, fileName } = contract;
 
         const config = new config();
         const chainConfig = await this.config.load(chainName);
-
-        const missingContractsFile = path.join(chainConfig.repo_path, "missing_contracts.json");
-        const outputDir = path.join(chainConfig.repo_path, "output");
 
         console.log(`Processing contract: ${fileName}`);
 
@@ -69,15 +65,7 @@ export class ContractProcessor {
         const fullPath = path.join(baseDirectory, fileName);
         console.log("Reading contract source from:", filePath);
 
-        const sourceCode = await fs.readFile(filePath, 'utf-8');
-
-        // Extract pragma solidity version
-        const pragmaMatch = sourceCode.match(/pragma solidity (\^?\d+\.\d+\.\d+|[\^\~]\d+\.\d+)/);
-        const compilerVersion = pragmaMatch ? pragmaMatch[1] : '0.8.17';
-
-        // Extract SPDX license
-        const licenseMatch = contractData.source.match(/SPDX-License-Identifier: (.*)/);
-        const license = licenseMatch ? licenseMatch[1].trim() : 'UNLICENSED';
+        const sourceCode = await fs.readFile(fullPath, 'utf-8');
 
         // Get chain-specific EVM version
         const evmVersionMap = {
@@ -88,13 +76,12 @@ export class ContractProcessor {
 
         const evmVersion = evmVersionMap[this.chainId] || 'london';
 
-
         // Create input for solc
         const input = {
           language: 'Solidity',
           sources: {
-            [contractData.filePath]: {
-              content: contractData.sourceCode,
+            [contract.filePath]: {
+              content: contract.sourceCode,
               keccak256: `0x${Buffer.from(keccak256(utf8ToBytes(contract.source))).toString('hex')}`,
               license: license
             }
@@ -167,11 +154,11 @@ export class ContractProcessor {
 
         //adding processed contracts to the results array
         processedContracts.push({
-          address: contractData.address.toLowerCase(),
-          contractName: contractData.contractName,
+          address: contract.address.toLowerCase(),
+          contractName: contract.contractName,
           filename: fileName,
           source: sourceCode,
-          compilerVersion: await this.extractCompilerVersion(source)
+          compilerVersion: await this.extractCompilerVersion(sourceCode)
         });
       }
       return processedContracts;
@@ -188,17 +175,17 @@ export class ContractProcessor {
     return match ? match[1].replace('^', '') : null;
   }
 
-  validateContract(contractData) {
+  validateContract(contract) {
     const required = ['address', 'source', 'compilerVersion', 'filePath', 'fileName'];
     for (const field of required) {
-      if (!contractData[field]) {
+      if (!contract[field]) {
         throw new Error(`Missing required field: ${field}`);
       }
     }
   }
 
-  isValidContract(source) {
-    const lowerCaseSource = source.toLowerCase();
+  isValidContract(sourceCode) {
+    const lowerCaseSource = sourceCode.toLowerCase();
     // Check for Solidity pragma
     const pragmaMatch = lowerCaseSource.match(/pragma\s+solidity\s+(\d+(?:\.\d+)*)/);
     if (!pragmaMatch) {
@@ -254,42 +241,6 @@ export class ContractProcessor {
     }
   }
 
-  extractCompilerVersion(source) {
-    if (!source) {
-      logger.warn('No source code provided for compiler version extraction');
-      return null;
-    }
-
-    try {
-      // Look for pragma solidity statement in source
-      const pragmaRegex = /pragma solidity (?:\^|>=|~)?(0\.[0-9]+\.[0-9]+)/;
-      const pragmaMatch = source.match(pragmaRegex);
-
-      if (pragmaMatch) {
-        return pragmaMatch[1];
-      }
-
-      logger.warn('No pragma version found in source code');
-      return null;
-    } catch (error) {
-      logger.error('Error extracting compiler version:', error);
-      return null;
-    }
-  }
-
-  extractPragmaVersion(contract) {
-    if (!contract || !contract.source) {
-      logger.warn(`Invalid contract data for address ${contract?.address}`);
-      return null;
-    }
-
-    try {
-      return this.extractCompilerVersion(contract.source) || "0.8.10";
-    } catch (error) {
-      logger.error(`Error extracting pragma version for ${contract?.address}: ${error.message}`);
-      return "0.8.10"; // Default fallback
-    }
-  }
 
   async saveVerificationProgress() {
     const progressPath = path.join(this.chainOutputDir, 'verification_progress.json');
