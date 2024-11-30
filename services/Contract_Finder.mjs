@@ -149,24 +149,24 @@ export class ContractFinder {
     }
   }
 
-  async processContract(address, contractName, filename, filepath) {
+  async processContract(address, contractName, fileName, filePath) {
     try {
       this.stats.processed++;
-      this.stats.lastProcessed = filename;
+      this.stats.lastProcessed = fileName;
 
       // Check cache first
       const cachedResult = await this.checkCache(address);
       if (cachedResult !== null) {
-        logger.debug(`Cache hit for ${filename}: ${cachedResult ? 'verified' : 'missing'}`);
+        logger.debug(`Cache hit for ${fileName}: ${cachedResult ? 'verified' : 'missing'}`);
         if (!cachedResult) {
-          await this.addMissingContract(address, contractName, filename, filepath);
+          await this.addMissingContract(address, contractName, fileName, filePath);
         } else {
-          await this.addMatchingContract(address, contractName, filename, filepath);
+          await this.addMatchingContract(address, contractName, fileName, filePath);
         }
         return;
       }
 
-      logger.debug(`Cache miss for ${filename}, checking Sourcify...`);
+      logger.debug(`Cache miss for ${fileName}, checking Sourcify...`);
 
       // If not in cache, check Sourcify
       const isVerified = await this.sourcifyApi.checkContract(address);
@@ -178,11 +178,11 @@ export class ContractFinder {
       }
 
       if (!isVerified) {
-        await this.addMissingContract(address, contractName, filename, filepath);
-        logger.info(`Found missing contract: ${filename}`);
+        await this.addMissingContract(address, contractName, fileName, filePath);
+        logger.info(`Found missing contract: ${fileName}`);
       } else {
-        await this.addMatchingContract(address, contractName, filename, filepath);
-        logger.debug(`Found matching contract: ${filename}`);
+        await this.addMatchingContract(address, contractName, fileName, filePath);
+        logger.debug(`Found matching contract: ${fileName}`);
       }
 
     } catch (error) {
@@ -211,30 +211,30 @@ export class ContractFinder {
     }
   }
 
-  async addMissingContract(address, contractName, filename, folderPath) {
-    const filePath = path.join(folderPath, filename);
+  async addMissingContract(address, contractName, fileName, folderPath) {
+    const filePath = path.join(folderPath, fileName);
 
     await fs.readFile(filePath, 'utf8');
 
     this.missingContracts.push({
       address,
       contractName,
-      filename,
+      fileName,
       filePath
     });
 
     this.stats.missing++;
   }
 
-  async addMatchingContract(address, contractName, filename, folderPath) {
-    const filePath = path.join(folderPath, filename);
+  async addMatchingContract(address, contractName, fileName, folderPath) {
+    const filePath = path.join(folderPath, fileName);
 
     await fs.readFile(filePath, 'utf8');
 
     this.matchingContracts.push({
       address,
       contractName,
-      filename,
+      fileName,
       verifiedAt: new Date().toISOString()
     });
 
@@ -356,9 +356,9 @@ export class ContractFinder {
   }
 
   // Add this method to check if we're parsing addresses correctly
-  extractAddressFromFilename(filename) {
+  extractAddressFromFilename(fileName) {
     // The address should be the part before the first underscore
-    const match = filename.match(/^(0x?[a-fA-F0-9]{40})_/);
+    const match = fileName.match(/^(0x?[a-fA-F0-9]{40})_/);
     if (!match) return null;
 
     // Ensure address is properly formatted with 0x prefix
