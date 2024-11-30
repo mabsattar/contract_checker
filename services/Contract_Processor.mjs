@@ -44,17 +44,22 @@ export class ContractProcessor {
     }
   }
 
-  async processContract(contractData, chain, network) {
-    // Validate required fields
-    if (!contractData.address || !contractData.contractName || !contractData.filePath || !contractData.fileName) {
-      throw new Error('Missing required contract fields');
-    }
-
-    try {
+  async processMissingContracts(chain, network) {
+      try {
       const missingContracts = await this.readMissingContracts(chain, network);
+
+      if (missingContracts.length === 0) {
+        logger.info("No missing contracts to process.");
+        return [];
+      }
 
       for (const contract of missingContracts) {
         const { address, contractName, filePath, fileName } = contract;
+
+        //validating required fields
+        if (!address || !contractName || !filePath || !fileName) {
+          throw new Error('missing required contract fields');
+        }
 
         const config = new config();
         const chainConfig = await this.config.load(chainName);
@@ -82,7 +87,7 @@ export class ContractProcessor {
           sources: {
             [contract.filePath]: {
               content: contract.sourceCode,
-              keccak256: `0x${Buffer.from(keccak256(utf8ToBytes(contract.source))).toString('hex')}`,
+              keccak256: `0x${Buffer.from(keccak256(utf8ToBytes(contract.sourceCode))).toString('hex')}`,
               license: license
             }
           },
@@ -140,8 +145,8 @@ export class ContractProcessor {
         const output = JSON.parse(solc.compile(JSON.stringify(input)));
 
         // Extract contract details
-        const contractKey = Object.keys(output.contracts[fileName])[0];
-        const contract = output.contracts[fileName][contractKey];
+        const contractKey = Object.keys(output.contract[fileName])[0];
+        const contract = output.contract[fileName][contractKey];
 
         // Check for errors
         if (output.errors) {
@@ -161,7 +166,7 @@ export class ContractProcessor {
           compilerVersion: await this.extractCompilerVersion(sourceCode)
         });
       }
-      return processedContracts;
+      return this.processMissingContracts;
     } catch (error) {
       logger.error(`Failed to process contract  ${error.message}`);
       throw error;
