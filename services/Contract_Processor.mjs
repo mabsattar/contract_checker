@@ -56,9 +56,8 @@ export class ContractProcessor {
 
   async processMissingContracts(chain, network, folder = null) {
     try {
-      const missingContracts = await this.readMissingContracts(chain, network);
+      const missingContracts = await this.readMissingContracts(chain, network, folder);
       const processedContracts = []; // Initialize array to store processed contracts
-
 
       if (missingContracts.length === 0) {
         logger.info("No missing contracts to process.");
@@ -68,24 +67,25 @@ export class ContractProcessor {
       for (const contractData of missingContracts) {
         const { address, contractName, filePath, fileName } = contractData;
 
-        //validating required fields
+        // Validating required fields
         if (!address || !contractName || !filePath || !fileName) {
           logger.warn(`Skipping contract with missing required fields: ${address}`);
+          continue;
         }
 
         logger.info(`Processing contract: ${fileName}`);
         
         try {
-        // Reading the source code from the file
-        console.log("Reading contract source from:", filePath);
-        const sourceCode = await fs.readFile(filePath, 'utf-8');
+          // Reading the source code from the file
+          logger.info("Reading contract source from:", filePath);
+          const sourceCode = await fs.readFile(filePath, 'utf-8');
 
-        // Get chain-specific EVM version
-        const evmVersionMap = {
-          1: 'london',    // Ethereum Mainnet
-          137: 'paris',   // Polygon
-          56: 'london',   // BSC
-        };
+          // Get chain-specific EVM version
+          const evmVersionMap = {
+            1: 'london',    // Ethereum Mainnet
+            137: 'paris',   // Polygon
+            56: 'london',   // BSC
+          };
 
         const chainId = parseInt(chain) || 1; // Default to mainnet if chain parsing fails
         const evmVersion = evmVersionMap[chainId] || 'london';
@@ -144,54 +144,41 @@ export class ContractProcessor {
           remappings: []
         }
 
-        // Ensure source code has SPDX identifier
-        if (!source.includes('SPDX-License-Identifier')) {
-          source = '// SPDX-License-Identifier: UNLICENSED\n' + sourceCode;
-        }
-        // Format and validate using solc
-        const output = JSON.parse(solc.compile(JSON.stringify(input)));
-
-        // Extract contract details
-        const contractKey = Object.keys(output.contract[fileName])[0];
-        const contract = output.contract[fileName][contractKey];
-
-        // Check for errors
-        if (output.errors) {
-          const errors = output.errors.filter(error => error.severity === 'error');
-          if (errors.length > 0) {
-            logger.error(`Compilation errors in ${fileName}: `, errors);
-            throw new Error('Contract compilation failed');
+          // Ensure source code has SPDX identifier
+          if (!sourceCode.includes('SPDX-License-Identifier')) {
+            sourceCode = '// SPDX-License-Identifier: UNLICENSED\n' + sourceCode;
           }
+
+          // Format the processed contract
+          const processedContract = {
+            address: address.toLowerCase(),
+            contractName: contractName,
+            fileName: fileName,
+            source: sourceCode,
+            compilerVersion: await this.extractCompilerVersion(sourceCode),
+            optimization: true,
+            optimizationRuns: 200,
+            evmVersion: evmVersion
+          };
+
+          // Add to processed contracts array
+          processedContracts.push(processedContract);
+          logger.info(`Successfully processed contract: ${fileName}`);
+       
+        } catch (error) {
+          logger.error(`Failed to process contract ${fileName}: ${error.message}`);
+          continue;
         }
-
-        //adding processed contracts to the results array
-        processedContracts.push({
-          address: address.toLowerCase(),
-          contractname: contractName,
-          filename: fileName,
-          source: sourceCode,
-          compilerVersion: await this.extractCompilerVersion(sourceCode),
-          optimization: true,
-          optimizationRuns: 200,
-          evmVersion: evmVersion
-        });
+      }
+    
+      logger.info(`Successfully processed ${processedContracts.length} contracts`);
+      return processedContracts;
      
-  
     } catch (error) {
-      logger.error(`Failed to process contract  ${error.message}`);
-      continue;
+      logger.error(`Failed to process contracts: ${error.message}`);
+      throw error;
     }
   }
-  
-    logger.info(`Successfully processed ${processedContracts.length} contracts`)
-    return processedContracts;
-   
-    }catch (error) {
-      logger.error(`Failed to process contracts: $(error.message)`);
-      throw new Error;
-    }
-  }
-
 
   async extractCompilerVersion(sourceCode) {
     try {
@@ -318,13 +305,14 @@ export class ContractProcessor {
     };
   }
 
-  async saveProcessedContracts(processMissingContracts, chain, network, folder = null) {
+  async saveProcessedContracts(processedContracts, chain, network, folder = null) {
     const outputPath = this.getFormattedContractsFilePath(chain, network, folder);
     try {
       await fs.writeFile(outputPath, JSON.stringify(processedContracts, null, 2));
       logger.info(`Processed contracts saved to ${outputPath}`);
     } catch (error) {
-      logger.error(`Error saving processec contracts: ${error.message}`);
+      logger.error(`Error saving processed contracts: ${error.message}`);
+      throw error;
     }
   }
 
