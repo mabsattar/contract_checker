@@ -26,12 +26,12 @@ export class SourcifyAPI {
     };
   }
 
-   /**
-   * Validates the contract data.
-   * @param {Object} contract - Contract object to validate.
-   * @returns {boolean} - True if valid, false otherwise.
-   */
-   _validateContractData(contract) {
+  /**
+  * Validates the contract data.
+  * @param {Object} contract - Contract object to validate.
+  * @returns {boolean} - True if valid, false otherwise.
+  */
+  _validateContractData(contract) {
     return (
       contract &&
       contract.address &&
@@ -191,7 +191,7 @@ export class SourcifyAPI {
       if (!this._validateContractData(contract)) {
         throw new Error(`Invalid contract data for address: ${contract.address}`);
       }
-  
+
       // Prepare submission payload
       const payload = new FormData();
       payload.append('address', contract.address);
@@ -199,15 +199,15 @@ export class SourcifyAPI {
       payload.append('contractName', contract.contractName);
       payload.append('compilerVersion', contract.compilerVersion);
       payload.append('source', contract.source);
-  
+
       // Handle additional metadata (optional)
       if (contract.metadata) {
         payload.append('metadata', JSON.stringify(contract.metadata));
       }
-  
+
       // Define endpoint
       const submissionUrl = `${this.apiUrl}/input-files`;
-  
+
       // Submit to Sourcify
       const response = await axios.post(submissionUrl, payload, {
         headers: {
@@ -215,7 +215,7 @@ export class SourcifyAPI {
         },
         timeout: this.timeout,
       });
-  
+
       if (response.status === 200 || response.status === 201) {
         // Submission successful
         logger.info(`Successfully submitted contract: ${contract.address}`);
@@ -225,12 +225,12 @@ export class SourcifyAPI {
           status: 'submitted',
           timestamp: new Date().toISOString(),
         });
-  
+
         // Optionally save metadata
         if (response.data.metadata) {
           await this.saveMetadata(contract, response.data.metadata);
         }
-  
+
         return true;
       } else {
         // Handle unexpected responses
@@ -247,16 +247,16 @@ export class SourcifyAPI {
     try {
       const processor = new ContractProcessor(config.sourcifyApi, config.cacheManager, config);
       const sourcify = new SourcifyAPI(config);
-  
+
       // Step 1: Process missing contracts
       logger.info(`Processing missing contracts for chain: ${chain}, network: ${network}`);
       const processedContracts = await processor.processMissingContracts(chain, network);
-  
+
       if (processedContracts.length === 0) {
         logger.info("No contracts to submit.");
         return;
       }
-  
+
       // Step 2: Submit each processed contract to Sourcify
       for (const contract of processedContracts) {
         try {
@@ -271,17 +271,17 @@ export class SourcifyAPI {
           logger.error(`Error during submission of contract ${contract.address}: ${error.message}`);
         }
       }
-  
+
       // Optional: Save progress or statistics
       logger.info("Processing and submission completed.");
       await processor.saveProgress();
-  
+
     } catch (error) {
       logger.error(`Error in processAndSubmitContracts: ${error.message}`);
       throw error;
     }
   }
 }
-  
+
 
 

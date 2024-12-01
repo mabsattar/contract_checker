@@ -136,7 +136,7 @@ export class ContractProcessor {
         }
 
         // Ensure source code has SPDX identifier
-        sourceCode = contract.source;
+        source = contract.sourceCode;
         if (!source.includes('SPDX-License-Identifier')) {
           source = '// SPDX-License-Identifier: UNLICENSED\n' + source;
         }
@@ -165,7 +165,7 @@ export class ContractProcessor {
           compilerVersion: await this.extractCompilerVersion(sourceCode)
         });
       }
-      return this.processMissingContracts;
+      return processedContracts;
     } catch (error) {
       logger.error(`Failed to process contract  ${error.message}`);
       throw error;
@@ -215,6 +215,78 @@ export class ContractProcessor {
     return true;
   }
 
+
+  async processFromFile(filePath) {
+    try {
+      const data = await fs.readFile(filePath, 'utf8');
+      const contracts = JSON.parse(data);
+
+      logger.info(`Processing ${contracts.length} contracts from file`);
+
+      // Validate contract format
+      const validContracts = contracts.filter(contract => {
+        return contract &&
+          contract.address &&
+          contract.sourceCode &&
+          typeof contract.sourceCode === 'string';
+      });
+
+      if (validContracts.length !== contracts.length) {
+        logger.warn(`Found ${contracts.length - validContracts.length} invalid contracts`);
+      }
+
+      // Process each valid contract
+      for (const contract of validContracts) {
+        try {
+          // Transform contract data for submission
+          const contractData = await this.transformContract(contract);
+
+          // Submit to Sourcify
+          const success = await this.submitContract(contractData);
+
+          if (success) {
+            this.progress.successful++;
+            await this.cacheManager.markVerified(contract.address);
+          } else {
+            this.progress.failed++;
+            logger.warn(`Failed to verify contract ${contract.address}`);
+          }
+
+        } catch (err) {
+          logger.error(`Error processing contract ${contract.address}: ${err.message}`);
+          this.progress.failed++;
+        }
+      }
+
+      // Update total processed count
+      this.progress.processed += validContracts.length;
+
+    } catch (err) {
+      logger.error(`Error reading/parsing contracts file: ${err.message}`);
+      throw err;
+    }
+  }
+
+  async transformContract(contract) {
+    if (!contract || !contract.address || !contract.sourceCode) {
+      logger.warn(`Invalid contract data for transformation: ${contract?.address}`);
+      throw new Error('Invalid contract data');
+    }
+
+    // Ensure address is properly formatted
+    const address = contract.address.toLowerCase();
+    const formattedAddress = address.startsWith('0x') ? address : `0x${address}`;
+
+    return {
+      address: formattedAddress,
+      contractName: contract.contractName || path.basename(contract.path || ''),
+      filename: `${formattedAddress}.sol`,
+      source: contract.sourceCode,
+      compiler: "solidity",
+      compilerVersion: await this.extractCompilerVersion(contract.sourceCode) || "0.8.10",
+      network: "chainName"
+    };
+  }
 
   async saveProcessedcontracts(processMissingContracts, chain, network) {
     const outputPath = path.join(process.cwd(), 'chains', chain, network, 'formatted_contracts.json');
