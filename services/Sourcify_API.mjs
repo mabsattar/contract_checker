@@ -242,6 +242,46 @@ export class SourcifyAPI {
       return this._handleApiError(error, contract.address);
     }
   }
+
+  async processAndSubmitContracts(chain, network, config) {
+    try {
+      const processor = new ContractProcessor(config.sourcifyApi, config.cacheManager, config);
+      const sourcify = new SourcifyAPI(config);
+  
+      // Step 1: Process missing contracts
+      logger.info(`Processing missing contracts for chain: ${chain}, network: ${network}`);
+      const processedContracts = await processor.processMissingContracts(chain, network);
+  
+      if (processedContracts.length === 0) {
+        logger.info("No contracts to submit.");
+        return;
+      }
+  
+      // Step 2: Submit each processed contract to Sourcify
+      for (const contract of processedContracts) {
+        try {
+          logger.info(`Submitting contract: ${contract.address}`);
+          const isSubmitted = await sourcify.contractSubmission(contract);
+          if (isSubmitted) {
+            logger.info(`Contract ${contract.address} submitted successfully`);
+          } else {
+            logger.warn(`Failed to submit contract ${contract.address}`);
+          }
+        } catch (error) {
+          logger.error(`Error during submission of contract ${contract.address}: ${error.message}`);
+        }
+      }
+  
+      // Optional: Save progress or statistics
+      logger.info("Processing and submission completed.");
+      await processor.saveProgress();
+  
+    } catch (error) {
+      logger.error(`Error in processAndSubmitContracts: ${error.message}`);
+      throw error;
+    }
+  }
 }
+  
 
 

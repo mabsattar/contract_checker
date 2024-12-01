@@ -62,7 +62,6 @@ export class ContractProcessor {
         }
 
         const config = new config();
-        const chainConfig = await this.config.load(chainName);
 
         console.log(`Processing contract: ${fileName}`);
 
