@@ -28,14 +28,14 @@ export class ContractProcessor {
 
   getMissingContractsFilePath(chain, network, folder) {
     const basePath = path.join(process.cwd(), 'chains', chain, network);
-    return folder 
+    return folder
       ? path.join(basePath, `missing_contracts_${folder}.json`)
       : path.join(basePath, 'missing_contracts.json');
   }
 
   getFormattedContractsFilePath(chain, network, folder) {
     const basePath = path.join(process.cwd(), 'chains', chain, network);
-    return folder 
+    return folder
       ? path.join(basePath, `formatted_contracts_${folder}.json`)
       : path.join(basePath, 'formatted_contracts.json');
   }
@@ -80,6 +80,13 @@ export class ContractProcessor {
           logger.info("Reading contract source from:", filePath);
           const sourceCode = await fs.readFile(filePath, 'utf-8');
 
+          // Extract compiler version
+          const compilerVersion = await this.extractCompilerVersion(sourceCode);
+          if (!compilerVersion) {
+            logger.error(`Could not extract compiler version for ${fileName}`);
+            continue;
+          }
+
           // Get chain-specific EVM version
           const evmVersionMap = {
             1: 'london',    // Ethereum Mainnet
@@ -87,78 +94,71 @@ export class ContractProcessor {
             56: 'london',   // BSC
           };
 
-        const chainId = parseInt(chain) || 1; // Default to mainnet if chain parsing fails
-        const evmVersion = evmVersionMap[chainId] || 'london';
-        // Create input for solc
-        const input = {
-          language: 'Solidity',
-          sources: {
-            [filePath]: {
-              content: sourceCode,
-              keccak256: `0x${Buffer.from(keccak256(utf8ToBytes(contract.sourceCode))).toString('hex')}`,
-              license: license
-            }
-          },
-          version: 1,
-          settings: {
-            optimizer: {
-              enable: true,
-              runs: 200
-            },
-            outputSelection: {
-              '*': {
-                '*': ['abi', 'evm.bytecode', 'evm.deployedBytecode', 'metadata']
-              }
-            },
-            output: {
-              abi: [], // Empty ABI since we don't have it
-              devdoc: {
-                kind: "dev",
-                methods: {},
-                version: 1
-              },
-              userdoc: {
-                kind: "user",
-                methods: {},
-                version: 1
-              }
-            },
-
-            compilationTarget: {
-              [fileName]: contractName,
-            },
-          },
-          compiler: {
-            version: compilerSettings.compilerVersion,
-          },
-          evmVersion: evmVersion,
-          libraries: {},
-          metadata: {
-            bytecodeHash: "ipfs",
-            useLiteralContent: true
-          },
-          optimizer: {
-            enabled: true,
-            runs: 200
-          },
-          remappings: []
-        }
+          const chainId = parseInt(chain) || 1;
+          const evmVersion = evmVersionMap[chainId] || 'london';
 
           // Ensure source code has SPDX identifier
-          if (!sourceCode.includes('SPDX-License-Identifier')) {
-            sourceCode = '// SPDX-License-Identifier: UNLICENSED\n' + sourceCode;
+          const processedSource = !sourceCode.includes('SPDX-License-Identifier') 
+            ? '// SPDX-License-Identifier: UNLICENSED\n' + sourceCode
+            : sourceCode;
+
+          // Create solc input
+          const solcInput = {
+            language: 'Solidity',
+            sources: {
+              [fileName]: {
+                content: processedSource
+              }
+            },
+            settings: {
+              optimizer: {
+                enabled: true,
+                runs: 200
+              },
+              evmVersion: evmVersion,
+              outputSelection: {
+                '*': {
+                  '*': ['abi', 'evm.bytecode', 'evm.deployedBytecode', 'metadata']
+                }
+              }
+            }
+          };
+
+          // Load specific compiler version
+          const solcVersion = await solc.loadRemoteVersion(compilerVersion);
+          
+          // Compile the contract
+          const compiledOutput = JSON.parse(solcVersion.compile(JSON.stringify(solcInput)));
+
+          if (compiledOutput.errors) {
+            const errors = compiledOutput.errors.filter(error => error.severity === 'error');
+            if (errors.length > 0) {
+              logger.error(`Compilation errors for ${fileName}:`, errors);
+              continue;
+            }
           }
 
-          // Format the processed contract
+          // Get the contract metadata
+          const contractMetadata = compiledOutput.contracts[fileName][contractName];
+          if (!contractMetadata) {
+            logger.error(`No metadata found for ${contractName} in ${fileName}`);
+            continue;
+          }
+
+          // Format for Sourcify
           const processedContract = {
             address: address.toLowerCase(),
+            chainId: chainId.toString(),
             contractName: contractName,
-            fileName: fileName,
-            source: sourceCode,
-            compilerVersion: await this.extractCompilerVersion(sourceCode),
+            compilerVersion: compilerVersion,
             optimization: true,
             optimizationRuns: 200,
-            evmVersion: evmVersion
+            evmVersion: evmVersion,
+            fileName: fileName,
+            source: processedSource,
+            metadata: JSON.parse(contractMetadata.metadata),
+            libraries: {}, // Add libraries if needed
+            constructorArguments: '', // Add constructor arguments if needed
           };
 
           // Add to processed contracts array
@@ -180,19 +180,21 @@ export class ContractProcessor {
     }
   }
 
+  // Helper method to extract compiler version
   async extractCompilerVersion(sourceCode) {
     try {
       const versionRegex = /pragma solidity (\^?\d+\.\d+\.\d+)/;
       const match = sourceCode.match(versionRegex);
       if (match) {
-        return match[1].replace('^', '');
+        // Remove the ^ if present and ensure it's a complete version number
+        const version = match[1].replace('^', '');
+        return version;
       }
-      // Default version if not found
       logger.warn('No compiler version found in source, using default');
       return '0.8.10';
     } catch (error) {
       logger.error(`Error extracting compiler version: ${error.message}`);
-      return '0.8.10'; // Default fallback version
+      return '0.8.10';
     }
   }
 
@@ -305,14 +307,13 @@ export class ContractProcessor {
     };
   }
 
-  async saveProcessedContracts(processedContracts, chain, network, folder = null) {
+  async saveProcessedContracts(processMissingContracts, chain, network, folder = null) {
     const outputPath = this.getFormattedContractsFilePath(chain, network, folder);
     try {
       await fs.writeFile(outputPath, JSON.stringify(processedContracts, null, 2));
       logger.info(`Processed contracts saved to ${outputPath}`);
     } catch (error) {
-      logger.error(`Error saving processed contracts: ${error.message}`);
-      throw error;
+      logger.error(`Error saving processec contracts: ${error.message}`);
     }
   }
 
