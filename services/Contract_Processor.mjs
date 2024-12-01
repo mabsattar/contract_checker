@@ -2,8 +2,6 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { logger } from '../utils/logger.mjs';
 import solc from 'solc';
-import { keccak256 } from 'ethereum-cryptography/keccak';
-import { utf8ToBytes } from 'ethereum-cryptography/utils';
 
 
 logger.info("Starting contract verification process");
