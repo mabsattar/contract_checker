@@ -3,3120 +3,3120 @@
     "address": "0x00000000000001ad428e4906aE43D8F9852d0dD6",
     "contractName": "Seaport",
     "fileName": "00000000000001ad428e4906aE43D8F9852d0dD6_Seaport.sol",
-    "verifiedAt": "2024-11-30T17:27:14.350Z"
+    "verifiedAt": "2024-12-01T18:10:54.247Z"
   },
   {
     "address": "0x00000000000006c7676171937C444f6BDe3D6282",
     "contractName": "Seaport",
     "fileName": "00000000000006c7676171937C444f6BDe3D6282_Seaport.sol",
-    "verifiedAt": "2024-11-30T17:27:15.465Z"
+    "verifiedAt": "2024-12-01T18:10:57.374Z"
   },
   {
     "address": "0x0000000000000aD24e80fd803C6ac37206a45f15",
     "contractName": "Seaport",
     "fileName": "0000000000000aD24e80fd803C6ac37206a45f15_Seaport.sol",
-    "verifiedAt": "2024-11-30T17:27:18.326Z"
+    "verifiedAt": "2024-12-01T18:11:01.004Z"
   },
   {
     "address": "0x0000000000000aF8FE6E4DE40F4804C90fA8Ea8F",
     "contractName": "EPSRegister",
     "fileName": "0000000000000aF8FE6E4DE40F4804C90fA8Ea8F_EPSRegister.sol",
-    "verifiedAt": "2024-11-30T17:27:19.349Z"
+    "verifiedAt": "2024-12-01T18:11:03.800Z"
   },
   {
     "address": "0x00000000000045166c45af0fc6e4cf31d9e14b9a",
     "contractName": "BID",
     "fileName": "00000000000045166c45af0fc6e4cf31d9e14b9a_BID.sol",
-    "verifiedAt": "2024-11-30T17:27:23.155Z"
+    "verifiedAt": "2024-12-01T18:11:08.551Z"
   },
   {
     "address": "0x00000000000058018B54c271615d94645b9aAb81",
     "contractName": "Keep",
     "fileName": "00000000000058018B54c271615d94645b9aAb81_Keep.sol",
-    "verifiedAt": "2024-11-30T17:27:24.071Z"
+    "verifiedAt": "2024-12-01T18:11:09.495Z"
   },
   {
     "address": "0x00000000000076a84fef008cdabe6409d2fe638b",
     "contractName": "DelegationRegistry",
     "fileName": "00000000000076a84fef008cdabe6409d2fe638b_DelegationRegistry.sol",
-    "verifiedAt": "2024-11-30T17:27:26.537Z"
+    "verifiedAt": "2024-12-01T18:11:13.643Z"
   },
   {
     "address": "0x000000000000Ad05Ccc4F10045630fb830B95127",
     "contractName": "ERC1967Proxy",
     "fileName": "000000000000Ad05Ccc4F10045630fb830B95127_ERC1967Proxy.sol",
-    "verifiedAt": "2024-11-30T17:27:28.594Z"
+    "verifiedAt": "2024-12-01T18:11:16.506Z"
   },
   {
     "address": "0x000000000000aaeb6d7670e522a718067333cd4e",
     "contractName": "OperatorFilterRegistry",
     "fileName": "000000000000aaeb6d7670e522a718067333cd4e_OperatorFilterRegistry.sol",
-    "verifiedAt": "2024-11-30T17:27:31.668Z"
+    "verifiedAt": "2024-12-01T18:11:20.808Z"
   },
   {
     "address": "0x000000000000cd17345801aa8147b8D3950260FF",
     "contractName": "Poster",
     "fileName": "000000000000cd17345801aa8147b8D3950260FF_Poster.sol",
-    "verifiedAt": "2024-11-30T17:27:35.298Z"
+    "verifiedAt": "2024-12-01T18:11:24.808Z"
   },
   {
     "address": "0x000000000000d0151e748d25b766e77efe2a6c83",
     "contractName": "XDEX",
     "fileName": "000000000000d0151e748d25b766e77efe2a6c83_XDEX.sol",
-    "verifiedAt": "2024-11-30T17:27:36.082Z"
+    "verifiedAt": "2024-12-01T18:11:25.625Z"
   },
   {
     "address": "0x0000000000085d4780B73119b644AE5ecd22b376",
     "contractName": "OwnedUpgradeabilityProxy",
     "fileName": "0000000000085d4780B73119b644AE5ecd22b376_OwnedUpgradeabilityProxy.sol",
-    "verifiedAt": "2024-11-30T17:27:42.040Z"
+    "verifiedAt": "2024-12-01T18:11:32.792Z"
   },
   {
     "address": "0x000000000009546b5e66182fa242f1aa669a5051",
     "contractName": "UpgradeHelper",
     "fileName": "000000000009546b5e66182fa242f1aa669a5051_UpgradeHelper.sol",
-    "verifiedAt": "2024-11-30T17:27:42.850Z"
+    "verifiedAt": "2024-12-01T18:11:33.610Z"
   },
   {
     "address": "0x00000000000b7f8e8e8ad148f9d53303bfe20796",
     "contractName": "zLoot",
     "fileName": "00000000000b7f8e8e8ad148f9d53303bfe20796_zLoot.sol",
-    "verifiedAt": "2024-11-30T17:27:43.752Z"
+    "verifiedAt": "2024-12-01T18:11:34.532Z"
   },
   {
     "address": "0x000000000014802bC35fEF3484edAD3BDdCA9e8b",
     "contractName": "VolatilityOracle",
     "fileName": "000000000014802bC35fEF3484edAD3BDdCA9e8b_VolatilityOracle.sol",
-    "verifiedAt": "2024-11-30T17:27:46.856Z"
+    "verifiedAt": "2024-12-01T18:11:37.765Z"
   },
   {
     "address": "0x000000000022d473030f116ddee9f6b43ac78ba3",
     "contractName": "Permit2",
     "fileName": "000000000022d473030f116ddee9f6b43ac78ba3_Permit2.sol",
-    "verifiedAt": "2024-11-30T17:27:50.711Z"
+    "verifiedAt": "2024-12-01T18:11:42.004Z"
   },
   {
     "address": "0x00000000002Fd5Aeb385D324B580FCa7c83823A0",
     "contractName": "MulticallerWithSender",
     "fileName": "00000000002Fd5Aeb385D324B580FCa7c83823A0_MulticallerWithSender.sol",
-    "verifiedAt": "2024-11-30T17:27:51.455Z"
+    "verifiedAt": "2024-12-01T18:11:42.931Z"
   },
   {
     "address": "0x00000000005228B791a99a61f36A130d50600106",
     "contractName": "LooksRareAggregator",
     "fileName": "00000000005228B791a99a61f36A130d50600106_LooksRareAggregator.sol",
-    "verifiedAt": "2024-11-30T17:27:55.709Z"
+    "verifiedAt": "2024-12-01T18:11:47.533Z"
   },
   {
     "address": "0x00000000005F30F04d21d7b859C900CE4513b565",
     "contractName": "GasRewardsDistributor",
     "fileName": "00000000005F30F04d21d7b859C900CE4513b565_GasRewardsDistributor.sol",
-    "verifiedAt": "2024-11-30T17:27:56.108Z"
+    "verifiedAt": "2024-12-01T18:11:47.965Z"
   },
   {
     "address": "0x00000000006c3852cbef3e08e8df289169ede581",
     "contractName": "Seaport",
     "fileName": "00000000006c3852cbef3e08e8df289169ede581_Seaport.sol",
-    "verifiedAt": "2024-11-30T17:27:57.834Z"
+    "verifiedAt": "2024-12-01T18:11:49.890Z"
   },
   {
     "address": "0x00000000006cee72100d161c57ada5bb2be1ca79",
     "contractName": "Seaport",
     "fileName": "00000000006cee72100d161c57ada5bb2be1ca79_Seaport.sol",
-    "verifiedAt": "2024-11-30T17:27:59.721Z"
+    "verifiedAt": "2024-12-01T18:11:51.943Z"
   },
   {
     "address": "0x00000000008dd7888459CaeB062eF9eCc1E27301",
     "contractName": "KeepFactory",
     "fileName": "00000000008dd7888459CaeB062eF9eCc1E27301_KeepFactory.sol",
-    "verifiedAt": "2024-11-30T17:28:06.069Z"
+    "verifiedAt": "2024-12-01T18:11:59.002Z"
   },
   {
     "address": "0x00000000009726632680fb29d3f7a9734e3010e2",
     "contractName": "RainbowRouter",
     "fileName": "00000000009726632680fb29d3f7a9734e3010e2_RainbowRouter.sol",
-    "verifiedAt": "2024-11-30T17:28:09.385Z"
+    "verifiedAt": "2024-12-01T18:12:03.308Z"
   },
   {
     "address": "0x0000000000b92d5d043faf7cecf7e2ee6aaed232",
     "contractName": "SafeCollectionBidPolicyERC721",
     "fileName": "0000000000b92d5d043faf7cecf7e2ee6aaed232_SafeCollectionBidPolicyERC721.sol",
-    "verifiedAt": "2024-11-30T17:28:15.824Z"
+    "verifiedAt": "2024-12-01T18:12:11.291Z"
   },
   {
     "address": "0x0000000000c2d145a2526bD8C716263bFeBe1A72",
     "contractName": "TransferHelper",
     "fileName": "0000000000c2d145a2526bD8C716263bFeBe1A72_TransferHelper.sol",
-    "verifiedAt": "2024-11-30T17:28:17.782Z"
+    "verifiedAt": "2024-12-01T18:12:13.648Z"
   },
   {
     "address": "0x0000000000da9e0e8c2a40510f991cef596ab682",
     "contractName": "frxETH",
     "fileName": "0000000000da9e0e8c2a40510f991cef596ab682_frxETH.sol",
-    "verifiedAt": "2024-11-30T17:28:20.070Z"
+    "verifiedAt": "2024-12-01T18:12:15.692Z"
   },
   {
     "address": "0x0000000000e7a628A67adbdB9C51B772915f90B2",
     "contractName": "VolatilityOracle",
     "fileName": "0000000000e7a628A67adbdB9C51B772915f90B2_VolatilityOracle.sol",
-    "verifiedAt": "2024-11-30T17:28:22.484Z"
+    "verifiedAt": "2024-12-01T18:12:18.252Z"
   },
   {
     "address": "0x0000000000f0Be9B330fAdfd141B63B93E1C3c84",
     "contractName": "Muny",
     "fileName": "0000000000f0Be9B330fAdfd141B63B93E1C3c84_Muny.sol",
-    "verifiedAt": "2024-11-30T17:28:23.720Z"
+    "verifiedAt": "2024-12-01T18:12:19.507Z"
   },
   {
     "address": "0x0000000001E4ef00d069e71d6bA041b0A16F7eA0",
     "contractName": "PendleRouter",
     "fileName": "0000000001E4ef00d069e71d6bA041b0A16F7eA0_PendleRouter.sol",
-    "verifiedAt": "2024-11-30T17:28:25.607Z"
+    "verifiedAt": "2024-12-01T18:12:21.948Z"
   },
   {
     "address": "0x0000000001E835A5D0D176e05499850B636F6B15",
     "contractName": "ConditionalWager",
     "fileName": "0000000001E835A5D0D176e05499850B636F6B15_ConditionalWager.sol",
-    "verifiedAt": "2024-11-30T17:28:25.990Z"
+    "verifiedAt": "2024-12-01T18:12:22.450Z"
   },
   {
     "address": "0x0000000003B49017d78475cf112682cb032FF9b1",
     "contractName": "ConditionalWager",
     "fileName": "0000000003B49017d78475cf112682cb032FF9b1_ConditionalWager.sol",
-    "verifiedAt": "2024-11-30T17:28:27.126Z"
+    "verifiedAt": "2024-12-01T18:12:23.883Z"
   },
   {
     "address": "0x000000000427e37c32b2be749610c5e4dd7b6d18",
     "contractName": "SHKOOBYSHNAX",
     "fileName": "000000000427e37c32b2be749610c5e4dd7b6d18_SHKOOBYSHNAX.sol",
-    "verifiedAt": "2024-11-30T17:28:28.026Z"
+    "verifiedAt": "2024-12-01T18:12:24.703Z"
   },
   {
     "address": "0x0000000004d3d3966A8B3f6f4a27f89b9fcc7974",
     "contractName": "SeaportRouter",
     "fileName": "0000000004d3d3966A8B3f6f4a27f89b9fcc7974_SeaportRouter.sol",
-    "verifiedAt": "2024-11-30T17:28:29.351Z"
+    "verifiedAt": "2024-12-01T18:12:25.932Z"
   },
   {
     "address": "0x0000000005756b5a03e751bd0280e3a55bc05b6e",
     "contractName": "XoloNFT",
     "fileName": "0000000005756b5a03e751bd0280e3a55bc05b6e_XoloNFT.sol",
-    "verifiedAt": "2024-11-30T17:28:30.109Z"
+    "verifiedAt": "2024-12-01T18:12:26.754Z"
   },
   {
     "address": "0x00000000064ecc11c97ac4a5551f279532bf9e0d",
     "contractName": "UniswapHelpers",
     "fileName": "00000000064ecc11c97ac4a5551f279532bf9e0d_UniswapHelpers.sol",
-    "verifiedAt": "2024-11-30T17:28:32.115Z"
+    "verifiedAt": "2024-12-01T18:12:29.003Z"
   },
   {
     "address": "0x0000000007927ce78919a6fbd7c200Ed3eaEfceC",
     "contractName": "DejaVox3Crapauds",
     "fileName": "0000000007927ce78919a6fbd7c200Ed3eaEfceC_DejaVox3Crapauds.sol",
-    "verifiedAt": "2024-11-30T17:28:32.539Z"
+    "verifiedAt": "2024-12-01T18:12:29.417Z"
   },
   {
     "address": "0x0000000008a7a0db734096a43d7ca2fb9dc08351",
     "contractName": "Bandel",
     "fileName": "0000000008a7a0db734096a43d7ca2fb9dc08351_Bandel.sol",
-    "verifiedAt": "2024-11-30T17:28:33.448Z"
+    "verifiedAt": "2024-12-01T18:12:29.823Z"
   },
   {
     "address": "0x000000000AF0BB14e1BcfaA67D76cc436dF54A47",
     "contractName": "FixedWager",
     "fileName": "000000000AF0BB14e1BcfaA67D76cc436dF54A47_FixedWager.sol",
-    "verifiedAt": "2024-11-30T17:28:34.592Z"
+    "verifiedAt": "2024-12-01T18:12:32.177Z"
   },
   {
     "address": "0x000000000c07ef1297222d14ad9606342f3b8898",
     "contractName": "NotJeffKoons",
     "fileName": "000000000c07ef1297222d14ad9606342f3b8898_NotJeffKoons.sol",
-    "verifiedAt": "2024-11-30T17:28:36.726Z"
+    "verifiedAt": "2024-12-01T18:12:34.228Z"
   },
   {
     "address": "0x000000000ca5171087c18fb271ca844a2370fc0a",
     "contractName": "MerkleNetworkERC20",
     "fileName": "000000000ca5171087c18fb271ca844a2370fc0a_MerkleNetworkERC20.sol",
-    "verifiedAt": "2024-11-30T17:28:37.562Z"
+    "verifiedAt": "2024-12-01T18:12:35.160Z"
   },
   {
     "address": "0x0000000010C38b3D8B4D642D9D065FB69BC77bC7",
     "contractName": "underground",
     "fileName": "0000000010C38b3D8B4D642D9D065FB69BC77bC7_underground.sol",
-    "verifiedAt": "2024-11-30T17:28:38.991Z"
+    "verifiedAt": "2024-12-01T18:12:36.477Z"
   },
   {
     "address": "0x00000000219ab540356cbb839cbe05303d7705fa",
     "contractName": "DepositContract",
     "fileName": "00000000219ab540356cbb839cbe05303d7705fa_DepositContract.sol",
-    "verifiedAt": "2024-11-30T17:28:42.659Z"
+    "verifiedAt": "2024-12-01T18:12:40.137Z"
   },
   {
     "address": "0x000000002f8c58a122F28C7CC8d644227a8FBa06",
     "contractName": "PreApproveListerFactory",
     "fileName": "000000002f8c58a122F28C7CC8d644227a8FBa06_PreApproveListerFactory.sol",
-    "verifiedAt": "2024-11-30T17:28:43.088Z"
+    "verifiedAt": "2024-12-01T18:12:40.597Z"
   },
   {
     "address": "0x00000000454a11ca3a574738c0aab442b62d5d45",
     "contractName": "ApeBank",
     "fileName": "00000000454a11ca3a574738c0aab442b62d5d45_ApeBank.sol",
-    "verifiedAt": "2024-11-30T17:28:46.276Z"
+    "verifiedAt": "2024-12-01T18:12:44.055Z"
   },
   {
     "address": "0x000000004a434312bfcbb119fa7bbdf7169fdc56",
     "contractName": "AlcxVault",
     "fileName": "000000004a434312bfcbb119fa7bbdf7169fdc56_AlcxVault.sol",
-    "verifiedAt": "2024-11-30T17:28:48.020Z"
+    "verifiedAt": "2024-12-01T18:12:46.006Z"
   },
   {
     "address": "0x000000005254e2780df608e16aa29538ee7a9ed9",
     "contractName": "pCNV",
     "fileName": "000000005254e2780df608e16aa29538ee7a9ed9_pCNV.sol",
-    "verifiedAt": "2024-11-30T17:28:48.918Z"
+    "verifiedAt": "2024-12-01T18:12:46.921Z"
   },
   {
     "address": "0x000000007E4bc6b8c9163dEE12F40D6131628c06",
     "contractName": "Receiver",
     "fileName": "000000007E4bc6b8c9163dEE12F40D6131628c06_Receiver.sol",
-    "verifiedAt": "2024-11-30T17:28:52.091Z"
+    "verifiedAt": "2024-12-01T18:12:50.504Z"
   },
   {
     "address": "0x000000007a58f5f58e697e51ab0357bc9e260a04",
     "contractName": "ConcaveToken",
     "fileName": "000000007a58f5f58e697e51ab0357bc9e260a04_ConcaveToken.sol",
-    "verifiedAt": "2024-11-30T17:28:52.913Z"
+    "verifiedAt": "2024-12-01T18:12:51.427Z"
   },
   {
     "address": "0x000000008375af0BB5546e34C8a39C5987eF3Dee",
     "contractName": "NFTYToken",
     "fileName": "000000008375af0BB5546e34C8a39C5987eF3Dee_NFTYToken.sol",
-    "verifiedAt": "2024-11-30T17:28:53.329Z"
+    "verifiedAt": "2024-12-01T18:12:51.837Z"
   },
   {
     "address": "0x000000009600105C4578D4131F67B7Ff952F9dE3",
     "contractName": "BadgerRegistry",
     "fileName": "000000009600105C4578D4131F67B7Ff952F9dE3_BadgerRegistry.sol",
-    "verifiedAt": "2024-11-30T17:28:55.645Z"
+    "verifiedAt": "2024-12-01T18:12:54.293Z"
   },
   {
     "address": "0x00000000AfCbce78c080F96032a5C1cB1b832D7B",
     "contractName": "Account",
     "fileName": "00000000AfCbce78c080F96032a5C1cB1b832D7B_Account.sol",
-    "verifiedAt": "2024-11-30T17:28:56.405Z"
+    "verifiedAt": "2024-12-01T18:12:55.112Z"
   },
   {
     "address": "0x00000000BE3Af6882A06323fd3f400A9e6A0DC42",
     "contractName": "SeaportValidator",
     "fileName": "00000000BE3Af6882A06323fd3f400A9e6A0DC42_SeaportValidator.sol",
-    "verifiedAt": "2024-11-30T17:28:56.800Z"
+    "verifiedAt": "2024-12-01T18:12:55.627Z"
   },
   {
     "address": "0x00000000Ff0027b3f3d2B0412D4a4cEd4e3366DA",
     "contractName": "VaultSwapper",
     "fileName": "00000000Ff0027b3f3d2B0412D4a4cEd4e3366DA_VaultSwapper.sol",
-    "verifiedAt": "2024-11-30T17:28:58.308Z"
+    "verifiedAt": "2024-12-01T18:12:57.674Z"
   },
   {
     "address": "0x00000000f2cfa550ad4aae0f33bcaad5164900be",
     "contractName": "Stealth",
     "fileName": "00000000f2cfa550ad4aae0f33bcaad5164900be_Stealth.sol",
-    "verifiedAt": "2024-11-30T17:29:04.824Z"
+    "verifiedAt": "2024-12-01T18:13:04.840Z"
   },
   {
     "address": "0x0000000304aAD016bA7a745da3cE64f6198B76B3",
     "contractName": "Platform",
     "fileName": "0000000304aAD016bA7a745da3cE64f6198B76B3_Platform.sol",
-    "verifiedAt": "2024-11-30T17:29:07.486Z"
+    "verifiedAt": "2024-12-01T18:13:08.043Z"
   },
   {
     "address": "0x00000003e02101799c6d82dc467db1fbcb4d867f",
     "contractName": "BlargNFT",
     "fileName": "00000003e02101799c6d82dc467db1fbcb4d867f_BlargNFT.sol",
-    "verifiedAt": "2024-11-30T17:29:07.873Z"
+    "verifiedAt": "2024-12-01T18:13:08.494Z"
   },
   {
     "address": "0x000000059619cDDdC056910672AbC90887136a95",
     "contractName": "SeKira",
     "fileName": "000000059619cDDdC056910672AbC90887136a95_SeKira.sol",
-    "verifiedAt": "2024-11-30T17:29:09.035Z"
+    "verifiedAt": "2024-12-01T18:13:09.961Z"
   },
   {
     "address": "0x0000000BE1d98523B5469AfF51A1e7b4891c6225",
     "contractName": "Platform",
     "fileName": "0000000BE1d98523B5469AfF51A1e7b4891c6225_Platform.sol",
-    "verifiedAt": "2024-11-30T17:29:11.704Z"
+    "verifiedAt": "2024-12-01T18:13:13.955Z"
   },
   {
     "address": "0x0000000DE40dfa9B17854cBC7869D80f9F98D823",
     "contractName": "DLTA",
     "fileName": "0000000DE40dfa9B17854cBC7869D80f9F98D823_DLTA.sol",
-    "verifiedAt": "2024-11-30T17:29:12.078Z"
+    "verifiedAt": "2024-12-01T18:13:14.589Z"
   },
   {
     "address": "0x000000850045036A537db0Be3CA7C73d3f57dE05",
     "contractName": "BadgerRegistry",
     "fileName": "000000850045036A537db0Be3CA7C73d3f57dE05_BadgerRegistry.sol",
-    "verifiedAt": "2024-11-30T17:29:20.844Z"
+    "verifiedAt": "2024-12-01T18:13:23.988Z"
   },
   {
     "address": "0x000000be320d58EAbB01D14B6755B0403a93Ab7d",
     "contractName": "YuGiOhCard",
     "fileName": "000000be320d58EAbB01D14B6755B0403a93Ab7d_YuGiOhCard.sol",
-    "verifiedAt": "2024-11-30T17:29:27.200Z"
+    "verifiedAt": "2024-12-01T18:13:31.060Z"
   },
   {
     "address": "0x000000ccfa464185e1d8d6ae4ebaca99ec4325d0",
     "contractName": "WrappedEtherOptimization",
     "fileName": "000000ccfa464185e1d8d6ae4ebaca99ec4325d0_WrappedEtherOptimization.sol",
-    "verifiedAt": "2024-11-30T17:29:28.068Z"
+    "verifiedAt": "2024-12-01T18:13:31.884Z"
   },
   {
     "address": "0x000000e45ffaab3552f1eba4b2799b6803322c12",
     "contractName": "SwapEncryption",
     "fileName": "000000e45ffaab3552f1eba4b2799b6803322c12_SwapEncryption.sol",
-    "verifiedAt": "2024-11-30T17:29:30.706Z"
+    "verifiedAt": "2024-12-01T18:13:34.943Z"
   },
   {
     "address": "0x000000e7Ec00e7B300774b00001314B8610022b8",
     "contractName": "SignedZone",
     "fileName": "000000e7Ec00e7B300774b00001314B8610022b8_SignedZone.sol",
-    "verifiedAt": "2024-11-30T17:29:31.602Z"
+    "verifiedAt": "2024-12-01T18:13:35.865Z"
   },
   {
     "address": "0x000001E1b2b5f9825f4d50bD4906aff2F298af4e",
     "contractName": "ImbuedNFT",
     "fileName": "000001E1b2b5f9825f4d50bD4906aff2F298af4e_ImbuedNFT.sol",
-    "verifiedAt": "2024-11-30T17:29:35.017Z"
+    "verifiedAt": "2024-12-01T18:13:40.064Z"
   },
   {
     "address": "0x00000401acad85df1707fffa9b369e07b4f50c0f",
     "contractName": "BOT",
     "fileName": "00000401acad85df1707fffa9b369e07b4f50c0f_BOT.sol",
-    "verifiedAt": "2024-11-30T17:29:36.744Z"
+    "verifiedAt": "2024-12-01T18:13:41.913Z"
   },
   {
     "address": "0x00000624264253944a702b8b812ae7bbb46af371",
     "contractName": "UniSlurmFactory",
     "fileName": "00000624264253944a702b8b812ae7bbb46af371_UniSlurmFactory.sol",
-    "verifiedAt": "2024-11-30T17:29:37.665Z"
+    "verifiedAt": "2024-12-01T18:13:42.741Z"
   },
   {
     "address": "0x00000633df1228868270badb2b812e12e13fdb91",
     "contractName": "wLoot",
     "fileName": "00000633df1228868270badb2b812e12e13fdb91_wLoot.sol",
-    "verifiedAt": "2024-11-30T17:29:38.185Z"
+    "verifiedAt": "2024-12-01T18:13:43.239Z"
   },
   {
     "address": "0x00000984fB0a64a94e4F5319DdFE052366D6b9B4",
     "contractName": "Aliens88CERC1155",
     "fileName": "00000984fB0a64a94e4F5319DdFE052366D6b9B4_Aliens88CERC1155.sol",
-    "verifiedAt": "2024-11-30T17:29:42.383Z"
+    "verifiedAt": "2024-12-01T18:13:47.537Z"
   },
   {
     "address": "0x00000b7665850F6b1E99447a68dB1e83d8Deafe3",
     "contractName": "BadgerRegistry",
     "fileName": "00000b7665850F6b1E99447a68dB1e83d8Deafe3_BadgerRegistry.sol",
-    "verifiedAt": "2024-11-30T17:29:45.724Z"
+    "verifiedAt": "2024-12-01T18:13:50.925Z"
   },
   {
     "address": "0x000014FB8dcA1D855ecAB28f955B17F20D0A0000",
     "contractName": "Ethereum",
     "fileName": "000014FB8dcA1D855ecAB28f955B17F20D0A0000_Ethereum.sol",
-    "verifiedAt": "2024-11-30T17:29:49.473Z"
+    "verifiedAt": "2024-12-01T18:13:55.634Z"
   },
   {
     "address": "0x000018EF70e0CB66F938b48eE8A93ff547EC0000",
     "contractName": "ContractMint",
     "fileName": "000018EF70e0CB66F938b48eE8A93ff547EC0000_ContractMint.sol",
-    "verifiedAt": "2024-11-30T17:29:50.232Z"
+    "verifiedAt": "2024-12-01T18:13:56.546Z"
   },
   {
     "address": "0x00003d1cEf5F30E34510198cB045E4ae0aa20000",
     "contractName": "ClaimRewards",
     "fileName": "00003d1cEf5F30E34510198cB045E4ae0aa20000_ClaimRewards.sol",
-    "verifiedAt": "2024-11-30T17:29:52.509Z"
+    "verifiedAt": "2024-12-01T18:13:59.008Z"
   },
   {
     "address": "0x0000472523E8ee003760a72708d39786811600A2",
     "contractName": "Blackhole",
     "fileName": "0000472523E8ee003760a72708d39786811600A2_Blackhole.sol",
-    "verifiedAt": "2024-11-30T17:29:54.417Z"
+    "verifiedAt": "2024-12-01T18:14:01.056Z"
   },
   {
     "address": "0x00005ea00ac477b1030ce78506496e8c2de24bf5",
     "contractName": "SeaDrop",
     "fileName": "00005ea00ac477b1030ce78506496e8c2de24bf5_SeaDrop.sol",
-    "verifiedAt": "2024-11-30T17:29:54.811Z"
+    "verifiedAt": "2024-12-01T18:14:01.463Z"
   },
   {
     "address": "0x00006ddCEfc503f88f8869fF0Ef4A2AE5d0110F5",
     "contractName": "GhostInu",
     "fileName": "00006ddCEfc503f88f8869fF0Ef4A2AE5d0110F5_GhostInu.sol",
-    "verifiedAt": "2024-11-30T17:29:55.329Z"
+    "verifiedAt": "2024-12-01T18:14:01.974Z"
   },
   {
     "address": "0x000075a79a928B8071f41D14bD5da462a9B68985",
     "contractName": "VirtualSafeToken",
     "fileName": "000075a79a928B8071f41D14bD5da462a9B68985_VirtualSafeToken.sol",
-    "verifiedAt": "2024-11-30T17:29:55.737Z"
+    "verifiedAt": "2024-12-01T18:14:02.384Z"
   },
   {
     "address": "0x0000A1c00009A619684135B824Ba02f7FbF3A572",
     "contractName": "ALCH",
     "fileName": "0000A1c00009A619684135B824Ba02f7FbF3A572_ALCH.sol",
-    "verifiedAt": "2024-11-30T17:29:58.801Z"
+    "verifiedAt": "2024-12-01T18:14:06.684Z"
   },
   {
     "address": "0x0000B765a79Ba3a4b819Cc873166b5bb8F6c508c",
     "contractName": "MonaArtistContract",
     "fileName": "0000B765a79Ba3a4b819Cc873166b5bb8F6c508c_MonaArtistContract.sol",
-    "verifiedAt": "2024-11-30T17:29:59.803Z"
+    "verifiedAt": "2024-12-01T18:14:07.610Z"
   },
   {
     "address": "0x0000a26b00c1f0df003000390027140000faa719",
     "contractName": "PayableProxy",
     "fileName": "0000a26b00c1f0df003000390027140000faa719_PayableProxy.sol",
-    "verifiedAt": "2024-11-30T17:30:00.748Z"
+    "verifiedAt": "2024-12-01T18:14:07.997Z"
   },
   {
     "address": "0x0000a5050a8036d29afa9bf36546efe225ed51e9",
     "contractName": "ERC20",
     "fileName": "0000a5050a8036d29afa9bf36546efe225ed51e9_ERC20.sol",
-    "verifiedAt": "2024-11-30T17:30:01.135Z"
+    "verifiedAt": "2024-12-01T18:14:08.534Z"
   },
   {
     "address": "0x0000fee6275dab194ab538a01dd8b18b02b20000",
     "contractName": "ApeBotV3",
     "fileName": "0000fee6275dab194ab538a01dd8b18b02b20000_ApeBotV3.sol",
-    "verifiedAt": "2024-11-30T17:30:03.570Z"
+    "verifiedAt": "2024-12-01T18:14:11.404Z"
   },
   {
     "address": "0x00017296bca02fac520bf91de81fe04b0bb9fe3a",
     "contractName": "PixelPrime",
     "fileName": "00017296bca02fac520bf91de81fe04b0bb9fe3a_PixelPrime.sol",
-    "verifiedAt": "2024-11-30T17:30:06.230Z"
+    "verifiedAt": "2024-12-01T18:14:13.954Z"
   },
   {
     "address": "0x0001A500A6B18995B03f44bb040A5fFc28E45CB0",
     "contractName": "OLAS",
     "fileName": "0001A500A6B18995B03f44bb040A5fFc28E45CB0_OLAS.sol",
-    "verifiedAt": "2024-11-30T17:30:06.629Z"
+    "verifiedAt": "2024-12-01T18:14:14.499Z"
   },
   {
     "address": "0x0001af047E9fb5dCD99E6823C900f3D8f5b2c5f4",
     "contractName": "ENSRegistry",
     "fileName": "0001af047E9fb5dCD99E6823C900f3D8f5b2c5f4_ENSRegistry.sol",
-    "verifiedAt": "2024-11-30T17:30:07.010Z"
+    "verifiedAt": "2024-12-01T18:14:14.978Z"
   },
   {
     "address": "0x0001b7fa59950c817b8caa0526f793863c6c2d74",
     "contractName": "SamuraiInu",
     "fileName": "0001b7fa59950c817b8caa0526f793863c6c2d74_SamuraiInu.sol",
-    "verifiedAt": "2024-11-30T17:30:07.385Z"
+    "verifiedAt": "2024-12-01T18:14:15.593Z"
   },
   {
     "address": "0x0001bfdb0010f4c7f667d970cd7d0891dcd51f72",
     "contractName": "COM",
     "fileName": "0001bfdb0010f4c7f667d970cd7d0891dcd51f72_COM.sol",
-    "verifiedAt": "2024-11-30T17:30:07.790Z"
+    "verifiedAt": "2024-12-01T18:14:16.206Z"
   },
   {
     "address": "0x0002848f37f02ecedc6e8a2df41d4df7746032db",
     "contractName": "DEGENWALKERS",
     "fileName": "0002848f37f02ecedc6e8a2df41d4df7746032db_DEGENWALKERS.sol",
-    "verifiedAt": "2024-11-30T17:30:10.970Z"
+    "verifiedAt": "2024-12-01T18:14:19.382Z"
   },
   {
     "address": "0x000386E3F7559d9B6a2F5c46B4aD1A9587D59Dc3",
     "contractName": "BoredApeNikeClub",
     "fileName": "000386E3F7559d9B6a2F5c46B4aD1A9587D59Dc3_BoredApeNikeClub.sol",
-    "verifiedAt": "2024-11-30T17:30:12.852Z"
+    "verifiedAt": "2024-12-01T18:14:21.532Z"
   },
   {
     "address": "0x0003ed19f80564745e84b4cc411a7b6be4f0cf31",
     "contractName": "NeverJeet",
     "fileName": "0003ed19f80564745e84b4cc411a7b6be4f0cf31_NeverJeet.sol",
-    "verifiedAt": "2024-11-30T17:30:13.972Z"
+    "verifiedAt": "2024-12-01T18:14:22.970Z"
   },
   {
     "address": "0x0004477d30634b6c7343701fcf5a9c6867625e1b",
     "contractName": "Emotons",
     "fileName": "0004477d30634b6c7343701fcf5a9c6867625e1b_Emotons.sol",
-    "verifiedAt": "2024-11-30T17:30:15.849Z"
+    "verifiedAt": "2024-12-01T18:14:25.420Z"
   },
   {
     "address": "0x00051036a814B43866b4246ae6854DB8E1b95870",
     "contractName": "BOWSER",
     "fileName": "00051036a814B43866b4246ae6854DB8E1b95870_BOWSER.sol",
-    "verifiedAt": "2024-11-30T17:30:17.350Z"
+    "verifiedAt": "2024-12-01T18:14:27.059Z"
   },
   {
     "address": "0x00072ab8488d8635e2129587ce2698301bdbb838",
     "contractName": "Quantum2",
     "fileName": "00072ab8488d8635e2129587ce2698301bdbb838_Quantum2.sol",
-    "verifiedAt": "2024-11-30T17:30:27.197Z"
+    "verifiedAt": "2024-12-01T18:14:38.146Z"
   },
   {
     "address": "0x0007693362aE0Cb8af162bFc626220a66b698345",
     "contractName": "Address",
     "fileName": "0007693362aE0Cb8af162bFc626220a66b698345_Address.sol",
-    "verifiedAt": "2024-11-30T17:30:27.656Z"
+    "verifiedAt": "2024-12-01T18:14:38.738Z"
   },
   {
     "address": "0x0008e939b9355e1ff4b4f19e1f04bbb7f9bfcc3e",
     "contractName": "PredictrMKTG3TokenTimelock",
     "fileName": "0008e939b9355e1ff4b4f19e1f04bbb7f9bfcc3e_PredictrMKTG3TokenTimelock.sol",
-    "verifiedAt": "2024-11-30T17:30:34.496Z"
+    "verifiedAt": "2024-12-01T18:14:45.182Z"
   },
   {
     "address": "0x000983ba1a675327f0940b56c2d49cd9c042dfbf",
     "contractName": "ShinyLegendaryPack",
     "fileName": "000983ba1a675327f0940b56c2d49cd9c042dfbf_ShinyLegendaryPack.sol",
-    "verifiedAt": "2024-11-30T17:30:35.618Z"
+    "verifiedAt": "2024-12-01T18:14:46.109Z"
   },
   {
     "address": "0x0009c715329F0e34c4484b6E8bf0a1a691ed81d1",
     "contractName": "TokenERC20",
     "fileName": "0009c715329F0e34c4484b6E8bf0a1a691ed81d1_TokenERC20.sol",
-    "verifiedAt": "2024-11-30T17:30:36.539Z"
+    "verifiedAt": "2024-12-01T18:14:46.922Z"
   },
   {
     "address": "0x000ab58cd1cbcba900d12cd559d873b5b6ed0ce2",
     "contractName": "EtherOrcs",
     "fileName": "000ab58cd1cbcba900d12cd559d873b5b6ed0ce2_EtherOrcs.sol",
-    "verifiedAt": "2024-11-30T17:30:42.867Z"
+    "verifiedAt": "2024-12-01T18:14:53.682Z"
   },
   {
     "address": "0x000b05b50ecb62ee8b6b2d16c3c1185637ca967e",
     "contractName": "ERC20PresetMinterPauser",
     "fileName": "000b05b50ecb62ee8b6b2d16c3c1185637ca967e_ERC20PresetMinterPauser.sol",
-    "verifiedAt": "2024-11-30T17:30:44.958Z"
+    "verifiedAt": "2024-12-01T18:14:55.902Z"
   },
   {
     "address": "0x000c9e174c840d3a9bbd608cd70b64dfdf726b94",
     "contractName": "xEUR",
     "fileName": "000c9e174c840d3a9bbd608cd70b64dfdf726b94_xEUR.sol",
-    "verifiedAt": "2024-11-30T17:30:48.017Z"
+    "verifiedAt": "2024-12-01T18:14:59.114Z"
   },
   {
     "address": "0x000e49c87d2874431567d38ff9548890ab39baac",
     "contractName": "GoobersNFT",
     "fileName": "000e49c87d2874431567d38ff9548890ab39baac_GoobersNFT.sol",
-    "verifiedAt": "2024-11-30T17:30:51.281Z"
+    "verifiedAt": "2024-12-01T18:15:02.802Z"
   },
   {
     "address": "0x000f045eab5f02e8fecb527a3b73a3ec189bb0c2",
     "contractName": "Game1",
     "fileName": "000f045eab5f02e8fecb527a3b73a3ec189bb0c2_Game1.sol",
-    "verifiedAt": "2024-11-30T17:30:54.248Z"
+    "verifiedAt": "2024-12-01T18:15:05.659Z"
   },
   {
     "address": "0x000fF9191A4b7e14C9a083A30c93EdcD9a794087",
     "contractName": "Beyzat",
     "fileName": "000fF9191A4b7e14C9a083A30c93EdcD9a794087_Beyzat.sol",
-    "verifiedAt": "2024-11-30T17:30:55.204Z"
+    "verifiedAt": "2024-12-01T18:15:06.479Z"
   },
   {
     "address": "0x001072a7d13eAd3bb4B87ABe76F577A09Fd68604",
     "contractName": "AnteOpynPlungeTest",
     "fileName": "001072a7d13eAd3bb4B87ABe76F577A09Fd68604_AnteOpynPlungeTest.sol",
-    "verifiedAt": "2024-11-30T17:30:59.069Z"
+    "verifiedAt": "2024-12-01T18:15:10.376Z"
   },
   {
     "address": "0x00108a984a2577c8923ffd93ab1d33de5e9095a6",
     "contractName": "NodeNft",
     "fileName": "00108a984a2577c8923ffd93ab1d33de5e9095a6_NodeNft.sol",
-    "verifiedAt": "2024-11-30T17:30:59.674Z"
+    "verifiedAt": "2024-12-01T18:15:10.883Z"
   },
   {
     "address": "0x001164F38146287b7af4b0bd3aaF01D22979Ea2A",
     "contractName": "ChinaTown",
     "fileName": "001164F38146287b7af4b0bd3aaF01D22979Ea2A_ChinaTown.sol",
-    "verifiedAt": "2024-11-30T17:31:04.827Z"
+    "verifiedAt": "2024-12-01T18:15:15.797Z"
   },
   {
     "address": "0x0011eaaaa14eb99b1dc0c3f931d91deea8bbd471",
     "contractName": "Saitinja",
     "fileName": "0011eaaaa14eb99b1dc0c3f931d91deea8bbd471_Saitinja.sol",
-    "verifiedAt": "2024-11-30T17:31:05.314Z"
+    "verifiedAt": "2024-12-01T18:15:16.207Z"
   },
   {
     "address": "0x0012493dd0991f292d0a4774afdd19f007895470",
     "contractName": "CryptoKingToken",
     "fileName": "0012493dd0991f292d0a4774afdd19f007895470_CryptoKingToken.sol",
-    "verifiedAt": "2024-11-30T17:31:07.044Z"
+    "verifiedAt": "2024-12-01T18:15:17.860Z"
   },
   {
     "address": "0x001366d1f309f4dd7d1c68129a574d59cfc45bf6",
     "contractName": "Vesting",
     "fileName": "001366d1f309f4dd7d1c68129a574d59cfc45bf6_Vesting.sol",
-    "verifiedAt": "2024-11-30T17:31:10.839Z"
+    "verifiedAt": "2024-12-01T18:15:22.251Z"
   },
   {
     "address": "0x00139FdD8f2Bb8b4376aab2435c44981EC34e7e0",
     "contractName": "AdventurersOfEther",
     "fileName": "00139FdD8f2Bb8b4376aab2435c44981EC34e7e0_AdventurersOfEther.sol",
-    "verifiedAt": "2024-11-30T17:31:11.990Z"
+    "verifiedAt": "2024-12-01T18:15:23.580Z"
   },
   {
     "address": "0x001502F7fBaA8b309962D7bcACBB499B99FC1D1f",
     "contractName": "TENSOR",
     "fileName": "001502F7fBaA8b309962D7bcACBB499B99FC1D1f_TENSOR.sol",
-    "verifiedAt": "2024-11-30T17:31:18.591Z"
+    "verifiedAt": "2024-12-01T18:15:31.056Z"
   },
   {
     "address": "0x001505A60d5C131E5Db7125cCE8410daD4aF2411",
     "contractName": "ERC20",
     "fileName": "001505A60d5C131E5Db7125cCE8410daD4aF2411_ERC20.sol",
-    "verifiedAt": "2024-11-30T17:31:18.980Z"
+    "verifiedAt": "2024-12-01T18:15:31.465Z"
   },
   {
     "address": "0x0015299A3790853a15A49aC559eAA04fba291D6c",
     "contractName": "OpenDEX",
     "fileName": "0015299A3790853a15A49aC559eAA04fba291D6c_OpenDEX.sol",
-    "verifiedAt": "2024-11-30T17:31:19.433Z"
+    "verifiedAt": "2024-12-01T18:15:32.077Z"
   },
   {
     "address": "0x00160baF84b3D2014837cc12e838ea399f8b8478",
     "contractName": "Multicall_Oz",
     "fileName": "00160baF84b3D2014837cc12e838ea399f8b8478_Multicall_Oz.sol",
-    "verifiedAt": "2024-11-30T17:31:24.348Z"
+    "verifiedAt": "2024-12-01T18:15:37.390Z"
   },
   {
     "address": "0x00166a5b93FD4f87ecA1c267d31D82dF3f133a7F",
     "contractName": "ICB",
     "fileName": "00166a5b93FD4f87ecA1c267d31D82dF3f133a7F_ICB.sol",
-    "verifiedAt": "2024-11-30T17:31:25.923Z"
+    "verifiedAt": "2024-12-01T18:15:40.779Z"
   },
   {
     "address": "0x0017835AF5D43Ef474Fa02Fe21ef14698C8E59e5",
     "contractName": "CaptainzV2",
     "fileName": "0017835AF5D43Ef474Fa02Fe21ef14698C8E59e5_CaptainzV2.sol",
-    "verifiedAt": "2024-11-30T17:31:28.036Z"
+    "verifiedAt": "2024-12-01T18:15:42.931Z"
   },
   {
     "address": "0x0017836e2e0A5445F1816D69380F244CAA41BDEd",
     "contractName": "LL420Reveal",
     "fileName": "0017836e2e0A5445F1816D69380F244CAA41BDEd_LL420Reveal.sol",
-    "verifiedAt": "2024-11-30T17:31:28.934Z"
+    "verifiedAt": "2024-12-01T18:15:43.893Z"
   },
   {
     "address": "0x00179709200d556c8c281bbcf8a7840d5ec92a17",
     "contractName": "FVCK",
     "fileName": "00179709200d556c8c281bbcf8a7840d5ec92a17_FVCK.sol",
-    "verifiedAt": "2024-11-30T17:31:29.372Z"
+    "verifiedAt": "2024-12-01T18:15:44.362Z"
   },
   {
     "address": "0x0018e66a1dea81fdd767cbb15673119b034b5cf2",
     "contractName": "BNSG",
     "fileName": "0018e66a1dea81fdd767cbb15673119b034b5cf2_BNSG.sol",
-    "verifiedAt": "2024-11-30T17:31:35.328Z"
+    "verifiedAt": "2024-12-01T18:15:50.199Z"
   },
   {
     "address": "0x00193fd84ee0a468a471163ed4da5a37768676b3",
     "contractName": "BOOBSAI",
     "fileName": "00193fd84ee0a468a471163ed4da5a37768676b3_BOOBSAI.sol",
-    "verifiedAt": "2024-11-30T17:31:36.225Z"
+    "verifiedAt": "2024-12-01T18:15:51.121Z"
   },
   {
     "address": "0x0019f661C0798AFFEa4Dd0949A526B873511a9f5",
     "contractName": "HyperDexRouter",
     "fileName": "0019f661C0798AFFEa4Dd0949A526B873511a9f5_HyperDexRouter.sol",
-    "verifiedAt": "2024-11-30T17:31:40.638Z"
+    "verifiedAt": "2024-12-01T18:15:55.832Z"
   },
   {
     "address": "0x001C249c09090D79Dc350A286247479F08c7aaD7",
     "contractName": "LPTokenStaker",
     "fileName": "001C249c09090D79Dc350A286247479F08c7aaD7_LPTokenStaker.sol",
-    "verifiedAt": "2024-11-30T17:31:44.072Z"
+    "verifiedAt": "2024-12-01T18:15:59.517Z"
   },
   {
     "address": "0x001a8ffcb0f03e99141652ebcdecdb0384e3bd6c",
     "contractName": "Polker",
     "fileName": "001a8ffcb0f03e99141652ebcdecdb0384e3bd6c_Polker.sol",
-    "verifiedAt": "2024-11-30T17:31:49.019Z"
+    "verifiedAt": "2024-12-01T18:16:04.536Z"
   },
   {
     "address": "0x001b6e5c7322899355eb65486e8cbb7dbbf19127",
     "contractName": "SDR22",
     "fileName": "001b6e5c7322899355eb65486e8cbb7dbbf19127_SDR22.sol",
-    "verifiedAt": "2024-11-30T17:31:50.810Z"
+    "verifiedAt": "2024-12-01T18:16:06.180Z"
   },
   {
     "address": "0x001dfC794bf68c47fEC0A3F031c710E71318FA2a",
     "contractName": "SturdyInternalAsset",
     "fileName": "001dfC794bf68c47fEC0A3F031c710E71318FA2a_SturdyInternalAsset.sol",
-    "verifiedAt": "2024-11-30T17:31:53.207Z"
+    "verifiedAt": "2024-12-01T18:16:08.634Z"
   },
   {
     "address": "0x001e1bd03e2cb28a4958db5b71b4caaa381a59f1",
     "contractName": "MonkeyIsland",
     "fileName": "001e1bd03e2cb28a4958db5b71b4caaa381a59f1_MonkeyIsland.sol",
-    "verifiedAt": "2024-11-30T17:31:54.868Z"
+    "verifiedAt": "2024-12-01T18:16:10.274Z"
   },
   {
     "address": "0x001e8E03583832d3932826160DDD20C6E3b25887",
     "contractName": "HCurve",
     "fileName": "001e8E03583832d3932826160DDD20C6E3b25887_HCurve.sol",
-    "verifiedAt": "2024-11-30T17:31:55.679Z"
+    "verifiedAt": "2024-12-01T18:16:11.298Z"
   },
   {
     "address": "0x001eb0D277d5B24A306582387Cfc16Fa37a1375C",
     "contractName": "Vault",
     "fileName": "001eb0D277d5B24A306582387Cfc16Fa37a1375C_Vault.sol",
-    "verifiedAt": "2024-11-30T17:31:58.057Z"
+    "verifiedAt": "2024-12-01T18:16:13.349Z"
   },
   {
     "address": "0x001ed2d6f4fb995572646bc21420bbc0f3cd89d4",
     "contractName": "SHIBAMARS",
     "fileName": "001ed2d6f4fb995572646bc21420bbc0f3cd89d4_SHIBAMARS.sol",
-    "verifiedAt": "2024-11-30T17:31:58.956Z"
+    "verifiedAt": "2024-12-01T18:16:14.267Z"
   },
   {
     "address": "0x001f751cdfee02e2f0714831be2f8384db0f71a2",
     "contractName": "Strategy",
     "fileName": "001f751cdfee02e2f0714831be2f8384db0f71a2_Strategy.sol",
-    "verifiedAt": "2024-11-30T17:32:00.934Z"
+    "verifiedAt": "2024-12-01T18:16:16.318Z"
   },
   {
     "address": "0x002023a26f956a1b770051ab5d8163cdca2fe22d",
     "contractName": "MewInu",
     "fileName": "002023a26f956a1b770051ab5d8163cdca2fe22d_MewInu.sol",
-    "verifiedAt": "2024-11-30T17:32:03.049Z"
+    "verifiedAt": "2024-12-01T18:16:18.469Z"
   },
   {
     "address": "0x0020Db377B67D035744d2243C794137b431EAbC0",
     "contractName": "SyncToken",
     "fileName": "0020Db377B67D035744d2243C794137b431EAbC0_SyncToken.sol",
-    "verifiedAt": "2024-11-30T17:32:04.685Z"
+    "verifiedAt": "2024-12-01T18:16:20.312Z"
   },
   {
     "address": "0x0020d80229877b495D2bf3269a4c13f6f1e1B9D3",
     "contractName": "Dexmex",
     "fileName": "0020d80229877b495D2bf3269a4c13f6f1e1B9D3_Dexmex.sol",
-    "verifiedAt": "2024-11-30T17:32:05.939Z"
+    "verifiedAt": "2024-12-01T18:16:21.631Z"
   },
   {
     "address": "0x00215dee054986050a858964a28c1fdc5bcccf93",
     "contractName": "REIKI",
     "fileName": "00215dee054986050a858964a28c1fdc5bcccf93_REIKI.sol",
-    "verifiedAt": "2024-11-30T17:32:09.591Z"
+    "verifiedAt": "2024-12-01T18:16:24.015Z"
   },
   {
     "address": "0x0021a48b90b89B6552D7C5A65f5063302c647375",
     "contractName": "headAlpha",
     "fileName": "0021a48b90b89B6552D7C5A65f5063302c647375_headAlpha.sol",
-    "verifiedAt": "2024-11-30T17:32:11.443Z"
+    "verifiedAt": "2024-12-01T18:16:25.747Z"
   },
   {
     "address": "0x0021c5f6bc6647e2b1387464b976db9f78ce3f55",
     "contractName": "ERC20Basic",
     "fileName": "0021c5f6bc6647e2b1387464b976db9f78ce3f55_ERC20Basic.sol",
-    "verifiedAt": "2024-11-30T17:32:11.837Z"
+    "verifiedAt": "2024-12-01T18:16:26.151Z"
   },
   {
     "address": "0x0021dc34eec3fb8b1e34b5ec812c342d0352ee4d",
     "contractName": "DOGSRUS",
     "fileName": "0021dc34eec3fb8b1e34b5ec812c342d0352ee4d_DOGSRUS.sol",
-    "verifiedAt": "2024-11-30T17:32:12.264Z"
+    "verifiedAt": "2024-12-01T18:16:26.562Z"
   },
   {
     "address": "0x00238b3cdbaca181887ba7798412a5ac17c569e2",
     "contractName": "VaultNonUpgradableProxy",
     "fileName": "00238b3cdbaca181887ba7798412a5ac17c569e2_VaultNonUpgradableProxy.sol",
-    "verifiedAt": "2024-11-30T17:32:18.009Z"
+    "verifiedAt": "2024-12-01T18:16:32.613Z"
   },
   {
     "address": "0x0025336944da9e6c4554f350d1e133b107845fd3",
     "contractName": "PublicData",
     "fileName": "0025336944da9e6c4554f350d1e133b107845fd3_PublicData.sol",
-    "verifiedAt": "2024-11-30T17:32:25.161Z"
+    "verifiedAt": "2024-12-01T18:16:39.569Z"
   },
   {
     "address": "0x00253fcb6563b1136c841a77116cdd1352788f39",
     "contractName": "HeroEscrowV2",
     "fileName": "00253fcb6563b1136c841a77116cdd1352788f39_HeroEscrowV2.sol",
-    "verifiedAt": "2024-11-30T17:32:25.575Z"
+    "verifiedAt": "2024-12-01T18:16:40.082Z"
   },
   {
     "address": "0x0026AfB55d017B003F23EF4789EBFc0052D2173F",
     "contractName": "ETHToken",
     "fileName": "0026AfB55d017B003F23EF4789EBFc0052D2173F_ETHToken.sol",
-    "verifiedAt": "2024-11-30T17:32:32.234Z"
+    "verifiedAt": "2024-12-01T18:16:45.921Z"
   },
   {
     "address": "0x002765Ca5E6F15828146138881867484253d6FB8",
     "contractName": "OpLong",
     "fileName": "002765Ca5E6F15828146138881867484253d6FB8_OpLong.sol",
-    "verifiedAt": "2024-11-30T17:32:35.726Z"
+    "verifiedAt": "2024-12-01T18:16:49.710Z"
   },
   {
     "address": "0x0027cbade7726996c950d6ff0987e7b94549485e",
     "contractName": "BlessAmerica",
     "fileName": "0027cbade7726996c950d6ff0987e7b94549485e_BlessAmerica.sol",
-    "verifiedAt": "2024-11-30T17:32:39.907Z"
+    "verifiedAt": "2024-12-01T18:16:53.505Z"
   },
   {
     "address": "0x0027fcb9c3605f30bfadaa32a63d92dc62a94360",
     "contractName": "EnigmaV4",
     "fileName": "0027fcb9c3605f30bfadaa32a63d92dc62a94360_EnigmaV4.sol",
-    "verifiedAt": "2024-11-30T17:32:41.645Z"
+    "verifiedAt": "2024-12-01T18:16:55.345Z"
   },
   {
     "address": "0x0028CE89fF53FeCC0708000CC9cA8962F3c43B25",
     "contractName": "ForefrontVesting",
     "fileName": "0028CE89fF53FeCC0708000CC9cA8962F3c43B25_ForefrontVesting.sol",
-    "verifiedAt": "2024-11-30T17:32:42.884Z"
+    "verifiedAt": "2024-12-01T18:16:56.777Z"
   },
   {
     "address": "0x002A71749059bc9332DCba05b34408Ef05476d95",
     "contractName": "MintableRewards",
     "fileName": "002A71749059bc9332DCba05b34408Ef05476d95_MintableRewards.sol",
-    "verifiedAt": "2024-11-30T17:32:51.121Z"
+    "verifiedAt": "2024-12-01T18:17:05.176Z"
   },
   {
     "address": "0x002EA266C98230c67D0029D14706e509F9150075",
     "contractName": "waitara",
     "fileName": "002EA266C98230c67D0029D14706e509F9150075_waitara.sol",
-    "verifiedAt": "2024-11-30T17:32:54.240Z"
+    "verifiedAt": "2024-12-01T18:17:08.556Z"
   },
   {
     "address": "0x002bc2632ec91e229470e747534ca93da52bb266",
     "contractName": "EthPowPos",
     "fileName": "002bc2632ec91e229470e747534ca93da52bb266_EthPowPos.sol",
-    "verifiedAt": "2024-11-30T17:32:57.621Z"
+    "verifiedAt": "2024-12-01T18:17:11.935Z"
   },
   {
     "address": "0x002c760099e0ad4917b5d12feaeff62b5fbf0785",
     "contractName": "TokenGeyser",
     "fileName": "002c760099e0ad4917b5d12feaeff62b5fbf0785_TokenGeyser.sol",
-    "verifiedAt": "2024-11-30T17:33:00.485Z"
+    "verifiedAt": "2024-12-01T18:17:14.804Z"
   },
   {
     "address": "0x002cd12051c3D0212Af47fB4393D10c879b60991",
     "contractName": "KeyStorage",
     "fileName": "002cd12051c3D0212Af47fB4393D10c879b60991_KeyStorage.sol",
-    "verifiedAt": "2024-11-30T17:33:00.900Z"
+    "verifiedAt": "2024-12-01T18:17:15.219Z"
   },
   {
     "address": "0x002d91ec0602dca06ef24071fc602d4c423fdfe5",
     "contractName": "Shiba2023",
     "fileName": "002d91ec0602dca06ef24071fc602d4c423fdfe5_Shiba2023.sol",
-    "verifiedAt": "2024-11-30T17:33:01.816Z"
+    "verifiedAt": "2024-12-01T18:17:16.133Z"
   },
   {
     "address": "0x002e79d50e61a73de91edf3c82a8f2577f9e680d",
     "contractName": "Spark",
     "fileName": "002e79d50e61a73de91edf3c82a8f2577f9e680d_Spark.sol",
-    "verifiedAt": "2024-11-30T17:33:05.197Z"
+    "verifiedAt": "2024-12-01T18:17:19.720Z"
   },
   {
     "address": "0x002f0efb31696670cb3d78b04df2f41f88c73125",
     "contractName": "PunkRockApeClub",
     "fileName": "002f0efb31696670cb3d78b04df2f41f88c73125_PunkRockApeClub.sol",
-    "verifiedAt": "2024-11-30T17:33:10.109Z"
+    "verifiedAt": "2024-12-01T18:17:24.943Z"
   },
   {
     "address": "0x002f1bfE85577d2F060ba399A69e3231337e6c6f",
     "contractName": "ThorToken",
     "fileName": "002f1bfE85577d2F060ba399A69e3231337e6c6f_ThorToken.sol",
-    "verifiedAt": "2024-11-30T17:33:11.037Z"
+    "verifiedAt": "2024-12-01T18:17:25.761Z"
   },
   {
     "address": "0x002f6cCea40d491B9731fe5189896d8A950C5F89",
     "contractName": "GuardaToken",
     "fileName": "002f6cCea40d491B9731fe5189896d8A950C5F89_GuardaToken.sol",
-    "verifiedAt": "2024-11-30T17:33:12.258Z"
+    "verifiedAt": "2024-12-01T18:17:27.198Z"
   },
   {
     "address": "0x002fF64E6581E6e3e1f3D35f68EB24839A8546B3",
     "contractName": "Safebook",
     "fileName": "002fF64E6581E6e3e1f3D35f68EB24839A8546B3_Safebook.sol",
-    "verifiedAt": "2024-11-30T17:33:13.185Z"
+    "verifiedAt": "2024-12-01T18:17:28.117Z"
   },
   {
     "address": "0x003025AF3ff44c3b038221AA99Ca1B365EC79D6d",
     "contractName": "ConvexStrategyYCRVMainnet",
     "fileName": "003025AF3ff44c3b038221AA99Ca1B365EC79D6d_ConvexStrategyYCRVMainnet.sol",
-    "verifiedAt": "2024-11-30T17:33:16.618Z"
+    "verifiedAt": "2024-12-01T18:17:31.806Z"
   },
   {
     "address": "0x0030E030F816AC33A1C32BBeFf22683ADbE3ef96",
     "contractName": "UnifiedStaking",
     "fileName": "0030E030F816AC33A1C32BBeFf22683ADbE3ef96_UnifiedStaking.sol",
-    "verifiedAt": "2024-11-30T17:33:17.892Z"
+    "verifiedAt": "2024-12-01T18:17:33.238Z"
   },
   {
     "address": "0x0030b16a648d228bC83C9427402307568E44884b",
     "contractName": "GoerliInu",
     "fileName": "0030b16a648d228bC83C9427402307568E44884b_GoerliInu.sol",
-    "verifiedAt": "2024-11-30T17:33:20.346Z"
+    "verifiedAt": "2024-12-01T18:17:35.711Z"
   },
   {
     "address": "0x0031130c56162e00A7e9C01eE4147b11cbac8776",
     "contractName": "CurveStEthBridge",
     "fileName": "0031130c56162e00A7e9C01eE4147b11cbac8776_CurveStEthBridge.sol",
-    "verifiedAt": "2024-11-30T17:33:20.760Z"
+    "verifiedAt": "2024-12-01T18:17:36.114Z"
   },
   {
     "address": "0x003163a2ee51ce13ba6d453f06f0426d8f04f719",
     "contractName": "SumInputs",
     "fileName": "003163a2ee51ce13ba6d453f06f0426d8f04f719_SumInputs.sol",
-    "verifiedAt": "2024-11-30T17:33:21.994Z"
+    "verifiedAt": "2024-12-01T18:17:37.335Z"
   },
   {
     "address": "0x0031Eb5dd0B890Dc2a03e1204d2EeCb486680c3d",
     "contractName": "RewardsNFT",
     "fileName": "0031Eb5dd0B890Dc2a03e1204d2EeCb486680c3d_RewardsNFT.sol",
-    "verifiedAt": "2024-11-30T17:33:22.808Z"
+    "verifiedAt": "2024-12-01T18:17:38.154Z"
   },
   {
     "address": "0x0031b7AC27d10c75072d2399323d4Ca4751C4642",
     "contractName": "StakingRewards",
     "fileName": "0031b7AC27d10c75072d2399323d4Ca4751C4642_StakingRewards.sol",
-    "verifiedAt": "2024-11-30T17:33:23.729Z"
+    "verifiedAt": "2024-12-01T18:17:39.181Z"
   },
   {
     "address": "0x00337a31aEE3Ed37f5D5FBF892031d0090Da2EeF",
     "contractName": "WormholeRelayer",
     "fileName": "00337a31aEE3Ed37f5D5FBF892031d0090Da2EeF_WormholeRelayer.sol",
-    "verifiedAt": "2024-11-30T17:33:27.107Z"
+    "verifiedAt": "2024-12-01T18:17:42.148Z"
   },
   {
     "address": "0x003516572f212dec785c3bcc97e6f354851eeb47",
     "contractName": "GBCToken",
     "fileName": "003516572f212dec785c3bcc97e6f354851eeb47_GBCToken.sol",
-    "verifiedAt": "2024-11-30T17:33:31.720Z"
+    "verifiedAt": "2024-12-01T18:17:46.859Z"
   },
   {
     "address": "0x00357d0000a81e1700755830007ca49100007f00",
     "contractName": "_0_",
     "fileName": "00357d0000a81e1700755830007ca49100007f00__0_.sol",
-    "verifiedAt": "2024-11-30T17:33:34.994Z"
+    "verifiedAt": "2024-12-01T18:17:50.956Z"
   },
   {
     "address": "0x003625571edc6d3350c09d250ba0cc7c6be84e74",
     "contractName": "RipGabe",
     "fileName": "003625571edc6d3350c09d250ba0cc7c6be84e74_RipGabe.sol",
-    "verifiedAt": "2024-11-30T17:33:37.660Z"
+    "verifiedAt": "2024-12-01T18:17:53.596Z"
   },
   {
     "address": "0x0036e798428dcc627bc9ccb6e16de48253082f35",
     "contractName": "StoicAI",
     "fileName": "0036e798428dcc627bc9ccb6e16de48253082f35_StoicAI.sol",
-    "verifiedAt": "2024-11-30T17:33:42.155Z"
+    "verifiedAt": "2024-12-01T18:17:58.329Z"
   },
   {
     "address": "0x00371fb3b17a13b9591fd135026367e9d2a6c33e",
     "contractName": "CYS",
     "fileName": "00371fb3b17a13b9591fd135026367e9d2a6c33e_CYS.sol",
-    "verifiedAt": "2024-11-30T17:33:42.669Z"
+    "verifiedAt": "2024-12-01T18:17:58.785Z"
   },
   {
     "address": "0x00372812abcB11c2EA291aeb7F612D9e0524b013",
     "contractName": "JAYZ",
     "fileName": "00372812abcB11c2EA291aeb7F612D9e0524b013_JAYZ.sol",
-    "verifiedAt": "2024-11-30T17:33:43.081Z"
+    "verifiedAt": "2024-12-01T18:17:59.167Z"
   },
   {
     "address": "0x003824AbF752bAa6ebA4A5F7e62D08354c9B2877",
     "contractName": "LWAN",
     "fileName": "003824AbF752bAa6ebA4A5F7e62D08354c9B2877_LWAN.sol",
-    "verifiedAt": "2024-11-30T17:33:46.968Z"
+    "verifiedAt": "2024-12-01T18:18:02.631Z"
   },
   {
     "address": "0x0039019392b1ea93cd1277f75986fdf2407fe254",
     "contractName": "Test",
     "fileName": "0039019392b1ea93cd1277f75986fdf2407fe254_Test.sol",
-    "verifiedAt": "2024-11-30T17:33:48.813Z"
+    "verifiedAt": "2024-12-01T18:18:04.269Z"
   },
   {
     "address": "0x00391d08b3e68e476a774ada379258264eb74485",
     "contractName": "DipTge",
     "fileName": "00391d08b3e68e476a774ada379258264eb74485_DipTge.sol",
-    "verifiedAt": "2024-11-30T17:33:49.732Z"
+    "verifiedAt": "2024-12-01T18:18:05.071Z"
   },
   {
     "address": "0x0039c556bddafe1a8e7ff64d8b8a1346573e58ac",
     "contractName": "PunkShibaToken",
     "fileName": "0039c556bddafe1a8e7ff64d8b8a1346573e58ac_PunkShibaToken.sol",
-    "verifiedAt": "2024-11-30T17:33:50.963Z"
+    "verifiedAt": "2024-12-01T18:18:06.333Z"
   },
   {
     "address": "0x0039d04e644cc816409dfa01Ad4D92471fCE26d0",
     "contractName": "Router",
     "fileName": "0039d04e644cc816409dfa01Ad4D92471fCE26d0_Router.sol",
-    "verifiedAt": "2024-11-30T17:33:51.383Z"
+    "verifiedAt": "2024-12-01T18:18:06.747Z"
   },
   {
     "address": "0x003A6eaF755C738D60e82D9e4C8eB2FB05B5d338",
     "contractName": "PartyPandas",
     "fileName": "003A6eaF755C738D60e82D9e4C8eB2FB05B5d338_PartyPandas.sol",
-    "verifiedAt": "2024-11-30T17:33:52.309Z"
+    "verifiedAt": "2024-12-01T18:18:07.532Z"
   },
   {
     "address": "0x003CBAfe842906366488C53aD883F09C49EEB3a5",
     "contractName": "HONGKONG",
     "fileName": "003CBAfe842906366488C53aD883F09C49EEB3a5_HONGKONG.sol",
-    "verifiedAt": "2024-11-30T17:33:53.419Z"
+    "verifiedAt": "2024-12-01T18:18:08.288Z"
   },
   {
     "address": "0x003b62aa2d510e983a46b3b3308664faeaaaed2e",
     "contractName": "FuckFlokiScam",
     "fileName": "003b62aa2d510e983a46b3b3308664faeaaaed2e_FuckFlokiScam.sol",
-    "verifiedAt": "2024-11-30T17:33:56.996Z"
+    "verifiedAt": "2024-12-01T18:18:11.818Z"
   },
   {
     "address": "0x003b77b7a433aef95d5fe557fee397bc1fb8da1b",
     "contractName": "KaijuFrenz",
     "fileName": "003b77b7a433aef95d5fe557fee397bc1fb8da1b_KaijuFrenz.sol",
-    "verifiedAt": "2024-11-30T17:33:57.806Z"
+    "verifiedAt": "2024-12-01T18:18:12.678Z"
   },
   {
     "address": "0x003c54517D56c0176C1D7cE116162A3448A9670a",
     "contractName": "Library",
     "fileName": "003c54517D56c0176C1D7cE116162A3448A9670a_Library.sol",
-    "verifiedAt": "2024-11-30T17:33:58.936Z"
+    "verifiedAt": "2024-12-01T18:18:13.921Z"
   },
   {
     "address": "0x003da78deb9dd263d46bf992da4fa255aa9766fc",
     "contractName": "CuteBullCoin",
     "fileName": "003da78deb9dd263d46bf992da4fa255aa9766fc_CuteBullCoin.sol",
-    "verifiedAt": "2024-11-30T17:34:03.764Z"
+    "verifiedAt": "2024-12-01T18:18:19.324Z"
   },
   {
     "address": "0x003e523dfb5d91e508745256603d222891e65828",
     "contractName": "MegaPoker",
     "fileName": "003e523dfb5d91e508745256603d222891e65828_MegaPoker.sol",
-    "verifiedAt": "2024-11-30T17:34:06.319Z"
+    "verifiedAt": "2024-12-01T18:18:21.781Z"
   },
   {
     "address": "0x003ed3a4e2e9a4a91a56dc2adccb9d23cc0e3851",
     "contractName": "GHGHouse",
     "fileName": "003ed3a4e2e9a4a91a56dc2adccb9d23cc0e3851_GHGHouse.sol",
-    "verifiedAt": "2024-11-30T17:34:07.243Z"
+    "verifiedAt": "2024-12-01T18:18:22.703Z"
   },
   {
     "address": "0x003ee81e1dae7d6ff964c604e6381fe4664e768f",
     "contractName": "ComfyInu",
     "fileName": "003ee81e1dae7d6ff964c604e6381fe4664e768f_ComfyInu.sol",
-    "verifiedAt": "2024-11-30T17:34:08.165Z"
+    "verifiedAt": "2024-12-01T18:18:23.639Z"
   },
   {
     "address": "0x003fb03e851f435e79066dcf652d84b53f1d66c5",
     "contractName": "GNB",
     "fileName": "003fb03e851f435e79066dcf652d84b53f1d66c5_GNB.sol",
-    "verifiedAt": "2024-11-30T17:34:11.448Z"
+    "verifiedAt": "2024-12-01T18:18:27.003Z"
   },
   {
     "address": "0x004048e3974D9FA7e1095c03B99F307A03E0e310",
     "contractName": "BakedLpPool",
     "fileName": "004048e3974D9FA7e1095c03B99F307A03E0e310_BakedLpPool.sol",
-    "verifiedAt": "2024-11-30T17:34:12.774Z"
+    "verifiedAt": "2024-12-01T18:18:28.540Z"
   },
   {
     "address": "0x0040da8480b899f555ab6904f574e0c54b31386b",
     "contractName": "AkitaRyu",
     "fileName": "0040da8480b899f555ab6904f574e0c54b31386b_AkitaRyu.sol",
-    "verifiedAt": "2024-11-30T17:34:16.664Z"
+    "verifiedAt": "2024-12-01T18:18:32.329Z"
   },
   {
     "address": "0x0040fd6b4Cb50003eA9Fc0651592a113ccBA45bc",
     "contractName": "KIZO",
     "fileName": "0040fd6b4Cb50003eA9Fc0651592a113ccBA45bc_KIZO.sol",
-    "verifiedAt": "2024-11-30T17:34:18.609Z"
+    "verifiedAt": "2024-12-01T18:18:33.967Z"
   },
   {
     "address": "0x00413945fb5c49ca79ef3d948c06bb30d240f245",
     "contractName": "ETOR",
     "fileName": "00413945fb5c49ca79ef3d948c06bb30d240f245_ETOR.sol",
-    "verifiedAt": "2024-11-30T17:34:21.310Z"
+    "verifiedAt": "2024-12-01T18:18:34.993Z"
   },
   {
     "address": "0x0041C57d18AA185bd25E8f323E2eD0F2cF84B02f",
     "contractName": "MarsGenesisWallet",
     "fileName": "0041C57d18AA185bd25E8f323E2eD0F2cF84B02f_MarsGenesisWallet.sol",
-    "verifiedAt": "2024-11-30T17:34:21.693Z"
+    "verifiedAt": "2024-12-01T18:18:35.401Z"
   },
   {
     "address": "0x004256CFBA6B0d984cab089d24Dd4CaF77F32316",
     "contractName": "UtilityFactoryCollab",
     "fileName": "004256CFBA6B0d984cab089d24Dd4CaF77F32316_UtilityFactoryCollab.sol",
-    "verifiedAt": "2024-11-30T17:34:24.114Z"
+    "verifiedAt": "2024-12-01T18:18:37.560Z"
   },
   {
     "address": "0x0043625392a133a0df4c9cfbd7b8f9ae973c101c",
     "contractName": "ArtEdu",
     "fileName": "0043625392a133a0df4c9cfbd7b8f9ae973c101c_ArtEdu.sol",
-    "verifiedAt": "2024-11-30T17:34:29.254Z"
+    "verifiedAt": "2024-12-01T18:18:42.747Z"
   },
   {
     "address": "0x0043A4a809bE33afA17C1E3e37E19977622E4700",
     "contractName": "BlockersContract",
     "fileName": "0043A4a809bE33afA17C1E3e37E19977622E4700_BlockersContract.sol",
-    "verifiedAt": "2024-11-30T17:34:31.402Z"
+    "verifiedAt": "2024-12-01T18:18:45.658Z"
   },
   {
     "address": "0x0043ec17ed15e7357785b034add7f33e30b792b8",
     "contractName": "VNFTMulti",
     "fileName": "0043ec17ed15e7357785b034add7f33e30b792b8_VNFTMulti.sol",
-    "verifiedAt": "2024-11-30T17:34:32.632Z"
+    "verifiedAt": "2024-12-01T18:18:47.501Z"
   },
   {
     "address": "0x00440cd01642fe9b6daf973001536ebdc28a1de1",
     "contractName": "NOPOLIEX",
     "fileName": "00440cd01642fe9b6daf973001536ebdc28a1de1_NOPOLIEX.sol",
-    "verifiedAt": "2024-11-30T17:34:33.040Z"
+    "verifiedAt": "2024-12-01T18:18:47.996Z"
   },
   {
     "address": "0x0044de5be32af3cdb08103bb075b4d7d3dc40872",
     "contractName": "SouthKoreaJunket",
     "fileName": "0044de5be32af3cdb08103bb075b4d7d3dc40872_SouthKoreaJunket.sol",
-    "verifiedAt": "2024-11-30T17:34:37.444Z"
+    "verifiedAt": "2024-12-01T18:18:52.344Z"
   },
   {
     "address": "0x0047D1712D60168FfE559f9569Da504c359637a9",
     "contractName": "FoundationMarketWrapper",
     "fileName": "0047D1712D60168FfE559f9569Da504c359637a9_FoundationMarketWrapper.sol",
-    "verifiedAt": "2024-11-30T17:34:43.489Z"
+    "verifiedAt": "2024-12-01T18:18:58.165Z"
   },
   {
     "address": "0x0048fc4357db3c0f45adea433a07a20769ddb0cf",
     "contractName": "DssBlow",
     "fileName": "0048fc4357db3c0f45adea433a07a20769ddb0cf_DssBlow.sol",
-    "verifiedAt": "2024-11-30T17:34:46.455Z"
+    "verifiedAt": "2024-12-01T18:19:01.409Z"
   },
   {
     "address": "0x0049e666d92e21862daf706c7185d16df20cdb39",
     "contractName": "Satoshinja",
     "fileName": "0049e666d92e21862daf706c7185d16df20cdb39_Satoshinja.sol",
-    "verifiedAt": "2024-11-30T17:34:50.629Z"
+    "verifiedAt": "2024-12-01T18:19:06.019Z"
   },
   {
     "address": "0x004BA6820A30A2c7B6458720495fb1eC5b5f7823",
     "contractName": "Aludel",
     "fileName": "004BA6820A30A2c7B6458720495fb1eC5b5f7823_Aludel.sol",
-    "verifiedAt": "2024-11-30T17:34:51.066Z"
+    "verifiedAt": "2024-12-01T18:19:06.533Z"
   },
   {
     "address": "0x004D09bDF288366B1AA6ea2229d11fc621B4e1d2",
     "contractName": "DevDetectorAi",
     "fileName": "004D09bDF288366B1AA6ea2229d11fc621B4e1d2_DevDetectorAi.sol",
-    "verifiedAt": "2024-11-30T17:34:52.802Z"
+    "verifiedAt": "2024-12-01T18:19:08.169Z"
   },
   {
     "address": "0x004cf82a346a71245193075a9B91f4329180766D",
     "contractName": "DieselXneuno",
     "fileName": "004cf82a346a71245193075a9B91f4329180766D_DieselXneuno.sol",
-    "verifiedAt": "2024-11-30T17:35:06.625Z"
+    "verifiedAt": "2024-12-01T18:19:22.200Z"
   },
   {
     "address": "0x004dcfc79b28ae0d52c2c013a328f84b433a1829",
     "contractName": "GreenXToken",
     "fileName": "004dcfc79b28ae0d52c2c013a328f84b433a1829_GreenXToken.sol",
-    "verifiedAt": "2024-11-30T17:35:09.286Z"
+    "verifiedAt": "2024-12-01T18:19:25.091Z"
   },
   {
     "address": "0x004f221ceed3c504145649ab0b2a9cd662337718",
     "contractName": "ERC20Basic",
     "fileName": "004f221ceed3c504145649ab0b2a9cd662337718_ERC20Basic.sol",
-    "verifiedAt": "2024-11-30T17:35:15.838Z"
+    "verifiedAt": "2024-12-01T18:19:38.376Z"
   },
   {
     "address": "0x004f5683e183908D0f6b688239e3e2D5bbb066CA",
     "contractName": "HallOfFameGoatLodge",
     "fileName": "004f5683e183908D0f6b688239e3e2D5bbb066CA_HallOfFameGoatLodge.sol",
-    "verifiedAt": "2024-11-30T17:35:16.659Z"
+    "verifiedAt": "2024-12-01T18:19:39.291Z"
   },
   {
     "address": "0x0050076b4ed699f4e432bb1cdcbf3d84d4ebbe19",
     "contractName": "DAWG",
     "fileName": "0050076b4ed699f4e432bb1cdcbf3d84d4ebbe19_DAWG.sol",
-    "verifiedAt": "2024-11-30T17:35:18.148Z"
+    "verifiedAt": "2024-12-01T18:19:40.631Z"
   },
   {
     "address": "0x00501902a2a5E249eC3133744BD5cb3D05EEC032",
     "contractName": "MovingEnergies",
     "fileName": "00501902a2a5E249eC3133744BD5cb3D05EEC032_MovingEnergies.sol",
-    "verifiedAt": "2024-11-30T17:35:18.604Z"
+    "verifiedAt": "2024-12-01T18:19:41.038Z"
   },
   {
     "address": "0x005098056a837c2c4F99C7eCeE976F8D90bdFFF8",
     "contractName": "DAO",
     "fileName": "005098056a837c2c4F99C7eCeE976F8D90bdFFF8_DAO.sol",
-    "verifiedAt": "2024-11-30T17:35:20.038Z"
+    "verifiedAt": "2024-12-01T18:19:42.275Z"
   },
   {
     "address": "0x005112454E4fAA73EDf28493BCb4c8De1E4276e1",
     "contractName": "RebirthAccessCards",
     "fileName": "005112454E4fAA73EDf28493BCb4c8De1E4276e1_RebirthAccessCards.sol",
-    "verifiedAt": "2024-11-30T17:35:24.131Z"
+    "verifiedAt": "2024-12-01T18:19:46.672Z"
   },
   {
     "address": "0x0051b5BAEb104a08Ce8A9F1A6B14062895df45C0",
     "contractName": "unbased",
     "fileName": "0051b5BAEb104a08Ce8A9F1A6B14062895df45C0_unbased.sol",
-    "verifiedAt": "2024-11-30T17:35:29.355Z"
+    "verifiedAt": "2024-12-01T18:19:51.629Z"
   },
   {
     "address": "0x005327e0817a017259056fb51defd11088b41e05",
     "contractName": "VenShiba",
     "fileName": "005327e0817a017259056fb51defd11088b41e05_VenShiba.sol",
-    "verifiedAt": "2024-11-30T17:35:38.982Z"
+    "verifiedAt": "2024-12-01T18:20:01.622Z"
   },
   {
     "address": "0x00547a1f1160a4af6fbee82fbf790b48b7192649",
     "contractName": "Star3Dlong",
     "fileName": "00547a1f1160a4af6fbee82fbf790b48b7192649_Star3Dlong.sol",
-    "verifiedAt": "2024-11-30T17:35:41.746Z"
+    "verifiedAt": "2024-12-01T18:20:04.181Z"
   },
   {
     "address": "0x00555513acf282b42882420e5e5ba87b44d8fa6e",
     "contractName": "AggregationRouter",
     "fileName": "00555513acf282b42882420e5e5ba87b44d8fa6e_AggregationRouter.sol",
-    "verifiedAt": "2024-11-30T17:35:46.673Z"
+    "verifiedAt": "2024-12-01T18:20:09.409Z"
   },
   {
     "address": "0x005685a5a1889fc7bfc3e9c11657703a67fb663b",
     "contractName": "CoretoStaking",
     "fileName": "005685a5a1889fc7bfc3e9c11657703a67fb663b_CoretoStaking.sol",
-    "verifiedAt": "2024-11-30T17:35:51.063Z"
+    "verifiedAt": "2024-12-01T18:20:14.012Z"
   },
   {
     "address": "0x0056f073898d5b38ca1841f8f5c3fd1d42ebb4cb",
     "contractName": "MysticBets",
     "fileName": "0056f073898d5b38ca1841f8f5c3fd1d42ebb4cb_MysticBets.sol",
-    "verifiedAt": "2024-11-30T17:35:52.801Z"
+    "verifiedAt": "2024-12-01T18:20:15.752Z"
   },
   {
     "address": "0x00589BB24138E8477F52B1f667E0838fF672d82d",
     "contractName": "AvnNftListingsV1",
     "fileName": "00589BB24138E8477F52B1f667E0838fF672d82d_AvnNftListingsV1.sol",
-    "verifiedAt": "2024-11-30T17:35:59.254Z"
+    "verifiedAt": "2024-12-01T18:20:21.912Z"
   },
   {
     "address": "0x005998df532dE1820119e3ebD50FC90A4e8E8080",
     "contractName": "ShibaGamesInu",
     "fileName": "005998df532dE1820119e3ebD50FC90A4e8E8080_ShibaGamesInu.sol",
-    "verifiedAt": "2024-11-30T17:36:01.809Z"
+    "verifiedAt": "2024-12-01T18:20:24.667Z"
   },
   {
     "address": "0x005Da41474EB93cfEa6FcC126e7bEAf467e96666",
     "contractName": "ProxyForMctMultisender",
     "fileName": "005Da41474EB93cfEa6FcC126e7bEAf467e96666_ProxyForMctMultisender.sol",
-    "verifiedAt": "2024-11-30T17:36:08.465Z"
+    "verifiedAt": "2024-12-01T18:20:31.317Z"
   },
   {
     "address": "0x005aefa801f03d7cd56d577bf91c9f4ca6c3c528",
     "contractName": "TLUC",
     "fileName": "005aefa801f03d7cd56d577bf91c9f4ca6c3c528_TLUC.sol",
-    "verifiedAt": "2024-11-30T17:36:13.689Z"
+    "verifiedAt": "2024-12-01T18:20:36.948Z"
   },
   {
     "address": "0x005b217d6b73584e83809c5084d3d5910ba12579",
     "contractName": "KIGGAL",
     "fileName": "005b217d6b73584e83809c5084d3d5910ba12579_KIGGAL.sol",
-    "verifiedAt": "2024-11-30T17:36:14.095Z"
+    "verifiedAt": "2024-12-01T18:20:37.357Z"
   },
   {
     "address": "0x005bA0cc7b779Ba9c598b8aC1bdf0C9bE83d301D",
     "contractName": "Aureus",
     "fileName": "005bA0cc7b779Ba9c598b8aC1bdf0C9bE83d301D_Aureus.sol",
-    "verifiedAt": "2024-11-30T17:36:16.352Z"
+    "verifiedAt": "2024-12-01T18:20:39.507Z"
   },
   {
     "address": "0x005bD3e250b2dF9CFF47dC7c82B4559E8A906758",
     "contractName": "ShakuMaku",
     "fileName": "005bD3e250b2dF9CFF47dC7c82B4559E8A906758_ShakuMaku.sol",
-    "verifiedAt": "2024-11-30T17:36:17.171Z"
+    "verifiedAt": "2024-12-01T18:20:40.326Z"
   },
   {
     "address": "0x005cb4dcec37fee53cb4330a3a59e8b9f3ddc86e",
     "contractName": "DefaultReserveInterestRateStrategy",
     "fileName": "005cb4dcec37fee53cb4330a3a59e8b9f3ddc86e_DefaultReserveInterestRateStrategy.sol",
-    "verifiedAt": "2024-11-30T17:36:19.321Z"
+    "verifiedAt": "2024-12-01T18:20:42.491Z"
   },
   {
     "address": "0x005d068a5dd27f3e49a047deac6785b426145bbc",
     "contractName": "ParasyteInu",
     "fileName": "005d068a5dd27f3e49a047deac6785b426145bbc_ParasyteInu.sol",
-    "verifiedAt": "2024-11-30T17:36:19.836Z"
+    "verifiedAt": "2024-12-01T18:20:42.989Z"
   },
   {
     "address": "0x005d1123878fc55fbd56b54c73963b234a64af3c",
     "contractName": "KibaInu",
     "fileName": "005d1123878fc55fbd56b54c73963b234a64af3c_KibaInu.sol",
-    "verifiedAt": "2024-11-30T17:36:20.650Z"
+    "verifiedAt": "2024-12-01T18:20:44.118Z"
   },
   {
     "address": "0x005e2aaf18a03484cc41240f37cbb5d42a6fe27c",
     "contractName": "Dogecoin",
     "fileName": "005e2aaf18a03484cc41240f37cbb5d42a6fe27c_Dogecoin.sol",
-    "verifiedAt": "2024-11-30T17:36:29.046Z"
+    "verifiedAt": "2024-12-01T18:20:52.614Z"
   },
   {
     "address": "0x0060228f198ec12089053786e762137d7cc70c60",
     "contractName": "CosmoSky",
     "fileName": "0060228f198ec12089053786e762137d7cc70c60_CosmoSky.sol",
-    "verifiedAt": "2024-11-30T17:36:35.291Z"
+    "verifiedAt": "2024-12-01T18:20:58.812Z"
   },
   {
     "address": "0x006134Fe44851d89daF32aFee326Aa886eAc641e",
     "contractName": "Neurex",
     "fileName": "006134Fe44851d89daF32aFee326Aa886eAc641e_Neurex.sol",
-    "verifiedAt": "2024-11-30T17:36:41.251Z"
+    "verifiedAt": "2024-12-01T18:21:04.913Z"
   },
   {
     "address": "0x00615AF1b2c4Cf730CBC1C3C6e2450de038B32b7",
     "contractName": "NXTPFacet",
     "fileName": "00615AF1b2c4Cf730CBC1C3C6e2450de038B32b7_NXTPFacet.sol",
-    "verifiedAt": "2024-11-30T17:36:41.744Z"
+    "verifiedAt": "2024-12-01T18:21:05.625Z"
   },
   {
     "address": "0x00619ea5a1cc9e9ef8d02a4ebe9f69b3bc387098",
     "contractName": "BrotherShiba",
     "fileName": "00619ea5a1cc9e9ef8d02a4ebe9f69b3bc387098_BrotherShiba.sol",
-    "verifiedAt": "2024-11-30T17:36:43.483Z"
+    "verifiedAt": "2024-12-01T18:21:06.847Z"
   },
   {
     "address": "0x0062179227c03efc81301ade144f447f2561edd5",
     "contractName": "Presale",
     "fileName": "0062179227c03efc81301ade144f447f2561edd5_Presale.sol",
-    "verifiedAt": "2024-11-30T17:36:48.604Z"
+    "verifiedAt": "2024-12-01T18:21:08.797Z"
   },
   {
     "address": "0x00627a15cf915f6db2ea899b906fee6aa9ec9bbc",
     "contractName": "FoundingEvent",
     "fileName": "00627a15cf915f6db2ea899b906fee6aa9ec9bbc_FoundingEvent.sol",
-    "verifiedAt": "2024-11-30T17:36:51.679Z"
+    "verifiedAt": "2024-12-01T18:21:12.169Z"
   },
   {
     "address": "0x00632CFe43d8F9f8E6cD0d39Ffa3D4fa7ec73CFB",
     "contractName": "ChainlinkOracleV2",
     "fileName": "00632CFe43d8F9f8E6cD0d39Ffa3D4fa7ec73CFB_ChainlinkOracleV2.sol",
-    "verifiedAt": "2024-11-30T17:36:53.422Z"
+    "verifiedAt": "2024-12-01T18:21:13.912Z"
   },
   {
     "address": "0x00642d98798C4f8ef016452C865933a32e9f1F4c",
     "contractName": "EXOPOP",
     "fileName": "00642d98798C4f8ef016452C865933a32e9f1F4c_EXOPOP.sol",
-    "verifiedAt": "2024-11-30T17:36:59.952Z"
+    "verifiedAt": "2024-12-01T18:21:20.876Z"
   },
   {
     "address": "0x0064c8db3062fec24600a783946b252a71efe055",
     "contractName": "MintVerseNFT",
     "fileName": "0064c8db3062fec24600a783946b252a71efe055_MintVerseNFT.sol",
-    "verifiedAt": "2024-11-30T17:37:00.352Z"
+    "verifiedAt": "2024-12-01T18:21:21.256Z"
   },
   {
     "address": "0x0066785535A3224AcC8C40FAf13CCB3A8191d232",
     "contractName": "CritAPYv3",
     "fileName": "0066785535A3224AcC8C40FAf13CCB3A8191d232_CritAPYv3.sol",
-    "verifiedAt": "2024-11-30T17:37:04.680Z"
+    "verifiedAt": "2024-12-01T18:21:25.286Z"
   },
   {
     "address": "0x006699d34AA3013605d468d2755A2Fe59A16B12B",
     "contractName": "IERC20",
     "fileName": "006699d34AA3013605d468d2755A2Fe59A16B12B_IERC20.sol",
-    "verifiedAt": "2024-11-30T17:37:05.599Z"
+    "verifiedAt": "2024-12-01T18:21:26.096Z"
   },
   {
     "address": "0x006699d34AA3013605d468d2755A2Fe59A16B12B",
     "contractName": "Ownable",
     "fileName": "006699d34AA3013605d468d2755A2Fe59A16B12B_Ownable.sol",
-    "verifiedAt": "2024-11-30T17:37:05.601Z"
+    "verifiedAt": "2024-12-01T18:21:26.097Z"
   },
   {
     "address": "0x006699d34AA3013605d468d2755A2Fe59A16B12B",
     "contractName": "SafeMath",
     "fileName": "006699d34AA3013605d468d2755A2Fe59A16B12B_SafeMath.sol",
-    "verifiedAt": "2024-11-30T17:37:05.602Z"
+    "verifiedAt": "2024-12-01T18:21:26.098Z"
   },
   {
     "address": "0x006699d34AA3013605d468d2755A2Fe59A16B12B",
     "contractName": "ZildFinance",
     "fileName": "006699d34AA3013605d468d2755A2Fe59A16B12B_ZildFinance.sol",
-    "verifiedAt": "2024-11-30T17:37:05.603Z"
+    "verifiedAt": "2024-12-01T18:21:26.099Z"
   },
   {
     "address": "0x006829f48dc2448a3d306b5890ff14f4572e029c",
     "contractName": "Address",
     "fileName": "006829f48dc2448a3d306b5890ff14f4572e029c_Address.sol",
-    "verifiedAt": "2024-11-30T17:37:15.120Z"
+    "verifiedAt": "2024-12-01T18:21:35.516Z"
   },
   {
     "address": "0x0068bdD1fF7eeD550E49D4015B5352364171a49F",
     "contractName": "DogeV3",
     "fileName": "0068bdD1fF7eeD550E49D4015B5352364171a49F_DogeV3.sol",
-    "verifiedAt": "2024-11-30T17:37:17.678Z"
+    "verifiedAt": "2024-12-01T18:21:38.178Z"
   },
   {
     "address": "0x006Bcd780643f2549417BBb3D06861aB0f703257",
     "contractName": "BING",
     "fileName": "006Bcd780643f2549417BBb3D06861aB0f703257_BING.sol",
-    "verifiedAt": "2024-11-30T17:37:20.447Z"
+    "verifiedAt": "2024-12-01T18:21:40.840Z"
   },
   {
     "address": "0x006Fc519111F2032Ee05352fFB1cAcE262E4D069",
     "contractName": "NikolaJokerJokic",
     "fileName": "006Fc519111F2032Ee05352fFB1cAcE262E4D069_NikolaJokerJokic.sol",
-    "verifiedAt": "2024-11-30T17:37:23.005Z"
+    "verifiedAt": "2024-12-01T18:21:43.400Z"
   },
   {
     "address": "0x006e003d2b6eb9cc962ba6979ef7dbfc477e8122",
     "contractName": "GZLR",
     "fileName": "006e003d2b6eb9cc962ba6979ef7dbfc477e8122_GZLR.sol",
-    "verifiedAt": "2024-11-30T17:37:37.746Z"
+    "verifiedAt": "2024-12-01T18:21:54.971Z"
   },
   {
     "address": "0x006e15fd64fc30e3f665a22dfdc86307ef487fce",
     "contractName": "VegaToken",
     "fileName": "006e15fd64fc30e3f665a22dfdc86307ef487fce_VegaToken.sol",
-    "verifiedAt": "2024-11-30T17:37:38.156Z"
+    "verifiedAt": "2024-12-01T18:21:55.382Z"
   },
   {
     "address": "0x006e666629206607464c3EBaF25FD16986910772",
     "contractName": "MONK",
     "fileName": "006e666629206607464c3EBaF25FD16986910772_MONK.sol",
-    "verifiedAt": "2024-11-30T17:37:41.033Z"
+    "verifiedAt": "2024-12-01T18:21:57.940Z"
   },
   {
     "address": "0x006eFE937375713F9e351eAdb6f53DBA37060eC8",
     "contractName": "SpookySouls",
     "fileName": "006eFE937375713F9e351eAdb6f53DBA37060eC8_SpookySouls.sol",
-    "verifiedAt": "2024-11-30T17:37:41.943Z"
+    "verifiedAt": "2024-12-01T18:21:58.759Z"
   },
   {
     "address": "0x006f80B288affAB900157949Ce27535Ac31A4593",
     "contractName": "OldMajorUpgradeable",
     "fileName": "006f80B288affAB900157949Ce27535Ac31A4593_OldMajorUpgradeable.sol",
-    "verifiedAt": "2024-11-30T17:37:44.819Z"
+    "verifiedAt": "2024-12-01T18:22:01.831Z"
   },
   {
     "address": "0x0071be3f40abd73e0afb0068301adaadf3696c99",
     "contractName": "JORDAN",
     "fileName": "0071be3f40abd73e0afb0068301adaadf3696c99_JORDAN.sol",
-    "verifiedAt": "2024-11-30T17:37:55.266Z"
+    "verifiedAt": "2024-12-01T18:22:13.075Z"
   },
   {
     "address": "0x0072232B475CF2bb9552994926D3D039715C2606",
     "contractName": "BabyDoge",
     "fileName": "0072232B475CF2bb9552994926D3D039715C2606_BabyDoge.sol",
-    "verifiedAt": "2024-11-30T17:37:55.666Z"
+    "verifiedAt": "2024-12-01T18:22:13.503Z"
   },
   {
     "address": "0x007223708B82F8E94307c1B004f8c1bd9d26B232",
     "contractName": "FaseYoda",
     "fileName": "007223708B82F8E94307c1B004f8c1bd9d26B232_FaseYoda.sol",
-    "verifiedAt": "2024-11-30T17:37:56.176Z"
+    "verifiedAt": "2024-12-01T18:22:13.939Z"
   },
   {
     "address": "0x007249bcf4f737c8eb201a07f0577bfd992282a0",
     "contractName": "TokenContract",
     "fileName": "007249bcf4f737c8eb201a07f0577bfd992282a0_TokenContract.sol",
-    "verifiedAt": "2024-11-30T17:37:57.917Z"
+    "verifiedAt": "2024-12-01T18:22:15.756Z"
   },
   {
     "address": "0x00725b9eB28C8FD472590274FEfF863d5b048756",
     "contractName": "Vesting",
     "fileName": "00725b9eB28C8FD472590274FEfF863d5b048756_Vesting.sol",
-    "verifiedAt": "2024-11-30T17:37:58.858Z"
+    "verifiedAt": "2024-12-01T18:22:16.678Z"
   },
   {
     "address": "0x007317253dE9C8a67dF0D6badc82572023817B6e",
     "contractName": "STARLIGHT",
     "fileName": "007317253dE9C8a67dF0D6badc82572023817B6e_STARLIGHT.sol",
-    "verifiedAt": "2024-11-30T17:38:01.808Z"
+    "verifiedAt": "2024-12-01T18:22:19.647Z"
   },
   {
     "address": "0x007385d376d01873d6a08b17c4569e330c66b579",
     "contractName": "PpApRenderer",
     "fileName": "007385d376d01873d6a08b17c4569e330c66b579_PpApRenderer.sol",
-    "verifiedAt": "2024-11-30T17:38:03.042Z"
+    "verifiedAt": "2024-12-01T18:22:20.884Z"
   },
   {
     "address": "0x0073b3FD7C9CdA520ADE8c3eEFD3c4A60B24b94F",
     "contractName": "StargateZap",
     "fileName": "0073b3FD7C9CdA520ADE8c3eEFD3c4A60B24b94F_StargateZap.sol",
-    "verifiedAt": "2024-11-30T17:38:03.567Z"
+    "verifiedAt": "2024-12-01T18:22:21.316Z"
   },
   {
     "address": "0x0073eb4b13d37cfc5f442025cfcf90abdb00d507",
     "contractName": "POLLENToken",
     "fileName": "0073eb4b13d37cfc5f442025cfcf90abdb00d507_POLLENToken.sol",
-    "verifiedAt": "2024-11-30T17:38:04.879Z"
+    "verifiedAt": "2024-12-01T18:22:22.519Z"
   },
   {
     "address": "0x0074709700fadb2ed6a9763461cab393e0753c90",
     "contractName": "GigaFiC",
     "fileName": "0074709700fadb2ed6a9763461cab393e0753c90_GigaFiC.sol",
-    "verifiedAt": "2024-11-30T17:38:06.208Z"
+    "verifiedAt": "2024-12-01T18:22:23.743Z"
   },
   {
     "address": "0x00758fB0C83a68b6cE4FcF1D2665600F3f0E4570",
     "contractName": "JuiceboxFrens",
     "fileName": "00758fB0C83a68b6cE4FcF1D2665600F3f0E4570_JuiceboxFrens.sol",
-    "verifiedAt": "2024-11-30T17:38:08.465Z"
+    "verifiedAt": "2024-12-01T18:22:25.790Z"
   },
   {
     "address": "0x0075Ce3F8d2CECaE84600D4A1F8675a72819896d",
     "contractName": "AlphaBytes",
     "fileName": "0075Ce3F8d2CECaE84600D4A1F8675a72819896d_AlphaBytes.sol",
-    "verifiedAt": "2024-11-30T17:38:08.871Z"
+    "verifiedAt": "2024-12-01T18:22:26.200Z"
   },
   {
     "address": "0x0075f029648FFbd2026a7df1E9EFf27ebC90Ca65",
     "contractName": "daiMerkleDistributor",
     "fileName": "0075f029648FFbd2026a7df1E9EFf27ebC90Ca65_daiMerkleDistributor.sol",
-    "verifiedAt": "2024-11-30T17:38:09.692Z"
+    "verifiedAt": "2024-12-01T18:22:27.224Z"
   },
   {
     "address": "0x00760de2025bd15a55a524b4a2b2bb547e0a62fb",
     "contractName": "yTokenFutureVault",
     "fileName": "00760de2025bd15a55a524b4a2b2bb547e0a62fb_yTokenFutureVault.sol",
-    "verifiedAt": "2024-11-30T17:38:10.099Z"
+    "verifiedAt": "2024-12-01T18:22:27.634Z"
   },
   {
     "address": "0x007678d98c05e20622fc8fffebca68f174aa631d",
     "contractName": "Identity",
     "fileName": "007678d98c05e20622fc8fffebca68f174aa631d_Identity.sol",
-    "verifiedAt": "2024-11-30T17:38:14.806Z"
+    "verifiedAt": "2024-12-01T18:22:32.444Z"
   },
   {
     "address": "0x0076b645920716be2ad8ecd41fdd6760bbb1124d",
     "contractName": "StonkNFT",
     "fileName": "0076b645920716be2ad8ecd41fdd6760bbb1124d_StonkNFT.sol",
-    "verifiedAt": "2024-11-30T17:38:16.653Z"
+    "verifiedAt": "2024-12-01T18:22:34.186Z"
   },
   {
     "address": "0x00776C1dB6b60641Ce2583a9F27ad975Af81BA10",
     "contractName": "b0yz",
     "fileName": "00776C1dB6b60641Ce2583a9F27ad975Af81BA10_b0yz.sol",
-    "verifiedAt": "2024-11-30T17:38:18.705Z"
+    "verifiedAt": "2024-12-01T18:22:36.440Z"
   },
   {
     "address": "0x0077d27cb82ff12322987b225bfce0bb6e8931b4",
     "contractName": "Corra",
     "fileName": "0077d27cb82ff12322987b225bfce0bb6e8931b4_Corra.sol",
-    "verifiedAt": "2024-11-30T17:38:22.115Z"
+    "verifiedAt": "2024-12-01T18:22:39.715Z"
   },
   {
     "address": "0x0078c9f055d2c72ba31fa4f87e40170adff91674",
     "contractName": "MultiLevelToken",
     "fileName": "0078c9f055d2c72ba31fa4f87e40170adff91674_MultiLevelToken.sol",
-    "verifiedAt": "2024-11-30T17:38:26.489Z"
+    "verifiedAt": "2024-12-01T18:22:44.023Z"
   },
   {
     "address": "0x00792e3740FA46E9123F10025873d5FA3e0369D7",
     "contractName": "RollupAdminFacet",
     "fileName": "00792e3740FA46E9123F10025873d5FA3e0369D7_RollupAdminFacet.sol",
-    "verifiedAt": "2024-11-30T17:38:27.710Z"
+    "verifiedAt": "2024-12-01T18:22:45.245Z"
   },
   {
     "address": "0x0079366497136d7b01b825ed9e2badd9b097c5d5",
     "contractName": "ParrotMint",
     "fileName": "0079366497136d7b01b825ed9e2badd9b097c5d5_ParrotMint.sol",
-    "verifiedAt": "2024-11-30T17:38:28.631Z"
+    "verifiedAt": "2024-12-01T18:22:46.065Z"
   },
   {
     "address": "0x0079453f683380c7493d4bc4fa9baac97c5e693c",
     "contractName": "Address",
     "fileName": "0079453f683380c7493d4bc4fa9baac97c5e693c_Address.sol",
-    "verifiedAt": "2024-11-30T17:38:29.041Z"
+    "verifiedAt": "2024-12-01T18:22:46.473Z"
   },
   {
     "address": "0x0079461e90d37332E5e2d46C1F241169f9bffDE4",
     "contractName": "Saave",
     "fileName": "0079461e90d37332E5e2d46C1F241169f9bffDE4_Saave.sol",
-    "verifiedAt": "2024-11-30T17:38:29.555Z"
+    "verifiedAt": "2024-12-01T18:22:46.938Z"
   },
   {
     "address": "0x0079a404c09ddd8950cd3dab6244f0c1bd96e126",
     "contractName": "FindBitToken",
     "fileName": "0079a404c09ddd8950cd3dab6244f0c1bd96e126_FindBitToken.sol",
-    "verifiedAt": "2024-11-30T17:38:32.013Z"
+    "verifiedAt": "2024-12-01T18:22:49.443Z"
   },
   {
     "address": "0x0079d39858de26f4a48aee061a27d01daffd18f1",
     "contractName": "MerkleDistributor",
     "fileName": "0079d39858de26f4a48aee061a27d01daffd18f1_MerkleDistributor.sol",
-    "verifiedAt": "2024-11-30T17:38:32.830Z"
+    "verifiedAt": "2024-12-01T18:22:50.266Z"
   },
   {
     "address": "0x007Ad88396801bb2D589F71375F9AF1DD693d67b",
     "contractName": "NP",
     "fileName": "007Ad88396801bb2D589F71375F9AF1DD693d67b_NP.sol",
-    "verifiedAt": "2024-11-30T17:38:34.076Z"
+    "verifiedAt": "2024-12-01T18:22:51.500Z"
   },
   {
     "address": "0x007B12a0945864843FF3B9E9D11e58371f9A53f0",
     "contractName": "RangeOrderResolver",
     "fileName": "007B12a0945864843FF3B9E9D11e58371f9A53f0_RangeOrderResolver.sol",
-    "verifiedAt": "2024-11-30T17:38:34.679Z"
+    "verifiedAt": "2024-12-01T18:22:51.897Z"
   },
   {
     "address": "0x007a422fd7e5b47dd2cb078f250388b406548cd4",
     "contractName": "BLTTokenSale",
     "fileName": "007a422fd7e5b47dd2cb078f250388b406548cd4_BLTTokenSale.sol",
-    "verifiedAt": "2024-11-30T17:38:39.387Z"
+    "verifiedAt": "2024-12-01T18:22:55.996Z"
   },
   {
     "address": "0x007caadcdd725893186d2735a055ac22b853e78a",
     "contractName": "AVGLToken",
     "fileName": "007caadcdd725893186d2735a055ac22b853e78a_AVGLToken.sol",
-    "verifiedAt": "2024-11-30T17:38:49.297Z"
+    "verifiedAt": "2024-12-01T18:23:05.923Z"
   },
   {
     "address": "0x007d0984f976489ef1b6e87fa09fa3494413e7e1",
     "contractName": "BOA",
     "fileName": "007d0984f976489ef1b6e87fa09fa3494413e7e1_BOA.sol",
-    "verifiedAt": "2024-11-30T17:38:49.728Z"
+    "verifiedAt": "2024-12-01T18:23:06.295Z"
   },
   {
     "address": "0x007f63007e488057FDE4F216c2DF4adA74A8cb7D",
     "contractName": "GroWithdrawFilter",
     "fileName": "007f63007e488057FDE4F216c2DF4adA74A8cb7D_GroWithdrawFilter.sol",
-    "verifiedAt": "2024-11-30T17:38:59.653Z"
+    "verifiedAt": "2024-12-01T18:23:16.165Z"
   },
   {
     "address": "0x007f7735baf391e207e3aa380bb53c4bd9a5fed6",
     "contractName": "BondFixedTermTeller",
     "fileName": "007f7735baf391e207e3aa380bb53c4bd9a5fed6_BondFixedTermTeller.sol",
-    "verifiedAt": "2024-11-30T17:39:00.037Z"
+    "verifiedAt": "2024-12-01T18:23:16.576Z"
   },
   {
     "address": "0x007f7a1cb838a872515c8ebd16be4b14ef43a222",
     "contractName": "BondFixedTermSDA",
     "fileName": "007f7a1cb838a872515c8ebd16be4b14ef43a222_BondFixedTermSDA.sol",
-    "verifiedAt": "2024-11-30T17:39:01.153Z"
+    "verifiedAt": "2024-12-01T18:23:17.804Z"
   },
   {
     "address": "0x007fa227d5d693f7f29e27b1fa028fd2051ed072",
     "contractName": "ExchangeRate",
     "fileName": "007fa227d5d693f7f29e27b1fa028fd2051ed072_ExchangeRate.sol",
-    "verifiedAt": "2024-11-30T17:39:06.616Z"
+    "verifiedAt": "2024-12-01T18:23:23.042Z"
   },
   {
     "address": "0x007fe70dc9797c4198528ae43d8195fff82bdc95",
     "contractName": "BondFixedExpiryTeller",
     "fileName": "007fe70dc9797c4198528ae43d8195fff82bdc95_BondFixedExpiryTeller.sol",
-    "verifiedAt": "2024-11-30T17:39:07.030Z"
+    "verifiedAt": "2024-12-01T18:23:23.539Z"
   },
   {
     "address": "0x007fea2a31644f20b0fe18f69643890b6f878aa6",
     "contractName": "BondFixedExpirySDA",
     "fileName": "007fea2a31644f20b0fe18f69643890b6f878aa6_BondFixedExpirySDA.sol",
-    "verifiedAt": "2024-11-30T17:39:08.357Z"
+    "verifiedAt": "2024-12-01T18:23:24.768Z"
   },
   {
     "address": "0x008051e6a1c7f7253443917a569236c12cbbb1d1",
     "contractName": "WeinerFish",
     "fileName": "008051e6a1c7f7253443917a569236c12cbbb1d1_WeinerFish.sol",
-    "verifiedAt": "2024-11-30T17:39:11.434Z"
+    "verifiedAt": "2024-12-01T18:23:27.950Z"
   },
   {
     "address": "0x00808581f24F017F2A4225CF3BB6cfF968982D1F",
     "contractName": "NFTStake",
     "fileName": "00808581f24F017F2A4225CF3BB6cfF968982D1F_NFTStake.sol",
-    "verifiedAt": "2024-11-30T17:39:11.821Z"
+    "verifiedAt": "2024-12-01T18:23:28.372Z"
   },
   {
     "address": "0x00808C4201db673c00950B291EcD23BB9C1C6B0F",
     "contractName": "TurfShop",
     "fileName": "00808C4201db673c00950B291EcD23BB9C1C6B0F_TurfShop.sol",
-    "verifiedAt": "2024-11-30T17:39:12.250Z"
+    "verifiedAt": "2024-12-01T18:23:28.766Z"
   },
   {
     "address": "0x008124D10026Ee9a5E7D985c0100bb6af1Fa8B92",
     "contractName": "LOSTAirdropV2",
     "fileName": "008124D10026Ee9a5E7D985c0100bb6af1Fa8B92_LOSTAirdropV2.sol",
-    "verifiedAt": "2024-11-30T17:39:17.162Z"
+    "verifiedAt": "2024-12-01T18:23:33.471Z"
   },
   {
     "address": "0x00813e3421e1367353bfe7615c7f7f133c89df74",
     "contractName": "SPS",
     "fileName": "00813e3421e1367353bfe7615c7f7f133c89df74_SPS.sol",
-    "verifiedAt": "2024-11-30T17:39:17.986Z"
+    "verifiedAt": "2024-12-01T18:23:34.618Z"
   },
   {
     "address": "0x00818215ae894f8dA60f68aB508D713E0F79f720",
     "contractName": "SYLVestingWallet",
     "fileName": "00818215ae894f8dA60f68aB508D713E0F79f720_SYLVestingWallet.sol",
-    "verifiedAt": "2024-11-30T17:39:19.315Z"
+    "verifiedAt": "2024-12-01T18:23:36.030Z"
   },
   {
     "address": "0x00819c26fbd1c7b70b3270567a55af46d5ea5b08",
     "contractName": "Connective_DAO",
     "fileName": "00819c26fbd1c7b70b3270567a55af46d5ea5b08_Connective_DAO.sol",
-    "verifiedAt": "2024-11-30T17:39:20.134Z"
+    "verifiedAt": "2024-12-01T18:23:36.848Z"
   },
   {
     "address": "0x00832130896b1992f6be24A4130e5e1e56d29d65",
     "contractName": "InitializableAdminUpgradeabilityProxy",
     "fileName": "00832130896b1992f6be24A4130e5e1e56d29d65_InitializableAdminUpgradeabilityProxy.sol",
-    "verifiedAt": "2024-11-30T17:39:27.093Z"
+    "verifiedAt": "2024-12-01T18:23:42.992Z"
   },
   {
     "address": "0x00834e2763b108b01218638dc2cec27ce6d43753",
     "contractName": "MoverUBTStakeNode",
     "fileName": "00834e2763b108b01218638dc2cec27ce6d43753_MoverUBTStakeNode.sol",
-    "verifiedAt": "2024-11-30T17:39:28.121Z"
+    "verifiedAt": "2024-12-01T18:23:43.811Z"
   },
   {
     "address": "0x00848A79823FF0d04Ef2062b7DadDa81631b8aed",
     "contractName": "ArtNFT",
     "fileName": "00848A79823FF0d04Ef2062b7DadDa81631b8aed_ArtNFT.sol",
-    "verifiedAt": "2024-11-30T17:39:30.785Z"
+    "verifiedAt": "2024-12-01T18:23:46.380Z"
   },
   {
     "address": "0x0086549Fb1a9646Ad90F662596f8a1Cd66361C91",
     "contractName": "HABIBA",
     "fileName": "0086549Fb1a9646Ad90F662596f8a1Cd66361C91_HABIBA.sol",
-    "verifiedAt": "2024-11-30T17:39:36.720Z"
+    "verifiedAt": "2024-12-01T18:23:52.530Z"
   },
   {
     "address": "0x008692a1683b7751af28ea22b96569606f5260b2",
     "contractName": "USDoge",
     "fileName": "008692a1683b7751af28ea22b96569606f5260b2_USDoge.sol",
-    "verifiedAt": "2024-11-30T17:39:38.771Z"
+    "verifiedAt": "2024-12-01T18:23:55.075Z"
   },
   {
     "address": "0x0087EB397af9E04Ff9872199d63F841474bf2A27",
     "contractName": "Greeter",
     "fileName": "0087EB397af9E04Ff9872199d63F841474bf2A27_Greeter.sol",
-    "verifiedAt": "2024-11-30T17:39:42.245Z"
+    "verifiedAt": "2024-12-01T18:23:58.453Z"
   },
   {
     "address": "0x00887Fe2aa5515cc503B3C2125acE5FF143fbFf6",
     "contractName": "Shibui",
     "fileName": "00887Fe2aa5515cc503B3C2125acE5FF143fbFf6_Shibui.sol",
-    "verifiedAt": "2024-11-30T17:39:48.001Z"
+    "verifiedAt": "2024-12-01T18:24:03.367Z"
   },
   {
     "address": "0x008D9bAff91c6b10301f27Edb10bD21426efB082",
     "contractName": "Bridge",
     "fileName": "008D9bAff91c6b10301f27Edb10bD21426efB082_Bridge.sol",
-    "verifiedAt": "2024-11-30T17:39:53.409Z"
+    "verifiedAt": "2024-12-01T18:24:07.974Z"
   },
   {
     "address": "0x008b7011ad990b6962ced77bfed2b6f678979209",
     "contractName": "NinNinToken",
     "fileName": "008b7011ad990b6962ced77bfed2b6f678979209_NinNinToken.sol",
-    "verifiedAt": "2024-11-30T17:39:59.450Z"
+    "verifiedAt": "2024-12-01T18:24:14.016Z"
   },
   {
     "address": "0x008c69e0c66ebd4b228d27f2162ad54ab1b7dde1",
     "contractName": "BIG3",
     "fileName": "008c69e0c66ebd4b228d27f2162ad54ab1b7dde1_BIG3.sol",
-    "verifiedAt": "2024-11-30T17:40:01.394Z"
+    "verifiedAt": "2024-12-01T18:24:16.885Z"
   },
   {
     "address": "0x008d35f8ab469Cc4bc1A286b01a0Ed74fe14BCdF",
     "contractName": "DoginaInu",
     "fileName": "008d35f8ab469Cc4bc1A286b01a0Ed74fe14BCdF_DoginaInu.sol",
-    "verifiedAt": "2024-11-30T17:40:03.140Z"
+    "verifiedAt": "2024-12-01T18:24:18.522Z"
   },
   {
     "address": "0x008da3f4c556d0e32e41a8daaadc519972bd1fb9",
     "contractName": "FEXXCOIN",
     "fileName": "008da3f4c556d0e32e41a8daaadc519972bd1fb9_FEXXCOIN.sol",
-    "verifiedAt": "2024-11-30T17:40:04.875Z"
+    "verifiedAt": "2024-12-01T18:24:20.261Z"
   },
   {
     "address": "0x008dcE3ed1c004cEef4e3b3e01d1bF96CbC6583c",
     "contractName": "YUKI",
     "fileName": "008dcE3ed1c004cEef4e3b3e01d1bF96CbC6583c_YUKI.sol",
-    "verifiedAt": "2024-11-30T17:40:06.721Z"
+    "verifiedAt": "2024-12-01T18:24:22.275Z"
   },
   {
     "address": "0x008f1d94ad209a5cc9439BA515f619F1d015412e",
     "contractName": "OTDToken",
     "fileName": "008f1d94ad209a5cc9439BA515f619F1d015412e_OTDToken.sol",
-    "verifiedAt": "2024-11-30T17:40:11.528Z"
+    "verifiedAt": "2024-12-01T18:24:26.916Z"
   },
   {
     "address": "0x008f8e9C29F275C74d497e62f6c0C50799b07e71",
     "contractName": "Contract",
     "fileName": "008f8e9C29F275C74d497e62f6c0C50799b07e71_Contract.sol",
-    "verifiedAt": "2024-11-30T17:40:14.805Z"
+    "verifiedAt": "2024-12-01T18:24:29.886Z"
   },
   {
     "address": "0x009109AB7b8CAFf748cdA2F272F36043528Bef2C",
     "contractName": "CompGetDebt",
     "fileName": "009109AB7b8CAFf748cdA2F272F36043528Bef2C_CompGetDebt.sol",
-    "verifiedAt": "2024-11-30T17:40:20.239Z"
+    "verifiedAt": "2024-12-01T18:24:35.770Z"
   },
   {
     "address": "0x0091a8deb666db4f81ae33d5f9d26becd670074c",
     "contractName": "StrikeFarmPool3",
     "fileName": "0091a8deb666db4f81ae33d5f9d26becd670074c_StrikeFarmPool3.sol",
-    "verifiedAt": "2024-11-30T17:40:25.559Z"
+    "verifiedAt": "2024-12-01T18:24:41.071Z"
   },
   {
     "address": "0x009277b5d10d3b436328fde0b42ecb29de059052",
     "contractName": "DEGENELON",
     "fileName": "009277b5d10d3b436328fde0b42ecb29de059052_DEGENELON.sol",
-    "verifiedAt": "2024-11-30T17:40:28.117Z"
+    "verifiedAt": "2024-12-01T18:24:43.932Z"
   },
   {
     "address": "0x0092A5552162f911ccF7f456e85f473cE259707F",
     "contractName": "nTokenMintAction",
     "fileName": "0092A5552162f911ccF7f456e85f473cE259707F_nTokenMintAction.sol",
-    "verifiedAt": "2024-11-30T17:40:30.072Z"
+    "verifiedAt": "2024-12-01T18:24:45.661Z"
   },
   {
     "address": "0x0092c3f81BC7d630dD1f885D0be67047f54D5aF1",
     "contractName": "LendPoolConfigurator",
     "fileName": "0092c3f81BC7d630dD1f885D0be67047f54D5aF1_LendPoolConfigurator.sol",
-    "verifiedAt": "2024-11-30T17:40:30.988Z"
+    "verifiedAt": "2024-12-01T18:24:46.584Z"
   },
   {
     "address": "0x0092d22fcf1b8efda0970ba59bece9107fc16a2f",
     "contractName": "SHAZAMETH",
     "fileName": "0092d22fcf1b8efda0970ba59bece9107fc16a2f_SHAZAMETH.sol",
-    "verifiedAt": "2024-11-30T17:40:31.803Z"
+    "verifiedAt": "2024-12-01T18:24:47.612Z"
   },
   {
     "address": "0x0092decca5e2f26466289011ad41465763bea4ce",
     "contractName": "LiquidityMigration",
     "fileName": "0092decca5e2f26466289011ad41465763bea4ce_LiquidityMigration.sol",
-    "verifiedAt": "2024-11-30T17:40:32.726Z"
+    "verifiedAt": "2024-12-01T18:24:48.432Z"
   },
   {
     "address": "0x0093065EC796b945079ac13663bcF8d2E6c0d693",
     "contractName": "plushielowergas",
     "fileName": "0093065EC796b945079ac13663bcF8d2E6c0d693_plushielowergas.sol",
-    "verifiedAt": "2024-11-30T17:40:33.545Z"
+    "verifiedAt": "2024-12-01T18:24:49.247Z"
   },
   {
     "address": "0x00942f66622aba2c2749807789af34b7c130f110",
     "contractName": "ENSAvatarMirrorNameLabeler",
     "fileName": "00942f66622aba2c2749807789af34b7c130f110_ENSAvatarMirrorNameLabeler.sol",
-    "verifiedAt": "2024-11-30T17:40:38.870Z"
+    "verifiedAt": "2024-12-01T18:24:54.785Z"
   },
   {
     "address": "0x0095151377296198241a25a0f36c805b03de2f12",
     "contractName": "FUMETZU",
     "fileName": "0095151377296198241a25a0f36c805b03de2f12_FUMETZU.sol",
-    "verifiedAt": "2024-11-30T17:40:43.066Z"
+    "verifiedAt": "2024-12-01T18:24:58.976Z"
   },
   {
     "address": "0x00952A036f2098C82C75Eb9cfAeE2C9849E39A2a",
     "contractName": "YieldFarmGenericToken",
     "fileName": "00952A036f2098C82C75Eb9cfAeE2C9849E39A2a_YieldFarmGenericToken.sol",
-    "verifiedAt": "2024-11-30T17:40:44.397Z"
+    "verifiedAt": "2024-12-01T18:25:00.206Z"
   },
   {
     "address": "0x0095f3a9bb00b2bcda35650ce6387c7a82af8f0b",
     "contractName": "AnyswapTokenAnycallClient",
     "fileName": "0095f3a9bb00b2bcda35650ce6387c7a82af8f0b_AnyswapTokenAnycallClient.sol",
-    "verifiedAt": "2024-11-30T17:40:46.242Z"
+    "verifiedAt": "2024-12-01T18:25:02.153Z"
   },
   {
     "address": "0x00965af6ddfd9171961e53f9f955c47521067ccc",
     "contractName": "EtherWrapped",
     "fileName": "00965af6ddfd9171961e53f9f955c47521067ccc_EtherWrapped.sol",
-    "verifiedAt": "2024-11-30T17:40:49.516Z"
+    "verifiedAt": "2024-12-01T18:25:04.201Z"
   },
   {
     "address": "0x009668a9691e456972c8ec4cc84e99486308b84d",
     "contractName": "Terareum",
     "fileName": "009668a9691e456972c8ec4cc84e99486308b84d_Terareum.sol",
-    "verifiedAt": "2024-11-30T17:40:50.339Z"
+    "verifiedAt": "2024-12-01T18:25:05.022Z"
   },
   {
     "address": "0x009686ef878AcacCc15Bd07Fcf063810c91e2861",
     "contractName": "Marketplace",
     "fileName": "009686ef878AcacCc15Bd07Fcf063810c91e2861_Marketplace.sol",
-    "verifiedAt": "2024-11-30T17:40:51.571Z"
+    "verifiedAt": "2024-12-01T18:25:06.253Z"
   },
   {
     "address": "0x00969aa6f99d37ceb04894a40fd709709b73e4dc",
     "contractName": "$h1t",
     "fileName": "00969aa6f99d37ceb04894a40fd709709b73e4dc_$h1t.sol",
-    "verifiedAt": "2024-11-30T17:40:52.791Z"
+    "verifiedAt": "2024-12-01T18:25:07.479Z"
   },
   {
     "address": "0x0096a2892CD4431E3707fAAbD6Ef5819226f7a26",
     "contractName": "JUNSU",
     "fileName": "0096a2892CD4431E3707fAAbD6Ef5819226f7a26_JUNSU.sol",
-    "verifiedAt": "2024-11-30T17:40:54.124Z"
+    "verifiedAt": "2024-12-01T18:25:08.713Z"
   },
   {
     "address": "0x009828945C993a9620319EA93a9422070FBb1565",
     "contractName": "MaRiO",
     "fileName": "009828945C993a9620319EA93a9422070FBb1565_MaRiO.sol",
-    "verifiedAt": "2024-11-30T17:41:00.986Z"
+    "verifiedAt": "2024-12-01T18:25:17.619Z"
   },
   {
     "address": "0x009845cb89f991c6bbab7deb807ffe6e39170b4b",
     "contractName": "SpaceInu",
     "fileName": "009845cb89f991c6bbab7deb807ffe6e39170b4b_SpaceInu.sol",
-    "verifiedAt": "2024-11-30T17:41:01.909Z"
+    "verifiedAt": "2024-12-01T18:25:18.462Z"
   },
   {
     "address": "0x0098517e78F6bA8376Ffd3b74F619BB1FCf67019",
     "contractName": "TREATS",
     "fileName": "0098517e78F6bA8376Ffd3b74F619BB1FCf67019_TREATS.sol",
-    "verifiedAt": "2024-11-30T17:41:03.753Z"
+    "verifiedAt": "2024-12-01T18:25:20.181Z"
   },
   {
     "address": "0x0098a1fd39dcc36febe96bd1b5758e25c3be76df",
     "contractName": "DCD",
     "fileName": "0098a1fd39dcc36febe96bd1b5758e25c3be76df_DCD.sol",
-    "verifiedAt": "2024-11-30T17:41:04.273Z"
+    "verifiedAt": "2024-12-01T18:25:20.594Z"
   },
   {
     "address": "0x009DC5245F443d851398C3D489B61b39384A5185",
     "contractName": "CryptoBao",
     "fileName": "009DC5245F443d851398C3D489B61b39384A5185_CryptoBao.sol",
-    "verifiedAt": "2024-11-30T17:41:09.497Z"
+    "verifiedAt": "2024-12-01T18:25:25.652Z"
   },
   {
     "address": "0x009FC0fD0840aDC54f44220e203A695a4e370f00",
     "contractName": "PolicyBookRegistry",
     "fileName": "009FC0fD0840aDC54f44220e203A695a4e370f00_PolicyBookRegistry.sol",
-    "verifiedAt": "2024-11-30T17:41:11.242Z"
+    "verifiedAt": "2024-12-01T18:25:27.452Z"
   },
   {
     "address": "0x009Fa7aEA8aeA9199B2Ad677A67720bC16aF0ebD",
     "contractName": "Ooze",
     "fileName": "009Fa7aEA8aeA9199B2Ad677A67720bC16aF0ebD_Ooze.sol",
-    "verifiedAt": "2024-11-30T17:41:11.733Z"
+    "verifiedAt": "2024-12-01T18:25:27.966Z"
   },
   {
     "address": "0x009a1dC629242961C9E4f089b437aFD394474cc0",
     "contractName": "PaymentProcessor",
     "fileName": "009a1dC629242961C9E4f089b437aFD394474cc0_PaymentProcessor.sol",
-    "verifiedAt": "2024-11-30T17:41:13.066Z"
+    "verifiedAt": "2024-12-01T18:25:29.315Z"
   },
   {
     "address": "0x009c43B42AEFAC590C719E971020575974122803",
     "contractName": "BIXToken",
     "fileName": "009c43B42AEFAC590C719E971020575974122803_BIXToken.sol",
-    "verifiedAt": "2024-11-30T17:41:20.847Z"
+    "verifiedAt": "2024-12-01T18:25:36.468Z"
   },
   {
     "address": "0x009c5b7ff119972e3437b51c4f94addb8dbb2bcd",
     "contractName": "MENDEZ",
     "fileName": "009c5b7ff119972e3437b51c4f94addb8dbb2bcd_MENDEZ.sol",
-    "verifiedAt": "2024-11-30T17:41:21.638Z"
+    "verifiedAt": "2024-12-01T18:25:36.876Z"
   },
   {
     "address": "0x009d0ef900757d6894682491d9918b15b23aa2ec",
     "contractName": "HERMIA",
     "fileName": "009d0ef900757d6894682491d9918b15b23aa2ec_HERMIA.sol",
-    "verifiedAt": "2024-11-30T17:41:24.231Z"
+    "verifiedAt": "2024-12-01T18:25:39.434Z"
   },
   {
     "address": "0x009d6a428ac3797888ceaf7ca4aa2aa113655500",
     "contractName": "_8BitMFers",
     "fileName": "009d6a428ac3797888ceaf7ca4aa2aa113655500__8BitMFers.sol",
-    "verifiedAt": "2024-11-30T17:41:25.864Z"
+    "verifiedAt": "2024-12-01T18:25:41.175Z"
   },
   {
     "address": "0x009e0bd9624cdc2bd8fb2e179928ec0f5a8b4157",
     "contractName": "PlayerBook",
     "fileName": "009e0bd9624cdc2bd8fb2e179928ec0f5a8b4157_PlayerBook.sol",
-    "verifiedAt": "2024-11-30T17:41:26.887Z"
+    "verifiedAt": "2024-12-01T18:25:41.995Z"
   },
   {
     "address": "0x009fa1ebc188022c4391c69ef63f1323d358e987",
     "contractName": "BeerToken",
     "fileName": "009fa1ebc188022c4391c69ef63f1323d358e987_BeerToken.sol",
-    "verifiedAt": "2024-11-30T17:41:32.419Z"
+    "verifiedAt": "2024-12-01T18:25:47.423Z"
   },
   {
     "address": "0x00A2c366C3a674cB3078145c64d55e6304D33B98",
     "contractName": "OnchainGate",
     "fileName": "00A2c366C3a674cB3078145c64d55e6304D33B98_OnchainGate.sol",
-    "verifiedAt": "2024-11-30T17:41:35.592Z"
+    "verifiedAt": "2024-12-01T18:25:50.520Z"
   },
   {
     "address": "0x00A55375002f3cDa400383F479e7Cd57Bad029A9",
     "contractName": "CNJ",
     "fileName": "00A55375002f3cDa400383F479e7Cd57Bad029A9_CNJ.sol",
-    "verifiedAt": "2024-11-30T17:41:38.661Z"
+    "verifiedAt": "2024-12-01T18:25:53.569Z"
   },
   {
     "address": "0x00A5EA35B5d58a1d12B77DE6ab354Fe6ef8242F9",
     "contractName": "PaintedMfers",
     "fileName": "00A5EA35B5d58a1d12B77DE6ab354Fe6ef8242F9_PaintedMfers.sol",
-    "verifiedAt": "2024-11-30T17:41:39.073Z"
+    "verifiedAt": "2024-12-01T18:25:53.979Z"
   },
   {
     "address": "0x00A7BA8Ae7bca0B10A32Ea1f8e2a1Da980c6CAd2",
     "contractName": "BaseRewardPool",
     "fileName": "00A7BA8Ae7bca0B10A32Ea1f8e2a1Da980c6CAd2_BaseRewardPool.sol",
-    "verifiedAt": "2024-11-30T17:41:41.223Z"
+    "verifiedAt": "2024-12-01T18:25:56.136Z"
   },
   {
     "address": "0x00B3443339Ad09253925404A3385823c2CB9D2bD",
     "contractName": "FraktalFactoryV2",
     "fileName": "00B3443339Ad09253925404A3385823c2CB9D2bD_FraktalFactoryV2.sol",
-    "verifiedAt": "2024-11-30T17:41:45.322Z"
+    "verifiedAt": "2024-12-01T18:25:59.920Z"
   },
   {
     "address": "0x00B6110c111b626bfC226894992d1A4C4740C4dC",
     "contractName": "StakingPoolFactoryImpl",
     "fileName": "00B6110c111b626bfC226894992d1A4C4740C4dC_StakingPoolFactoryImpl.sol",
-    "verifiedAt": "2024-11-30T17:41:48.592Z"
+    "verifiedAt": "2024-12-01T18:26:03.297Z"
   },
   {
     "address": "0x00B6F96e7b389aaDe7015a6513Af2450b8BAa621",
     "contractName": "StrayCat",
     "fileName": "00B6F96e7b389aaDe7015a6513Af2450b8BAa621_StrayCat.sol",
-    "verifiedAt": "2024-11-30T17:41:49.927Z"
+    "verifiedAt": "2024-12-01T18:26:04.739Z"
   },
   {
     "address": "0x00B8a75AE8f4c68AfE206f1006da92F2cDA57FC8",
     "contractName": "X1MintedDucksContract",
     "fileName": "00B8a75AE8f4c68AfE206f1006da92F2cDA57FC8_X1MintedDucksContract.sol",
-    "verifiedAt": "2024-11-30T17:41:52.792Z"
+    "verifiedAt": "2024-12-01T18:26:08.522Z"
   },
   {
     "address": "0x00Bc94d0102C4A6C1224b8b1f9A1172Dc5d1a1F8",
     "contractName": "HustleversePassport",
     "fileName": "00Bc94d0102C4A6C1224b8b1f9A1172Dc5d1a1F8_HustleversePassport.sol",
-    "verifiedAt": "2024-11-30T17:41:57.095Z"
+    "verifiedAt": "2024-12-01T18:26:12.516Z"
   },
   {
     "address": "0x00C3253d317ccA7Bf3F038288E61f14A9e3af8B2",
     "contractName": "Erc20Vault",
     "fileName": "00C3253d317ccA7Bf3F038288E61f14A9e3af8B2_Erc20Vault.sol",
-    "verifiedAt": "2024-11-30T17:41:59.753Z"
+    "verifiedAt": "2024-12-01T18:26:15.284Z"
   },
   {
     "address": "0x00C4cb57617B06c5f3903f62eB6050B110379E90",
     "contractName": "FeePoolState",
     "fileName": "00C4cb57617B06c5f3903f62eB6050B110379E90_FeePoolState.sol",
-    "verifiedAt": "2024-11-30T17:42:01.800Z"
+    "verifiedAt": "2024-12-01T18:26:17.330Z"
   },
   {
     "address": "0x00C95495173b962BdeF86734b7688aA20AdBf4D5",
     "contractName": "PoolSettings",
     "fileName": "00C95495173b962BdeF86734b7688aA20AdBf4D5_PoolSettings.sol",
-    "verifiedAt": "2024-11-30T17:42:03.907Z"
+    "verifiedAt": "2024-12-01T18:26:19.482Z"
   },
   {
     "address": "0x00CCc5Fe33fa66847082af413d4A8700cd7CDe16",
     "contractName": "Rug",
     "fileName": "00CCc5Fe33fa66847082af413d4A8700cd7CDe16_Rug.sol",
-    "verifiedAt": "2024-11-30T17:42:06.122Z"
+    "verifiedAt": "2024-12-01T18:26:21.490Z"
   },
   {
     "address": "0x00CCe2Ec610d6613CE6886260CA3cd8AbF971133",
     "contractName": "TransferManagerERC1155",
     "fileName": "00CCe2Ec610d6613CE6886260CA3cd8AbF971133_TransferManagerERC1155.sol",
-    "verifiedAt": "2024-11-30T17:42:07.022Z"
+    "verifiedAt": "2024-12-01T18:26:22.241Z"
   },
   {
     "address": "0x00CDb81A412E712C85f3ceD5c9AFC5DD6Aa080fD",
     "contractName": "FROGECoinETH",
     "fileName": "00CDb81A412E712C85f3ceD5c9AFC5DD6Aa080fD_FROGECoinETH.sol",
-    "verifiedAt": "2024-11-30T17:42:07.953Z"
+    "verifiedAt": "2024-12-01T18:26:23.000Z"
   },
   {
     "address": "0x00CECAd4302B4a68606e88a7D280Ae63b3A1Ca64",
     "contractName": "NFDP",
     "fileName": "00CECAd4302B4a68606e88a7D280Ae63b3A1Ca64_NFDP.sol",
-    "verifiedAt": "2024-11-30T17:42:08.456Z"
+    "verifiedAt": "2024-12-01T18:26:23.516Z"
   },
   {
     "address": "0x00D1433929B0FB45A26dFB40bC56bD28807A448D",
     "contractName": "TosakenInu",
     "fileName": "00D1433929B0FB45A26dFB40bC56bD28807A448D_TosakenInu.sol",
-    "verifiedAt": "2024-11-30T17:42:14.702Z"
+    "verifiedAt": "2024-12-01T18:26:29.312Z"
   },
   {
     "address": "0x00D3216403eD04C57038c5aABc839728D27061D8",
     "contractName": "LockerFactory",
     "fileName": "00D3216403eD04C57038c5aABc839728D27061D8_LockerFactory.sol",
-    "verifiedAt": "2024-11-30T17:42:16.853Z"
+    "verifiedAt": "2024-12-01T18:26:31.461Z"
   },
   {
     "address": "0x00D54F129293b1580C779c8F04b2d8cE370cA69d",
     "contractName": "RiskManager",
     "fileName": "00D54F129293b1580C779c8F04b2d8cE370cA69d_RiskManager.sol",
-    "verifiedAt": "2024-11-30T17:42:17.263Z"
+    "verifiedAt": "2024-12-01T18:26:31.870Z"
   },
   {
     "address": "0x00D54d745935993c93ce15de1cdde32Ca20C171E",
     "contractName": "Noodls",
     "fileName": "00D54d745935993c93ce15de1cdde32Ca20C171E_Noodls.sol",
-    "verifiedAt": "2024-11-30T17:42:18.082Z"
+    "verifiedAt": "2024-12-01T18:26:32.690Z"
   },
   {
     "address": "0x00DBD20398f8271b8d89dd6E8dbfA7aE38539fcD",
     "contractName": "Chance",
     "fileName": "00DBD20398f8271b8d89dd6E8dbfA7aE38539fcD_Chance.sol",
-    "verifiedAt": "2024-11-30T17:42:19.514Z"
+    "verifiedAt": "2024-12-01T18:26:34.025Z"
   },
   {
     "address": "0x00DCa92b7fBD0C01F3508756718807836Ec82156",
     "contractName": "GotchaGatcha",
     "fileName": "00DCa92b7fBD0C01F3508756718807836Ec82156_GotchaGatcha.sol",
-    "verifiedAt": "2024-11-30T17:42:19.891Z"
+    "verifiedAt": "2024-12-01T18:26:34.431Z"
   },
   {
     "address": "0x00Da7a102ae61266D1D15D149C083B622414A5e8",
     "contractName": "KryptoNotz",
     "fileName": "00Da7a102ae61266D1D15D149C083B622414A5e8_KryptoNotz.sol",
-    "verifiedAt": "2024-11-30T17:42:23.713Z"
+    "verifiedAt": "2024-12-01T18:26:38.856Z"
   },
   {
     "address": "0x00E595D4060dcF65c9C5622aA02d6B999F7835db",
     "contractName": "Dunk",
     "fileName": "00E595D4060dcF65c9C5622aA02d6B999F7835db_Dunk.sol",
-    "verifiedAt": "2024-11-30T17:42:33.442Z"
+    "verifiedAt": "2024-12-01T18:26:49.075Z"
   },
   {
     "address": "0x00E76f93581F05FF176E49930357003765E88283",
     "contractName": "InstaChainLinkResolver",
     "fileName": "00E76f93581F05FF176E49930357003765E88283_InstaChainLinkResolver.sol",
-    "verifiedAt": "2024-11-30T17:42:35.184Z"
+    "verifiedAt": "2024-12-01T18:26:50.823Z"
   },
   {
     "address": "0x00EEfA8135c606EA0D7A1bdbe0b5689B0E571a5E",
     "contractName": "GoodSushiSatisfaction",
     "fileName": "00EEfA8135c606EA0D7A1bdbe0b5689B0E571a5E_GoodSushiSatisfaction.sol",
-    "verifiedAt": "2024-11-30T17:42:40.708Z"
+    "verifiedAt": "2024-12-01T18:26:56.288Z"
   },
   {
     "address": "0x00Ea2894FE840F105ab99A8f8F75B1F17e94843A",
     "contractName": "DrugReceipts",
     "fileName": "00Ea2894FE840F105ab99A8f8F75B1F17e94843A_DrugReceipts.sol",
-    "verifiedAt": "2024-11-30T17:42:42.456Z"
+    "verifiedAt": "2024-12-01T18:26:57.997Z"
   },
   {
     "address": "0x00Ed5f674Cd4A340bd8023dc1Ffb0dcf840FbF41",
     "contractName": "ArrlandItem",
     "fileName": "00Ed5f674Cd4A340bd8023dc1Ffb0dcf840FbF41_ArrlandItem.sol",
-    "verifiedAt": "2024-11-30T17:42:42.858Z"
+    "verifiedAt": "2024-12-01T18:26:58.510Z"
   },
   {
     "address": "0x00Ed7b5A7B280d1491166287223B431E835d2a39",
     "contractName": "QUANTOM",
     "fileName": "00Ed7b5A7B280d1491166287223B431E835d2a39_QUANTOM.sol",
-    "verifiedAt": "2024-11-30T17:42:43.678Z"
+    "verifiedAt": "2024-12-01T18:26:59.316Z"
   },
   {
     "address": "0x00Ef908AcABB2449B626E8E49afB31201cC54626",
     "contractName": "PinkslipRacing",
     "fileName": "00Ef908AcABB2449B626E8E49afB31201cC54626_PinkslipRacing.sol",
-    "verifiedAt": "2024-11-30T17:42:44.937Z"
+    "verifiedAt": "2024-12-01T18:27:00.545Z"
   },
   {
     "address": "0x00F0FeEd50354E22370F3523897081E3D994DAe6",
     "contractName": "OpenOracleFramework",
     "fileName": "00F0FeEd50354E22370F3523897081E3D994DAe6_OpenOracleFramework.sol",
-    "verifiedAt": "2024-11-30T17:42:45.421Z"
+    "verifiedAt": "2024-12-01T18:27:00.976Z"
   },
   {
     "address": "0x00F5c620bD442E8ADBce6Fbd0d68C7Ecc181701B",
     "contractName": "MainnetCreateLoanWithNFTFacet",
     "fileName": "00F5c620bD442E8ADBce6Fbd0d68C7Ecc181701B_MainnetCreateLoanWithNFTFacet.sol",
-    "verifiedAt": "2024-11-30T17:42:52.177Z"
+    "verifiedAt": "2024-12-01T18:27:07.715Z"
   },
   {
     "address": "0x00FA3a3E25455Be7a09D03D080bBAb05EbA308a8",
     "contractName": "MerkleDistributorFactory",
     "fileName": "00FA3a3E25455Be7a09D03D080bBAb05EbA308a8_MerkleDistributorFactory.sol",
-    "verifiedAt": "2024-11-30T17:42:53.403Z"
+    "verifiedAt": "2024-12-01T18:27:09.264Z"
   },
   {
     "address": "0x00FA6daac69a216B32C229A6D623A9e6934f7D58",
     "contractName": "OrcsBlock",
     "fileName": "00FA6daac69a216B32C229A6D623A9e6934f7D58_OrcsBlock.sol",
-    "verifiedAt": "2024-11-30T17:42:53.815Z"
+    "verifiedAt": "2024-12-01T18:27:09.761Z"
   },
   {
     "address": "0x00FA82eA9BE4E24ec6D7ED86ef93bfe85b9a3e68",
     "contractName": "NervousNFT",
     "fileName": "00FA82eA9BE4E24ec6D7ED86ef93bfe85b9a3e68_NervousNFT.sol",
-    "verifiedAt": "2024-11-30T17:42:54.224Z"
+    "verifiedAt": "2024-12-01T18:27:10.170Z"
   },
   {
     "address": "0x00FB92203E6E5a909712500b975625eD53DA8ce1",
     "contractName": "StandardERC20",
     "fileName": "00FB92203E6E5a909712500b975625eD53DA8ce1_StandardERC20.sol",
-    "verifiedAt": "2024-11-30T17:42:55.044Z"
+    "verifiedAt": "2024-12-01T18:27:10.994Z"
   },
   {
     "address": "0x00FD05B17D884D86b964CEEd8652EfC8333b59Fe",
     "contractName": "SDKApproveCheckerFeature",
     "fileName": "00FD05B17D884D86b964CEEd8652EfC8333b59Fe_SDKApproveCheckerFeature.sol",
-    "verifiedAt": "2024-11-30T17:42:56.272Z"
+    "verifiedAt": "2024-12-01T18:27:12.219Z"
   },
   {
     "address": "0x00Fc4bB5349F1104D3252c36C308688651e3eb1F",
     "contractName": "PercentSplitETH",
     "fileName": "00Fc4bB5349F1104D3252c36C308688651e3eb1F_PercentSplitETH.sol",
-    "verifiedAt": "2024-11-30T17:42:58.522Z"
+    "verifiedAt": "2024-12-01T18:27:14.061Z"
   },
   {
     "address": "0x00a03e1dc6ccb4de2ac005c93ce20ac009baba96",
     "contractName": "Disperse",
     "fileName": "00a03e1dc6ccb4de2ac005c93ce20ac009baba96_Disperse.sol",
-    "verifiedAt": "2024-11-30T17:42:59.750Z"
+    "verifiedAt": "2024-12-01T18:27:15.399Z"
   },
   {
     "address": "0x00a103267A22971375C3C37d6E1f1BDfb548e946",
     "contractName": "MoonStaking",
     "fileName": "00a103267A22971375C3C37d6E1f1BDfb548e946_MoonStaking.sol",
-    "verifiedAt": "2024-11-30T17:43:01.493Z"
+    "verifiedAt": "2024-12-01T18:27:17.344Z"
   },
   {
     "address": "0x00a35FD824c717879BF370E70AC6868b95870Dfb",
     "contractName": "AnyswapV6ERC20",
     "fileName": "00a35FD824c717879BF370E70AC6868b95870Dfb_AnyswapV6ERC20.sol",
-    "verifiedAt": "2024-11-30T17:43:07.841Z"
+    "verifiedAt": "2024-12-01T18:27:23.790Z"
   },
   {
     "address": "0x00a3CdeB78EB5e55C94f3A379d459929A58641eb",
     "contractName": "Deployment12",
     "fileName": "00a3CdeB78EB5e55C94f3A379d459929A58641eb_Deployment12.sol",
-    "verifiedAt": "2024-11-30T17:43:08.816Z"
+    "verifiedAt": "2024-12-01T18:27:24.713Z"
   },
   {
     "address": "0x00a3e70637e5d897e0C19bf1C6369A97aB07b163",
     "contractName": "RewardNFT",
     "fileName": "00a3e70637e5d897e0C19bf1C6369A97aB07b163_RewardNFT.sol",
-    "verifiedAt": "2024-11-30T17:43:10.498Z"
+    "verifiedAt": "2024-12-01T18:27:26.348Z"
   },
   {
     "address": "0x00a6acb01a3d54ee8139fcaaf839a40ef9d4f888",
     "contractName": "UniswapV2ExchangeInteractiveAdapter",
     "fileName": "00a6acb01a3d54ee8139fcaaf839a40ef9d4f888_UniswapV2ExchangeInteractiveAdapter.sol",
-    "verifiedAt": "2024-11-30T17:43:19.309Z"
+    "verifiedAt": "2024-12-01T18:27:34.236Z"
   },
   {
     "address": "0x00a71200e3423CD3653C0d7fbC231053C7063742",
     "contractName": "UnboundToken",
     "fileName": "00a71200e3423CD3653C0d7fbC231053C7063742_UnboundToken.sol",
-    "verifiedAt": "2024-11-30T17:43:21.471Z"
+    "verifiedAt": "2024-12-01T18:27:36.695Z"
   },
   {
     "address": "0x00a80284a025c91c1df6048f7a71d1a56a86bffa",
     "contractName": "ADH",
     "fileName": "00a80284a025c91c1df6048f7a71d1a56a86bffa_ADH.sol",
-    "verifiedAt": "2024-11-30T17:43:27.906Z"
+    "verifiedAt": "2024-12-01T18:27:43.143Z"
   },
   {
     "address": "0x00a83550deaa56aae7d54afde5c23739b6d0ba63",
     "contractName": "YvsTimelock",
     "fileName": "00a83550deaa56aae7d54afde5c23739b6d0ba63_YvsTimelock.sol",
-    "verifiedAt": "2024-11-30T17:43:28.318Z"
+    "verifiedAt": "2024-12-01T18:27:43.553Z"
   },
   {
     "address": "0x00a8b738e453ffd858a7edf03bccfe20412f0eb0",
     "contractName": "AllianceBlockToken",
     "fileName": "00a8b738e453ffd858a7edf03bccfe20412f0eb0_AllianceBlockToken.sol",
-    "verifiedAt": "2024-11-30T17:43:30.060Z"
+    "verifiedAt": "2024-12-01T18:27:45.294Z"
   },
   {
     "address": "0x00a8bE6Ea4888D6F232dFB84c3a7628c8A3DfD7E",
     "contractName": "StakingContract",
     "fileName": "00a8bE6Ea4888D6F232dFB84c3a7628c8A3DfD7E_StakingContract.sol",
-    "verifiedAt": "2024-11-30T17:43:30.980Z"
+    "verifiedAt": "2024-12-01T18:27:46.323Z"
   },
   {
     "address": "0x00a97f32E64049e2122909abDd2B915B5C86EAE1",
     "contractName": "OBAMA",
     "fileName": "00a97f32E64049e2122909abDd2B915B5C86EAE1_OBAMA.sol",
-    "verifiedAt": "2024-11-30T17:43:33.438Z"
+    "verifiedAt": "2024-12-01T18:27:48.775Z"
   },
   {
     "address": "0x00a9e3cd3261b22f9e94169cc23197dfc7d7b15e",
     "contractName": "NRB_Users",
     "fileName": "00a9e3cd3261b22f9e94169cc23197dfc7d7b15e_NRB_Users.sol",
-    "verifiedAt": "2024-11-30T17:43:35.892Z"
+    "verifiedAt": "2024-12-01T18:27:51.233Z"
   },
   {
     "address": "0x00adFB82CaBb2559b0Af254d6170E9B8aC48E6B3",
     "contractName": "EIP712PropositionFacet",
     "fileName": "00adFB82CaBb2559b0Af254d6170E9B8aC48E6B3_EIP712PropositionFacet.sol",
-    "verifiedAt": "2024-11-30T17:43:41.523Z"
+    "verifiedAt": "2024-12-01T18:27:56.865Z"
   },
   {
     "address": "0x00b0e8d3d7a6275dea291111ff8480ea053cd719",
     "contractName": "RickAndMorty",
     "fileName": "00b0e8d3d7a6275dea291111ff8480ea053cd719_RickAndMorty.sol",
-    "verifiedAt": "2024-11-30T17:43:48.690Z"
+    "verifiedAt": "2024-12-01T18:28:04.443Z"
   },
   {
     "address": "0x00b10982010c28e093209fbc2c09582c780c4504",
     "contractName": "BulldogToken",
     "fileName": "00b10982010c28e093209fbc2c09582c780c4504_BulldogToken.sol",
-    "verifiedAt": "2024-11-30T17:43:49.523Z"
+    "verifiedAt": "2024-12-01T18:28:05.364Z"
   },
   {
     "address": "0x00b17e5c7f4096ec7c67b05e41f77a724b927e62",
     "contractName": "TRENDTOKEN",
     "fileName": "00b17e5c7f4096ec7c67b05e41f77a724b927e62_TRENDTOKEN.sol",
-    "verifiedAt": "2024-11-30T17:43:53.403Z"
+    "verifiedAt": "2024-12-01T18:28:09.357Z"
   },
   {
     "address": "0x00b310A01182Ed7b10572173506c2ff8B270a806",
     "contractName": "ETHSwapAgentImpl",
     "fileName": "00b310A01182Ed7b10572173506c2ff8B270a806_ETHSwapAgentImpl.sol",
-    "verifiedAt": "2024-11-30T17:43:54.734Z"
+    "verifiedAt": "2024-12-01T18:28:10.586Z"
   },
   {
     "address": "0x00b486093f34084f0d3227a776f74d66c365657f",
     "contractName": "CULTerraform",
     "fileName": "00b486093f34084f0d3227a776f74d66c365657f_CULTerraform.sol",
-    "verifiedAt": "2024-11-30T17:43:58.655Z"
+    "verifiedAt": "2024-12-01T18:28:14.616Z"
   },
   {
     "address": "0x00b76657b02e1de5c86c57c7e87f65591552fce1",
     "contractName": "HuskyWallet",
     "fileName": "00b76657b02e1de5c86c57c7e87f65591552fce1_HuskyWallet.sol",
-    "verifiedAt": "2024-11-30T17:44:03.946Z"
+    "verifiedAt": "2024-12-01T18:28:20.008Z"
   },
   {
     "address": "0x00b81204b111f0cd5f5742e879c1e90344be3e64",
     "contractName": "CookPool",
     "fileName": "00b81204b111f0cd5f5742e879c1e90344be3e64_CookPool.sol",
-    "verifiedAt": "2024-11-30T17:44:07.940Z"
+    "verifiedAt": "2024-12-01T18:28:23.694Z"
   },
   {
     "address": "0x00b8924f98d3f9547afc74518e7cffda29ae8ea3",
     "contractName": "MWC",
     "fileName": "00b8924f98d3f9547afc74518e7cffda29ae8ea3_MWC.sol",
-    "verifiedAt": "2024-11-30T17:44:08.869Z"
+    "verifiedAt": "2024-12-01T18:28:24.514Z"
   },
   {
     "address": "0x00b8b562c53d404dcd1a83260ba7c4c2e8225551",
     "contractName": "YMGC",
     "fileName": "00b8b562c53d404dcd1a83260ba7c4c2e8225551_YMGC.sol",
-    "verifiedAt": "2024-11-30T17:44:10.395Z"
+    "verifiedAt": "2024-12-01T18:28:25.844Z"
   },
   {
     "address": "0x00b955b7fe9766418382b41c40bfabfcbd0f5751",
     "contractName": "ValueBase",
     "fileName": "00b955b7fe9766418382b41c40bfabfcbd0f5751_ValueBase.sol",
-    "verifiedAt": "2024-11-30T17:44:10.805Z"
+    "verifiedAt": "2024-12-01T18:28:26.253Z"
   },
   {
     "address": "0x00b9771a7ccfe504b366da83b5d25695e8347a33",
     "contractName": "TheBlackHole",
     "fileName": "00b9771a7ccfe504b366da83b5d25695e8347a33_TheBlackHole.sol",
-    "verifiedAt": "2024-11-30T17:44:11.624Z"
+    "verifiedAt": "2024-12-01T18:28:27.277Z"
   },
   {
     "address": "0x00b9990251f411c28ff37eebfda25e5ad37fbb65",
     "contractName": "NeCashTokenSale",
     "fileName": "00b9990251f411c28ff37eebfda25e5ad37fbb65_NeCashTokenSale.sol",
-    "verifiedAt": "2024-11-30T17:44:13.261Z"
+    "verifiedAt": "2024-12-01T18:28:28.918Z"
   },
   {
     "address": "0x00bb12c5412731bc8185add4c7ea3658300ddbdc",
     "contractName": "kek",
     "fileName": "00bb12c5412731bc8185add4c7ea3658300ddbdc_kek.sol",
-    "verifiedAt": "2024-11-30T17:44:18.391Z"
+    "verifiedAt": "2024-12-01T18:28:34.611Z"
   },
   {
     "address": "0x00bccD3394f412835e5Be641B815c96F798cBd7A",
     "contractName": "Jinx",
     "fileName": "00bccD3394f412835e5Be641B815c96F798cBd7A_Jinx.sol",
-    "verifiedAt": "2024-11-30T17:44:22.380Z"
+    "verifiedAt": "2024-12-01T18:28:38.405Z"
   },
   {
     "address": "0x00bd62d530158b80cefcfa8b7497734594d42521",
     "contractName": "ligmajohnson",
     "fileName": "00bd62d530158b80cefcfa8b7497734594d42521_ligmajohnson.sol",
-    "verifiedAt": "2024-11-30T17:44:26.168Z"
+    "verifiedAt": "2024-12-01T18:28:41.682Z"
   },
   {
     "address": "0x00bd8f02ec3f20818281fb9e78b00102331e86f3",
     "contractName": "SenderReceiverTest",
     "fileName": "00bd8f02ec3f20818281fb9e78b00102331e86f3_SenderReceiverTest.sol",
-    "verifiedAt": "2024-11-30T17:44:27.083Z"
+    "verifiedAt": "2024-12-01T18:28:42.539Z"
   },
   {
     "address": "0x00bdd3081a4b5ac0664f3e05606b0e091d38fee7",
     "contractName": "Multicall2",
     "fileName": "00bdd3081a4b5ac0664f3e05606b0e091d38fee7_Multicall2.sol",
-    "verifiedAt": "2024-11-30T17:44:28.219Z"
+    "verifiedAt": "2024-12-01T18:28:43.351Z"
   },
   {
     "address": "0x00bdde8c638ff923f1814fa3f6cd94deb7a069ef",
     "contractName": "CUBED",
     "fileName": "00bdde8c638ff923f1814fa3f6cd94deb7a069ef_CUBED.sol",
-    "verifiedAt": "2024-11-30T17:44:29.133Z"
+    "verifiedAt": "2024-12-01T18:28:44.288Z"
   },
   {
     "address": "0x00c03008B0fCbC9b5A9841acF2E52D4afa82B408",
     "contractName": "ByIamMe",
     "fileName": "00c03008B0fCbC9b5A9841acF2E52D4afa82B408_ByIamMe.sol",
-    "verifiedAt": "2024-11-30T17:44:32.000Z"
+    "verifiedAt": "2024-12-01T18:28:47.348Z"
   },
   {
     "address": "0x00c06dc31daa37937a911b8c35ea85ea3f1bf044",
     "contractName": "notg",
     "fileName": "00c06dc31daa37937a911b8c35ea85ea3f1bf044_notg.sol",
-    "verifiedAt": "2024-11-30T17:44:32.819Z"
+    "verifiedAt": "2024-12-01T18:28:48.146Z"
   },
   {
     "address": "0x00c0F550ccf85e61B83709584f54f19a2d17BA4C",
     "contractName": "RewardsInfo",
     "fileName": "00c0F550ccf85e61B83709584f54f19a2d17BA4C_RewardsInfo.sol",
-    "verifiedAt": "2024-11-30T17:44:33.740Z"
+    "verifiedAt": "2024-12-01T18:28:49.087Z"
   },
   {
     "address": "0x00c2Eea3d2f0dAC6B88b07B33c6C01a7Da65a940",
     "contractName": "sNOTE",
     "fileName": "00c2Eea3d2f0dAC6B88b07B33c6C01a7Da65a940_sNOTE.sol",
-    "verifiedAt": "2024-11-30T17:44:39.071Z"
+    "verifiedAt": "2024-12-01T18:28:54.606Z"
   },
   {
     "address": "0x00c2cbdb5acb3bb80d1b3a6c293f149b889fe96c",
     "contractName": "TstToken",
     "fileName": "00c2cbdb5acb3bb80d1b3a6c293f149b889fe96c_TstToken.sol",
-    "verifiedAt": "2024-11-30T17:44:40.330Z"
+    "verifiedAt": "2024-12-01T18:28:55.846Z"
   },
   {
     "address": "0x00c315ac9ff89bb6afa7524cd159f0a9766e8c89",
     "contractName": "IMDEXDexchange",
     "fileName": "00c315ac9ff89bb6afa7524cd159f0a9766e8c89_IMDEXDexchange.sol",
-    "verifiedAt": "2024-11-30T17:44:42.975Z"
+    "verifiedAt": "2024-12-01T18:28:58.302Z"
   },
   {
     "address": "0x00c37341f8014c5bb6f97f00c30cf33b2377d091",
     "contractName": "MarketDefaultOddsFactory",
     "fileName": "00c37341f8014c5bb6f97f00c30cf33b2377d091_MarketDefaultOddsFactory.sol",
-    "verifiedAt": "2024-11-30T17:44:45.521Z"
+    "verifiedAt": "2024-12-01T18:29:01.169Z"
   },
   {
     "address": "0x00c396383400a1ef2eb401052dbf5d989b2da481",
     "contractName": "CypherCity",
     "fileName": "00c396383400a1ef2eb401052dbf5d989b2da481_CypherCity.sol",
-    "verifiedAt": "2024-11-30T17:44:46.339Z"
+    "verifiedAt": "2024-12-01T18:29:01.989Z"
   },
   {
     "address": "0x00c3b91f8c86f7d091ce729a71a593280c4f3c12",
     "contractName": "DOGEREUM",
     "fileName": "00c3b91f8c86f7d091ce729a71a593280c4f3c12_DOGEREUM.sol",
-    "verifiedAt": "2024-11-30T17:44:47.984Z"
+    "verifiedAt": "2024-12-01T18:29:03.729Z"
   },
   {
     "address": "0x00c3cde5515f2c3b7e646c265d9e70e63a3d9b0a",
     "contractName": "DegenDataAccess",
     "fileName": "00c3cde5515f2c3b7e646c265d9e70e63a3d9b0a_DegenDataAccess.sol",
-    "verifiedAt": "2024-11-30T17:44:49.515Z"
+    "verifiedAt": "2024-12-01T18:29:05.172Z"
   },
   {
     "address": "0x00c47b2ac6c298d33dcd53adb48f3d678bd0e561",
     "contractName": "McdShifter",
     "fileName": "00c47b2ac6c298d33dcd53adb48f3d678bd0e561_McdShifter.sol",
-    "verifiedAt": "2024-11-30T17:44:50.537Z"
+    "verifiedAt": "2024-12-01T18:29:05.982Z"
   },
   {
     "address": "0x00c50293025e3dc7745650282d6451dca9dad737",
     "contractName": "DOGEDOGE",
     "fileName": "00c50293025e3dc7745650282d6451dca9dad737_DOGEDOGE.sol",
-    "verifiedAt": "2024-11-30T17:44:53.398Z"
+    "verifiedAt": "2024-12-01T18:29:08.439Z"
   },
   {
     "address": "0x00c51f63a2d906510cb2c802c0a30589ba75d942",
     "contractName": "RollupUserFacet",
     "fileName": "00c51f63a2d906510cb2c802c0a30589ba75d942_RollupUserFacet.sol",
-    "verifiedAt": "2024-11-30T17:44:53.916Z"
+    "verifiedAt": "2024-12-01T18:29:08.850Z"
   },
   {
     "address": "0x00c5A679d3Ae7261e021FF80DF210De513b38042",
     "contractName": "SmartAdToken",
     "fileName": "00c5A679d3Ae7261e021FF80DF210De513b38042_SmartAdToken.sol",
-    "verifiedAt": "2024-11-30T17:44:54.937Z"
+    "verifiedAt": "2024-12-01T18:29:09.667Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "BokkyPooBahsDateTimeLibrary",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_BokkyPooBahsDateTimeLibrary.sol",
-    "verifiedAt": "2024-11-30T17:45:06.408Z"
+    "verifiedAt": "2024-12-01T18:29:21.136Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "ConstantsHolder",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_ConstantsHolder.sol",
-    "verifiedAt": "2024-11-30T17:45:06.410Z"
+    "verifiedAt": "2024-12-01T18:29:21.137Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "ContractManager",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_ContractManager.sol",
-    "verifiedAt": "2024-11-30T17:45:06.411Z"
+    "verifiedAt": "2024-12-01T18:29:21.138Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "DelegationController",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_DelegationController.sol",
-    "verifiedAt": "2024-11-30T17:45:06.413Z"
+    "verifiedAt": "2024-12-01T18:29:21.139Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "DelegationPeriodManager",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_DelegationPeriodManager.sol",
-    "verifiedAt": "2024-11-30T17:45:06.514Z"
+    "verifiedAt": "2024-12-01T18:29:21.139Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "ERC777",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_ERC777.sol",
-    "verifiedAt": "2024-11-30T17:45:06.516Z"
+    "verifiedAt": "2024-12-01T18:29:21.140Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "FractionUtils",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_FractionUtils.sol",
-    "verifiedAt": "2024-11-30T17:45:06.518Z"
+    "verifiedAt": "2024-12-01T18:29:21.141Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "IDelegatableToken",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_IDelegatableToken.sol",
-    "verifiedAt": "2024-11-30T17:45:06.519Z"
+    "verifiedAt": "2024-12-01T18:29:21.142Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "ILocker",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_ILocker.sol",
-    "verifiedAt": "2024-11-30T17:45:06.521Z"
+    "verifiedAt": "2024-12-01T18:29:21.142Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "MathUtils",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_MathUtils.sol",
-    "verifiedAt": "2024-11-30T17:45:06.522Z"
+    "verifiedAt": "2024-12-01T18:29:21.143Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "Nodes",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_Nodes.sol",
-    "verifiedAt": "2024-11-30T17:45:06.523Z"
+    "verifiedAt": "2024-12-01T18:29:21.145Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "OCContext",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_OCContext.sol",
-    "verifiedAt": "2024-11-30T17:45:06.524Z"
+    "verifiedAt": "2024-12-01T18:29:21.146Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "OCECDSA",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_OCECDSA.sol",
-    "verifiedAt": "2024-11-30T17:45:06.525Z"
+    "verifiedAt": "2024-12-01T18:29:21.147Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "OCIERC1820Registry",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_OCIERC1820Registry.sol",
-    "verifiedAt": "2024-11-30T17:45:06.527Z"
+    "verifiedAt": "2024-12-01T18:29:21.147Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "OCIERC20",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_OCIERC20.sol",
-    "verifiedAt": "2024-11-30T17:45:06.529Z"
+    "verifiedAt": "2024-12-01T18:29:21.148Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "OCIERC777",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_OCIERC777.sol",
-    "verifiedAt": "2024-11-30T17:45:06.530Z"
+    "verifiedAt": "2024-12-01T18:29:21.149Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "OCIERC777Recipient",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_OCIERC777Recipient.sol",
-    "verifiedAt": "2024-11-30T17:45:06.532Z"
+    "verifiedAt": "2024-12-01T18:29:21.150Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "OCIERC777Sender",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_OCIERC777Sender.sol",
-    "verifiedAt": "2024-11-30T17:45:06.533Z"
+    "verifiedAt": "2024-12-01T18:29:21.150Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "OCReentrancyGuard",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_OCReentrancyGuard.sol",
-    "verifiedAt": "2024-11-30T17:45:06.534Z"
+    "verifiedAt": "2024-12-01T18:29:21.151Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "OCSafeCast",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_OCSafeCast.sol",
-    "verifiedAt": "2024-11-30T17:45:06.536Z"
+    "verifiedAt": "2024-12-01T18:29:21.151Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "OCSafeMath",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_OCSafeMath.sol",
-    "verifiedAt": "2024-11-30T17:45:06.538Z"
+    "verifiedAt": "2024-12-01T18:29:21.152Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "OEPAccessControl",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_OEPAccessControl.sol",
-    "verifiedAt": "2024-11-30T17:45:06.539Z"
+    "verifiedAt": "2024-12-01T18:29:21.153Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "OEPAddress",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_OEPAddress.sol",
-    "verifiedAt": "2024-11-30T17:45:06.540Z"
+    "verifiedAt": "2024-12-01T18:29:21.154Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "OEPContext",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_OEPContext.sol",
-    "verifiedAt": "2024-11-30T17:45:06.542Z"
+    "verifiedAt": "2024-12-01T18:29:21.154Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "OEPEnumerableSet",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_OEPEnumerableSet.sol",
-    "verifiedAt": "2024-11-30T17:45:06.543Z"
+    "verifiedAt": "2024-12-01T18:29:21.155Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "OEPInitializable",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_OEPInitializable.sol",
-    "verifiedAt": "2024-11-30T17:45:06.545Z"
+    "verifiedAt": "2024-12-01T18:29:21.155Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "OEPOwnable",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_OEPOwnable.sol",
-    "verifiedAt": "2024-11-30T17:45:06.546Z"
+    "verifiedAt": "2024-12-01T18:29:21.156Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "PartialDifferences",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_PartialDifferences.sol",
-    "verifiedAt": "2024-11-30T17:45:06.548Z"
+    "verifiedAt": "2024-12-01T18:29:21.157Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "Permissions",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_Permissions.sol",
-    "verifiedAt": "2024-11-30T17:45:06.549Z"
+    "verifiedAt": "2024-12-01T18:29:21.157Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "Punisher",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_Punisher.sol",
-    "verifiedAt": "2024-11-30T17:45:06.550Z"
+    "verifiedAt": "2024-12-01T18:29:21.159Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "SkaleToken",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_SkaleToken.sol",
-    "verifiedAt": "2024-11-30T17:45:06.552Z"
+    "verifiedAt": "2024-12-01T18:29:21.159Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "StringUtils",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_StringUtils.sol",
-    "verifiedAt": "2024-11-30T17:45:06.553Z"
+    "verifiedAt": "2024-12-01T18:29:21.160Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "TimeHelpers",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_TimeHelpers.sol",
-    "verifiedAt": "2024-11-30T17:45:06.554Z"
+    "verifiedAt": "2024-12-01T18:29:21.161Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "TokenLaunchLocker",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_TokenLaunchLocker.sol",
-    "verifiedAt": "2024-11-30T17:45:06.556Z"
+    "verifiedAt": "2024-12-01T18:29:21.162Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "TokenState",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_TokenState.sol",
-    "verifiedAt": "2024-11-30T17:45:06.557Z"
+    "verifiedAt": "2024-12-01T18:29:21.163Z"
   },
   {
     "address": "0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7",
     "contractName": "ValidatorService",
     "fileName": "00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7_ValidatorService.sol",
-    "verifiedAt": "2024-11-30T17:45:06.559Z"
+    "verifiedAt": "2024-12-01T18:29:21.164Z"
   },
   {
     "address": "0x00c85C226A7899aE3c87AD2e8684d352dC83F180",
     "contractName": "Token",
     "fileName": "00c85C226A7899aE3c87AD2e8684d352dC83F180_Token.sol",
-    "verifiedAt": "2024-11-30T17:45:08.257Z"
+    "verifiedAt": "2024-12-01T18:29:22.995Z"
   },
   {
     "address": "0x00c8b2fd3213f089604e7a7ae264e9839a91f097",
     "contractName": "DRKCOIN",
     "fileName": "00c8b2fd3213f089604e7a7ae264e9839a91f097_DRKCOIN.sol",
-    "verifiedAt": "2024-11-30T17:45:08.756Z"
+    "verifiedAt": "2024-12-01T18:29:23.493Z"
   },
   {
     "address": "0x00cD4b00b356e76F788BBC98e15E15084d97bE83",
     "contractName": "Timelock",
     "fileName": "00cD4b00b356e76F788BBC98e15E15084d97bE83_Timelock.sol",
-    "verifiedAt": "2024-11-30T17:45:14.080Z"
+    "verifiedAt": "2024-12-01T18:29:28.901Z"
   },
   {
     "address": "0x00ca1ef843e8503e9422dd2c0142a37d7adfc996",
     "contractName": "CorruptionsFAQ",
     "fileName": "00ca1ef843e8503e9422dd2c0142a37d7adfc996_CorruptionsFAQ.sol",
-    "verifiedAt": "2024-11-30T17:45:17.561Z"
+    "verifiedAt": "2024-12-01T18:29:32.296Z"
   },
   {
     "address": "0x00cac57560253bDC9887837A4b02A3f5555Ee9aC",
     "contractName": "MrdrVrsFactory",
     "fileName": "00cac57560253bDC9887837A4b02A3f5555Ee9aC_MrdrVrsFactory.sol",
-    "verifiedAt": "2024-11-30T17:45:19.815Z"
+    "verifiedAt": "2024-12-01T18:29:34.612Z"
   },
   {
     "address": "0x00cc0e1C488E188922aAc9F1703A6F1961c5854b",
     "contractName": "TreasuryTimelock",
     "fileName": "00cc0e1C488E188922aAc9F1703A6F1961c5854b_TreasuryTimelock.sol",
-    "verifiedAt": "2024-11-30T17:45:22.270Z"
+    "verifiedAt": "2024-12-01T18:29:37.133Z"
   },
   {
     "address": "0x00cdc65065248e046fbace13745c8e0a82593372",
     "contractName": "ButtPunks",
     "fileName": "00cdc65065248e046fbace13745c8e0a82593372_ButtPunks.sol",
-    "verifiedAt": "2024-11-30T17:45:23.603Z"
+    "verifiedAt": "2024-12-01T18:29:38.337Z"
   },
   {
     "address": "0x00ce2071edbe54709ae8a4c1d4e0fc4e5d2ae6ef",
     "contractName": "AzumiInu",
     "fileName": "00ce2071edbe54709ae8a4c1d4e0fc4e5d2ae6ef_AzumiInu.sol",
-    "verifiedAt": "2024-11-30T17:45:26.469Z"
+    "verifiedAt": "2024-12-01T18:29:40.966Z"
   },
   {
     "address": "0x00cebccaa4b4ee5010ac3118c2154836b009925a",
     "contractName": "HC",
     "fileName": "00cebccaa4b4ee5010ac3118c2154836b009925a_HC.sol",
-    "verifiedAt": "2024-11-30T17:45:29.441Z"
+    "verifiedAt": "2024-12-01T18:29:43.975Z"
   },
   {
     "address": "0x00cfC937B1e2e32a922c418EF5CC4bEDb5C943ec",
     "contractName": "Whales",
     "fileName": "00cfC937B1e2e32a922c418EF5CC4bEDb5C943ec_Whales.sol",
-    "verifiedAt": "2024-11-30T17:45:31.691Z"
+    "verifiedAt": "2024-12-01T18:29:46.121Z"
   },
   {
     "address": "0x00d07c53e70338c376cf6ab2a5218d8643115084",
     "contractName": "HPToken",
     "fileName": "00d07c53e70338c376cf6ab2a5218d8643115084_HPToken.sol",
-    "verifiedAt": "2024-11-30T17:45:34.865Z"
+    "verifiedAt": "2024-12-01T18:29:49.192Z"
   },
   {
     "address": "0x00d0f137b51692d0ac708bde7b367a373865cffe",
     "contractName": "Balancer_ZapOut_General_V2_2",
     "fileName": "00d0f137b51692d0ac708bde7b367a373865cffe_Balancer_ZapOut_General_V2_2.sol",
-    "verifiedAt": "2024-11-30T17:45:35.685Z"
+    "verifiedAt": "2024-12-01T18:29:50.011Z"
   },
   {
     "address": "0x00d14753f126286502a3aa6df97a949a951398c9",
     "contractName": "AlienNetworkToken",
     "fileName": "00d14753f126286502a3aa6df97a949a951398c9_AlienNetworkToken.sol",
-    "verifiedAt": "2024-11-30T17:45:36.505Z"
+    "verifiedAt": "2024-12-01T18:29:50.933Z"
   },
   {
     "address": "0x00d197D8cfe95498264EAceddB02C79Bc0F26d67",
     "contractName": "ChaingeWrappedToken",
     "fileName": "00d197D8cfe95498264EAceddB02C79Bc0F26d67_ChaingeWrappedToken.sol",
-    "verifiedAt": "2024-11-30T17:45:37.433Z"
+    "verifiedAt": "2024-12-01T18:29:51.752Z"
   },
   {
     "address": "0x00d1f83Ac925dD533aDF791D08f92C6ACA74BD91",
     "contractName": "LifePlanetNFT",
     "fileName": "00d1f83Ac925dD533aDF791D08f92C6ACA74BD91_LifePlanetNFT.sol",
-    "verifiedAt": "2024-11-30T17:45:38.243Z"
+    "verifiedAt": "2024-12-01T18:29:52.784Z"
   },
   {
     "address": "0x00d338223dd275f47f6920718f5227a31a5baf15",
     "contractName": "KaibaEarn",
     "fileName": "00d338223dd275f47f6920718f5227a31a5baf15_KaibaEarn.sol",
-    "verifiedAt": "2024-11-30T17:45:41.061Z"
+    "verifiedAt": "2024-12-01T18:29:55.236Z"
   },
   {
     "address": "0x00d66DB8a34d69EDCa9304Af898ea44f23C42C5d",
     "contractName": "NFTSales",
     "fileName": "00d66DB8a34d69EDCa9304Af898ea44f23C42C5d_NFTSales.sol",
-    "verifiedAt": "2024-11-30T17:45:47.869Z"
+    "verifiedAt": "2024-12-01T18:30:01.377Z"
   },
   {
     "address": "0x00d67c871344f9f9a0fe5efaa0a4cdca71f05e6b",
     "contractName": "WeedGangPresents",
     "fileName": "00d67c871344f9f9a0fe5efaa0a4cdca71f05e6b_WeedGangPresents.sol",
-    "verifiedAt": "2024-11-30T17:45:48.892Z"
+    "verifiedAt": "2024-12-01T18:30:02.204Z"
   },
   {
     "address": "0x00d6C5fa02568A585D3cd4caA6bf18124e689F11",
     "contractName": "WithdrawEth",
     "fileName": "00d6C5fa02568A585D3cd4caA6bf18124e689F11_WithdrawEth.sol",
-    "verifiedAt": "2024-11-30T17:45:49.885Z"
+    "verifiedAt": "2024-12-01T18:30:03.014Z"
   },
   {
     "address": "0x00d97facb316f12b64c7ac93405b2d45ed9aa358",
     "contractName": "KIRITOINU",
     "fileName": "00d97facb316f12b64c7ac93405b2d45ed9aa358_KIRITOINU.sol",
-    "verifiedAt": "2024-11-30T17:45:57.799Z"
+    "verifiedAt": "2024-12-01T18:30:11.417Z"
   },
   {
     "address": "0x00dB02E7041E025d24894AA9BE9dbF85014104DE",
     "contractName": "ShareBondToken",
     "fileName": "00dB02E7041E025d24894AA9BE9dbF85014104DE_ShareBondToken.sol",
-    "verifiedAt": "2024-11-30T17:46:01.997Z"
+    "verifiedAt": "2024-12-01T18:30:16.020Z"
   },
   {
     "address": "0x00da328ea462f75325770aaf1ade0f457ddbedc0",
     "contractName": "ConvexERC4626",
     "fileName": "00da328ea462f75325770aaf1ade0f457ddbedc0_ConvexERC4626.sol",
-    "verifiedAt": "2024-11-30T17:46:06.504Z"
+    "verifiedAt": "2024-12-01T18:30:20.420Z"
   },
   {
     "address": "0x00e07fd90e86855c3f9ebf7741c92981f664b442",
     "contractName": "Dodo",
     "fileName": "00e07fd90e86855c3f9ebf7741c92981f664b442_Dodo.sol",
-    "verifiedAt": "2024-11-30T17:46:21.553Z"
+    "verifiedAt": "2024-12-01T18:30:38.442Z"
   },
   {
     "address": "0x00e25f0fd5d6a36c252398ca14f3f29128cf5bf9",
     "contractName": "KWIK",
     "fileName": "00e25f0fd5d6a36c252398ca14f3f29128cf5bf9_KWIK.sol",
-    "verifiedAt": "2024-11-30T17:46:28.823Z"
+    "verifiedAt": "2024-12-01T18:30:45.511Z"
   },
   {
     "address": "0x00e262AC0648b3478c0751aFC6FebEAC320B1370",
     "contractName": "PRBLYGenesisNFT",
     "fileName": "00e262AC0648b3478c0751aFC6FebEAC320B1370_PRBLYGenesisNFT.sol",
-    "verifiedAt": "2024-11-30T17:46:29.232Z"
+    "verifiedAt": "2024-12-01T18:30:45.917Z"
   },
   {
     "address": "0x00e2Dde5a0e824740eD4bd2a27d6a6b0d92D8c99",
     "contractName": "bBetaToken",
     "fileName": "00e2Dde5a0e824740eD4bd2a27d6a6b0d92D8c99_bBetaToken.sol",
-    "verifiedAt": "2024-11-30T17:46:30.052Z"
+    "verifiedAt": "2024-12-01T18:30:46.738Z"
   },
   {
     "address": "0x00e2d039e94EC94172807604f85B2406271c6812",
     "contractName": "AccountProxy",
     "fileName": "00e2d039e94EC94172807604f85B2406271c6812_AccountProxy.sol",
-    "verifiedAt": "2024-11-30T17:46:31.792Z"
+    "verifiedAt": "2024-12-01T18:30:48.066Z"
   },
   {
     "address": "0x00e36429c47056B22D4d46F02F77845EF90f01E1",
     "contractName": "EdenNetwork",
     "fileName": "00e36429c47056B22D4d46F02F77845EF90f01E1_EdenNetwork.sol",
-    "verifiedAt": "2024-11-30T17:46:34.146Z"
+    "verifiedAt": "2024-12-01T18:30:50.638Z"
   },
   {
     "address": "0x00e3ec1f55ce4f86cf7ac2bac8c0876a276e78d2",
     "contractName": "LarvaDads",
     "fileName": "00e3ec1f55ce4f86cf7ac2bac8c0876a276e78d2_LarvaDads.sol",
-    "verifiedAt": "2024-11-30T17:46:37.522Z"
+    "verifiedAt": "2024-12-01T18:30:54.417Z"
   },
   {
     "address": "0x00e632A902f2cE3a40174A0D08dEe887bf7C321d",
     "contractName": "w3_quiz",
     "fileName": "00e632A902f2cE3a40174A0D08dEe887bf7C321d_w3_quiz.sol",
-    "verifiedAt": "2024-11-30T17:46:45.203Z"
+    "verifiedAt": "2024-12-01T18:31:01.990Z"
   },
   {
     "address": "0x00e699bb8D011585E6429fC2F2550743a38d7F8F",
     "contractName": "CryptoPuppets",
     "fileName": "00e699bb8D011585E6429fC2F2550743a38d7F8F_CryptoPuppets.sol",
-    "verifiedAt": "2024-11-30T17:46:46.439Z"
+    "verifiedAt": "2024-12-01T18:31:03.221Z"
   },
   {
     "address": "0x00e76361d45707507db7bdeb7dd2c0f5c1c3fa6d",
     "contractName": "DekuInu",
     "fileName": "00e76361d45707507db7bdeb7dd2c0f5c1c3fa6d_DekuInu.sol",
-    "verifiedAt": "2024-11-30T17:46:51.346Z"
+    "verifiedAt": "2024-12-01T18:31:08.452Z"
   },
   {
     "address": "0x00e80f098171b4569e22df9a290ebe60ac95a9b7",
     "contractName": "Address",
     "fileName": "00e80f098171b4569e22df9a290ebe60ac95a9b7_Address.sol",
-    "verifiedAt": "2024-11-30T17:46:55.749Z"
+    "verifiedAt": "2024-12-01T18:31:12.939Z"
   },
   {
     "address": "0x00e82E98a2119Aa175eab206706efE0Df2c7D51D",
     "contractName": "TreasureFinder",
     "fileName": "00e82E98a2119Aa175eab206706efE0Df2c7D51D_TreasureFinder.sol",
-    "verifiedAt": "2024-11-30T17:46:56.671Z"
+    "verifiedAt": "2024-12-01T18:31:13.767Z"
   },
   {
     "address": "0x00e856ee945a49bb73436e719d96910cd9d116a4",
     "contractName": "AnyswapV5ERC20",
     "fileName": "00e856ee945a49bb73436e719d96910cd9d116a4_AnyswapV5ERC20.sol",
-    "verifiedAt": "2024-11-30T17:46:59.128Z"
+    "verifiedAt": "2024-12-01T18:31:15.917Z"
   },
   {
     "address": "0x00e9ed8ad3a889dcb625eb759ad9ea47fd0a9dc0",
     "contractName": "Ninjasy",
     "fileName": "00e9ed8ad3a889dcb625eb759ad9ea47fd0a9dc0_Ninjasy.sol",
-    "verifiedAt": "2024-11-30T17:47:01.175Z"
+    "verifiedAt": "2024-12-01T18:31:18.069Z"
   },
   {
     "address": "0x00eaa60fd31df3cd294ca88838e58293d8d6e861",
     "contractName": "EthMashTower",
     "fileName": "00eaa60fd31df3cd294ca88838e58293d8d6e861_EthMashTower.sol",
-    "verifiedAt": "2024-11-30T17:47:04.459Z"
+    "verifiedAt": "2024-12-01T18:31:21.503Z"
   },
   {
     "address": "0x00eb5ba3912fa10013941792E324DB88E93b572D",
     "contractName": "PhantasmaToken",
     "fileName": "00eb5ba3912fa10013941792E324DB88E93b572D_PhantasmaToken.sol",
-    "verifiedAt": "2024-11-30T17:47:05.375Z"
+    "verifiedAt": "2024-12-01T18:31:22.258Z"
   },
   {
     "address": "0x00eb9dd2365b4fe57298ac45646273a1f873c6f7",
     "contractName": "Riddle",
     "fileName": "00eb9dd2365b4fe57298ac45646273a1f873c6f7_Riddle.sol",
-    "verifiedAt": "2024-11-30T17:47:07.952Z"
+    "verifiedAt": "2024-12-01T18:31:24.723Z"
   },
   {
     "address": "0x00ebD18bc10019e00cC040b5Af757d091af9ab60",
     "contractName": "VindergoodTransferProxy",
     "fileName": "00ebD18bc10019e00cC040b5Af757d091af9ab60_VindergoodTransferProxy.sol",
-    "verifiedAt": "2024-11-30T17:47:08.446Z"
+    "verifiedAt": "2024-12-01T18:31:25.137Z"
   },
   {
     "address": "0x00ec053f75a8189ef0763c88e483be4da40522ef",
     "contractName": "UBOToken",
     "fileName": "00ec053f75a8189ef0763c88e483be4da40522ef_UBOToken.sol",
-    "verifiedAt": "2024-11-30T17:47:09.366Z"
+    "verifiedAt": "2024-12-01T18:31:25.951Z"
   },
   {
     "address": "0x00ec37A5C158A04CB76a5fa798801b051ec8C7A4",
     "contractName": "KintsugiInu",
     "fileName": "00ec37A5C158A04CB76a5fa798801b051ec8C7A4_KintsugiInu.sol",
-    "verifiedAt": "2024-11-30T17:47:09.780Z"
+    "verifiedAt": "2024-12-01T18:31:26.462Z"
   },
   {
     "address": "0x00ed3446135b937fa12248443c377feb628e8809",
     "contractName": "TokenChecker",
     "fileName": "00ed3446135b937fa12248443c377feb628e8809_TokenChecker.sol",
-    "verifiedAt": "2024-11-30T17:47:13.236Z"
+    "verifiedAt": "2024-12-01T18:31:29.739Z"
   },
   {
     "address": "0x00ed62ce3308e04d03b66c878f87a157dc6dc8b7",
     "contractName": "dragontownwtf",
     "fileName": "00ed62ce3308e04d03b66c878f87a157dc6dc8b7_dragontownwtf.sol",
-    "verifiedAt": "2024-11-30T17:47:14.085Z"
+    "verifiedAt": "2024-12-01T18:31:30.764Z"
   },
   {
     "address": "0x00edca4652f6e117c0c1f04f2280a86ae08bdd0c",
     "contractName": "DiceRoll",
     "fileName": "00edca4652f6e117c0c1f04f2280a86ae08bdd0c_DiceRoll.sol",
-    "verifiedAt": "2024-11-30T17:47:15.817Z"
+    "verifiedAt": "2024-12-01T18:31:32.504Z"
   },
   {
     "address": "0x00ef6d929b76dfbf4b87d3796c76920708314fd1",
     "contractName": "BattleCats",
     "fileName": "00ef6d929b76dfbf4b87d3796c76920708314fd1_BattleCats.sol",
-    "verifiedAt": "2024-11-30T17:47:18.789Z"
+    "verifiedAt": "2024-12-01T18:31:37.320Z"
   },
   {
     "address": "0x00ef721095c355edf851be7ae0a1ed26d2ba64d4",
     "contractName": "CELLInu",
     "fileName": "00ef721095c355edf851be7ae0a1ed26d2ba64d4_CELLInu.sol",
-    "verifiedAt": "2024-11-30T17:47:19.606Z"
+    "verifiedAt": "2024-12-01T18:31:38.237Z"
   },
   {
     "address": "0x00f0feed50DcDF57b4f1B532E8f5e7f291E0C84b",
     "contractName": "OpenOracleFramework",
     "fileName": "00f0feed50DcDF57b4f1B532E8f5e7f291E0C84b_OpenOracleFramework.sol",
-    "verifiedAt": "2024-11-30T17:47:24.519Z"
+    "verifiedAt": "2024-12-01T18:31:42.848Z"
   },
   {
     "address": "0x00f223b85625991bd817a463958560699707B9A7",
     "contractName": "Pirates",
     "fileName": "00f223b85625991bd817a463958560699707B9A7_Pirates.sol",
-    "verifiedAt": "2024-11-30T17:47:24.932Z"
+    "verifiedAt": "2024-12-01T18:31:43.259Z"
   },
   {
     "address": "0x00f29171d7bcdc464a0758cf3217fe83173772b9",
     "contractName": "INU",
     "fileName": "00f29171d7bcdc464a0758cf3217fe83173772b9_INU.sol",
-    "verifiedAt": "2024-11-30T17:47:26.671Z"
+    "verifiedAt": "2024-12-01T18:31:44.895Z"
   },
   {
     "address": "0x00f2eF78710bB98e32EE32Ef46d70ffdD1A0e2aC",
     "contractName": "TheGoatCity",
     "fileName": "00f2eF78710bB98e32EE32Ef46d70ffdD1A0e2aC_TheGoatCity.sol",
-    "verifiedAt": "2024-11-30T17:47:27.080Z"
+    "verifiedAt": "2024-12-01T18:31:45.306Z"
   },
   {
     "address": "0x00f548bc685e4b495ba559e881112fdd4576f331",
     "contractName": "MOMAT",
     "fileName": "00f548bc685e4b495ba559e881112fdd4576f331_MOMAT.sol",
-    "verifiedAt": "2024-11-30T17:47:35.382Z"
+    "verifiedAt": "2024-12-01T18:31:53.717Z"
   },
   {
     "address": "0x00f68f36d729ba8e3efd38b1c2bc775f9788aaf4",
     "contractName": "CryptoFreaks",
     "fileName": "00f68f36d729ba8e3efd38b1c2bc775f9788aaf4_CryptoFreaks.sol",
-    "verifiedAt": "2024-11-30T17:47:37.627Z"
+    "verifiedAt": "2024-12-01T18:31:56.157Z"
   },
   {
     "address": "0x00f78120e8d1cb03f87be37f096d6f726f469aa4",
     "contractName": "NoRules",
     "fileName": "00f78120e8d1cb03f87be37f096d6f726f469aa4_NoRules.sol",
-    "verifiedAt": "2024-11-30T17:47:40.951Z"
+    "verifiedAt": "2024-12-01T18:31:59.024Z"
   },
   {
     "address": "0x00f9D525828bEeBf1eE75fb72B1f21932E195BDF",
     "contractName": "CRVStrategySwerveUSDCMainnet",
     "fileName": "00f9D525828bEeBf1eE75fb72B1f21932E195BDF_CRVStrategySwerveUSDCMainnet.sol",
-    "verifiedAt": "2024-11-30T17:47:46.134Z"
+    "verifiedAt": "2024-12-01T18:32:03.432Z"
   },
   {
     "address": "0x00fD4d608Ef0f22FBd39Ff24Ed40B37A9dbB820F",
     "contractName": "TokenVesting",
     "fileName": "00fD4d608Ef0f22FBd39Ff24Ed40B37A9dbB820F_TokenVesting.sol",
-    "verifiedAt": "2024-11-30T17:47:51.857Z"
+    "verifiedAt": "2024-12-01T18:32:08.854Z"
   },
   {
     "address": "0x00fa8056ffa2d86c0d66337a8b97588af7b31d8f",
     "contractName": "FuseFlywheelDynamicRewards",
     "fileName": "00fa8056ffa2d86c0d66337a8b97588af7b31d8f_FuseFlywheelDynamicRewards.sol",
-    "verifiedAt": "2024-11-30T17:47:56.977Z"
+    "verifiedAt": "2024-12-01T18:32:13.767Z"
   },
   {
     "address": "0x00fb202c62BEFC7d509C629c295ed38765774183",
     "contractName": "MLC",
     "fileName": "00fb202c62BEFC7d509C629c295ed38765774183_MLC.sol",
-    "verifiedAt": "2024-11-30T17:47:59.546Z"
+    "verifiedAt": "2024-12-01T18:32:15.836Z"
   },
   {
     "address": "0x00fbe7398d9f0d53fbaef6e2f4c6ab0e7c31f5d7",
     "contractName": "UAPToken",
     "fileName": "00fbe7398d9f0d53fbaef6e2f4c6ab0e7c31f5d7_UAPToken.sol",
-    "verifiedAt": "2024-11-30T17:48:03.835Z"
+    "verifiedAt": "2024-12-01T18:32:20.013Z"
   },
   {
     "address": "0x00fd9f7f8dba372310435a2a1813aef6eab9c857",
     "contractName": "TrippyToadz",
     "fileName": "00fd9f7f8dba372310435a2a1813aef6eab9c857_TrippyToadz.sol",
-    "verifiedAt": "2024-11-30T17:48:10.391Z"
+    "verifiedAt": "2024-12-01T18:32:26.463Z"
   },
   {
     "address": "0x00feC8b7EE9c14424F71b30Dac7C1CFE054B6771",
     "contractName": "IterableMapping",
     "fileName": "00feC8b7EE9c14424F71b30Dac7C1CFE054B6771_IterableMapping.sol",
-    "verifiedAt": "2024-11-30T17:48:14.287Z"
+    "verifiedAt": "2024-12-01T18:32:30.149Z"
   },
   {
     "address": "0x00ff66ab8699aafa050ee5ef5041d1503aa0849a",
     "contractName": "BAMM",
     "fileName": "00ff66ab8699aafa050ee5ef5041d1503aa0849a_BAMM.sol",
-    "verifiedAt": "2024-11-30T17:48:17.150Z"
+    "verifiedAt": "2024-12-01T18:32:32.711Z"
   }
 ]

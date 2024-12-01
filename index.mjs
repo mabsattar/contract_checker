@@ -8,23 +8,40 @@ import { HealthCheck } from './utils/Health_Check.mjs';
 import path from 'path';
 import fs from 'fs/promises';
 
+const VALID_COMMANDS = ['find', 'process', 'submit'];
+
 function parseFolderOption(args) {
   const folderIndex = args.indexOf('--folder');
   return folderIndex !== -1 ? args[folderIndex + 1] : null;
 }
 
+function parseCommand() {
+  const command = process.argv[2];
+  const chain = process.argv[3];
+  const folderOption = parseFolderOption(process.argv);
+
+  if (!VALID_COMMANDS.includes(command)) {
+    logger.error(`Invalid command. Valid commands are: ${VALID_COMMANDS.join(', ')}`);
+    logger.info('Usage examples:');
+    logger.info('  Find contracts:    node index.mjs find ethereum_mainnet --folder 00');
+    logger.info('  Process contracts: node index.mjs process ethereum_mainnet --folder 00');
+    logger.info('  Submit to Sourcify: node index.mjs submit ethereum_mainnet');
+    process.exit(1);
+  }
+
+  if (!chain) {
+    logger.error('No chain specified. Please specify a chain (e.g., ethereum_mainnet)');
+    process.exit(1);
+  }
+  
+  return { command, chain, folderOption };
+}
+
 async function main() {
+  const { command, chain: chainName, folderOption } = parseCommand();
+  
   try {
-    // Remove default value and require explicit chain specification
-    const chainName = process.argv[2] || process.env.CHAIN;
-
-    if (!chainName) {
-      logger.error('No chain specified. Please specify a chain (e.g., ethereum_mainnet, ethereum_sepolia)');
-      logger.info('To see available chains, run: node index.mjs --list-chains');
-      process.exit(1);
-    }
-
-    logger.info(`Starting contract verification process for ${chainName}`);
+    logger.info(`Starting ${command} phase for ${chainName}${folderOption ? ` (folder: ${folderOption})` : ''}`);
 
     // Initialize components
     const config = new Config();
@@ -41,7 +58,6 @@ async function main() {
 
     // Initialize health check
     const healthCheck = new HealthCheck();
-
     // Add periodic health checks
     const healthCheckInterval = setInterval(() => {
       const status = healthCheck.updateStatus(sourcifyApi.getStats());
@@ -50,60 +66,49 @@ async function main() {
       }
     }, 30000);
 
-    // Check if we're in submission mode
-    if (process.env.AUTO_SUBMIT === 'true') {
-      logger.info('Starting submission phase...');
-      const missingContractsFile = path.join(chainOutputDir, 'missing_contracts.json');
+    switch (command) {
+      case 'find':
+        const finder = new ContractFinder(sourcifyApi, chainConfig, cacheManager);
+        await finder.resetStats();
+        const { stats } = await finder.findMissingContracts(folderOption);
+        logger.info('Contract finding phase completed:', stats);
+        logger.info(`To process found contracts, run: node index.mjs process ${chainName}${folderOption ? ` --folder ${folderOption}` : ''}`);
+        break;
 
-      try {
-        // Check if file exists
-        await fs.access(missingContractsFile);
-
-        // Process submissions
+      case 'process':
+        // Processing phase
         const processor = new ContractProcessor(sourcifyApi, cacheManager, chainConfig);
-        await processor.processFromFile(missingContractsFile);
+        const processedContracts = await processor.processMissingContracts(
+          chainConfig.chain_name.split('_')[0],
+          chainConfig.chain_name.split('_')[1],
+          folderOption
+        );
+        
+        // Save the processed contracts
+        await processor.saveProcessedContracts(
+          processedContracts,
+          chainConfig.chain_name.split('_')[0],
+          chainConfig.chain_name.split('_')[1],
+          folderOption
+        );
+        
+        logger.info(`Processed and formatted ${processedContracts.length} contracts${folderOption ? ` from folder ${folderOption}` : ''}`);
+        logger.info(`To submit contracts to Sourcify, run: node index.mjs submit ${chainName}`);
+        break;
 
-        // Clear interval before returning
-        clearInterval(healthCheckInterval);
-        return;
-      } catch (error) {
-        // If file doesn't exist, create it with an empty array
-        if (error.code === 'ENOENT') {
-          await fs.writeFile(missingContractsFile, JSON.stringify([], null, 2));
-          logger.info(`Created new missing_contracts.json in ${chainOutputDir}`);
-
-          // Also create other necessary files
-          const files = {
-            'matching_contracts.json': [],
-            'submission_stats.json': {},
-            'submitted_contracts.json': []
-          };
-
-          for (const [filename, initialData] of Object.entries(files)) {
-            const filePath = path.join(chainOutputDir, filename);
-            await fs.writeFile(filePath, JSON.stringify(initialData, null, 2));
-            logger.info(`Created ${filename} in ${chainOutputDir}`);
-          }
-        } else {
-          logger.error(`Error accessing ${missingContractsFile}:`, error);
-          clearInterval(healthCheckInterval);
-          process.exit(1);
-        }
-      }
+      case 'submit':
+        // Submission phase
+        logger.info('Starting submission to Sourcify...');
+        await sourcifyApi.processAndSubmitContracts(
+          chainConfig.chain_name.split('_')[0],
+          chainConfig.chain_name.split('_')[1],
+          chainConfig,
+          folderOption
+        );
+        logger.info('Submission completed');
+        break;
     }
 
-    // If not in submission mode, run finding phase
-    logger.info('Starting finding phase...');
-    const finder = new ContractFinder(sourcifyApi, chainConfig, cacheManager);
-    await finder.resetStats();
-
-    const folderOption = parseFolderOption(process.argv);
-    const { stats } = await finder.findMissingContracts(folderOption);
-
-    logger.info('Contract finding phase completed:', stats);
-    logger.info('To submit contracts, run: AUTO_SUBMIT=true node index.mjs ethereum_mainnet');
-
-    // Clear interval before exiting
     clearInterval(healthCheckInterval);
 
   } catch (error) {

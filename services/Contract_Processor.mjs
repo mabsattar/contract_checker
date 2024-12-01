@@ -26,14 +26,24 @@ export class ContractProcessor {
     this.processedContracts = [];
   }
 
-  getMissingContractsFilePath(chain, network) {
-    return path.join(process.cwd(), 'chains', chain, network, 'missing_contracts.json')
+  getMissingContractsFilePath(chain, network, folder) {
+    const basePath = path.join(process.cwd(), 'chains', chain, network);
+    return folder 
+      ? path.join(basePath, `missing_contracts_${folder}.json`)
+      : path.join(basePath, 'missing_contracts.json');
+  }
+
+  getFormattedContractsFilePath(chain, network, folder) {
+    const basePath = path.join(process.cwd(), 'chains', chain, network);
+    return folder 
+      ? path.join(basePath, `formatted_contracts_${folder}.json`)
+      : path.join(basePath, 'formatted_contracts.json');
   }
 
   //reading and processing the missing contracts file
   async readMissingContracts(chains, network) {
-    const missingContractsFilePath = this.getMissingContractsFilePath(chains, network);
     try {
+      const missingContractsFilePath = this.getMissingContractsFilePath(chains, network);
       const fileContent = await fs.readFile(missingContractsFilePath, 'utf-8');
       const missingContracts = JSON.parse(fileContent);
       logger.info(`Loaded ${missingContracts.length} missing contracts from ${missingContractsFilePath}`);
@@ -47,28 +57,27 @@ export class ContractProcessor {
   async processMissingContracts(chain, network) {
     try {
       const missingContracts = await this.readMissingContracts(chain, network);
+      const processedContracts = []; // Initialize array to store processed contracts
+
 
       if (missingContracts.length === 0) {
         logger.info("No missing contracts to process.");
         return [];
       }
 
-      for (const contract of missingContracts) {
-        const { address, contractName, filePath, fileName } = contract;
+      for (const contractData of missingContracts) {
+        const { address, contractName, filePath, fileName } = contractData;
 
         //validating required fields
         if (!address || !contractName || !filePath || !fileName) {
           throw new Error('missing required contract fields');
         }
 
-        const config = new config();
-
         console.log(`Processing contract: ${fileName}`);
-
+        
+        try {
         // Reading the source code from the file
-        const fullPath = path.join(baseDirectory, fileName);
         console.log("Reading contract source from:", filePath);
-
         const sourceCode = await fs.readFile(fullPath, 'utf-8');
 
         // Get chain-specific EVM version
@@ -78,8 +87,8 @@ export class ContractProcessor {
           56: 'london',   // BSC
         };
 
-        const evmVersion = evmVersionMap[this.chainId] || 'london';
-
+        const chainId = parseInt(chain) || 1; // Default to mainnet if chain parsing fails
+        const evmVersion = evmVersionMap[chainId] || 'london';
         // Create input for solc
         const input = {
           language: 'Solidity',
@@ -158,25 +167,44 @@ export class ContractProcessor {
 
         //adding processed contracts to the results array
         processedContracts.push({
-          address: contract.address.toLowerCase(),
-          contractname: contract.contractName,
-          filename: contract.fileName,
+          address: address.toLowerCase(),
+          contractname: contractName,
+          filename: fileName,
           source: sourceCode,
           compilerVersion: await this.extractCompilerVersion(sourceCode)
         });
-      }
-      return processedContracts;
+     
+  
     } catch (error) {
       logger.error(`Failed to process contract  ${error.message}`);
-      throw error;
+      continue;
+    }
+  }
+  
+    logger.info(`Successfully processed ${processedContracts.length} contracts`)
+    return processedContracts;
+   
+    }catch (error) {
+      logger.error(`Failed to process contracts: $(error.message)`);
+      throw new Error;
     }
   }
 
 
   async extractCompilerVersion(sourceCode) {
-    const versionRegex = /pragma solidity (\^?\d+\.\d+\.\d+)/;
-    const match = sourceCode.match(versionRegex);
-    return match ? match[1].replace('^', '') : null;
+    try {
+      const versionRegex = /pragma solidity (\^?\d+\.\d+\.\d+)/;
+      const match = sourceCode.match(versionRegex);
+      if (match) {
+        return match[1].replace('^', '');
+      }
+      // Default version if not found
+      logger.warn('No compiler version found in source, using default');
+      return '0.8.10';
+    } catch (error) {
+      logger.error(`Error extracting compiler version: ${error.message}`);
+      return '0.8.10'; // Default fallback version
+    }
   }
 
   validateContract(contract) {
@@ -288,7 +316,7 @@ export class ContractProcessor {
     };
   }
 
-  async saveProcessedcontracts(processMissingContracts, chain, network) {
+  async saveProcessedContracts(processMissingContracts, chain, network) {
     const outputPath = path.join(process.cwd(), 'chains', chain, network, 'formatted_contracts.json');
     try {
       await fs.writeFile(outputPath, JSON.stringify(processMissingContracts, null, 2));
