@@ -54,7 +54,7 @@ export class ContractProcessor {
     }
   }
 
-  async processMissingContracts(chain, network) {
+  async processMissingContracts(chain, network, folder = null) {
     try {
       const missingContracts = await this.readMissingContracts(chain, network);
       const processedContracts = []; // Initialize array to store processed contracts
@@ -70,15 +70,15 @@ export class ContractProcessor {
 
         //validating required fields
         if (!address || !contractName || !filePath || !fileName) {
-          throw new Error('missing required contract fields');
+          logger.warn(`Skipping contract with missing required fields: ${address}`);
         }
 
-        console.log(`Processing contract: ${fileName}`);
+        logger.info(`Processing contract: ${fileName}`);
         
         try {
         // Reading the source code from the file
         console.log("Reading contract source from:", filePath);
-        const sourceCode = await fs.readFile(fullPath, 'utf-8');
+        const sourceCode = await fs.readFile(filePath, 'utf-8');
 
         // Get chain-specific EVM version
         const evmVersionMap = {
@@ -93,8 +93,8 @@ export class ContractProcessor {
         const input = {
           language: 'Solidity',
           sources: {
-            [contract.filePath]: {
-              content: contract.sourceCode,
+            [filePath]: {
+              content: sourceCode,
               keccak256: `0x${Buffer.from(keccak256(utf8ToBytes(contract.sourceCode))).toString('hex')}`,
               license: license
             }
@@ -125,7 +125,7 @@ export class ContractProcessor {
             },
 
             compilationTarget: {
-              [contract.fileName]: contract.contractName,
+              [fileName]: contractName,
             },
           },
           compiler: {
@@ -145,9 +145,8 @@ export class ContractProcessor {
         }
 
         // Ensure source code has SPDX identifier
-        source = contract.sourceCode;
         if (!source.includes('SPDX-License-Identifier')) {
-          source = '// SPDX-License-Identifier: UNLICENSED\n' + source;
+          source = '// SPDX-License-Identifier: UNLICENSED\n' + sourceCode;
         }
         // Format and validate using solc
         const output = JSON.parse(solc.compile(JSON.stringify(input)));
@@ -171,7 +170,10 @@ export class ContractProcessor {
           contractname: contractName,
           filename: fileName,
           source: sourceCode,
-          compilerVersion: await this.extractCompilerVersion(sourceCode)
+          compilerVersion: await this.extractCompilerVersion(sourceCode),
+          optimization: true,
+          optimizationRuns: 200,
+          evmVersion: evmVersion
         });
      
   
@@ -316,11 +318,11 @@ export class ContractProcessor {
     };
   }
 
-  async saveProcessedContracts(processMissingContracts, chain, network) {
-    const outputPath = path.join(process.cwd(), 'chains', chain, network, 'formatted_contracts.json');
+  async saveProcessedContracts(processMissingContracts, chain, network, folder = null) {
+    const outputPath = this.getFormattedContractsFilePath(chain, network, folder);
     try {
-      await fs.writeFile(outputPath, JSON.stringify(processMissingContracts, null, 2));
-      logger.info(`{rpcessed contracts saved to ${outputPath}`);
+      await fs.writeFile(outputPath, JSON.stringify(processedContracts, null, 2));
+      logger.info(`Processed contracts saved to ${outputPath}`);
     } catch (error) {
       logger.error(`Error saving processec contracts: ${error.message}`);
     }
