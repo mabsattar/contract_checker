@@ -11,15 +11,17 @@ export class ContractProcessor {
     this.sourcifyApi = sourcifyApi;
     this.cacheManager = cacheManager;
     this.config = config;
+    this.compilerCache = new Map();
+
     this.progress = {
       total: 0,
       processed: 0,
       successful: 0,
       failed: 0,
-      matchingContracts: []
+      matchingContracts: [],
+      startTime: new Date().stoSIOString();
+      lastUpdateTime: null
     };
-
-    this.missingContracts = [];
 
     this.processedContracts = [];
   }
@@ -72,7 +74,7 @@ export class ContractProcessor {
         }
 
         logger.info(`Processing contract: ${fileName}`);
-        
+
         try {
           logger.info("Reading contract source from:", filePath);
           const sourceCode = await fs.readFile(filePath, 'utf-8');
@@ -94,7 +96,7 @@ export class ContractProcessor {
           const evmVersion = evmVersionMap[chainId] || 'london';
 
           // Ensure source code has SPDX identifier
-          const processedSource = !sourceCode.includes('SPDX-License-Identifier') 
+          const processedSource = !sourceCode.includes('SPDX-License-Identifier')
             ? '// SPDX-License-Identifier: UNLICENSED\n' + sourceCode
             : sourceCode;
 
@@ -167,16 +169,16 @@ export class ContractProcessor {
 
           processedContracts.push(processedContract);
           logger.info(`Successfully processed contract: ${fileName}`);
-       
+
         } catch (error) {
           logger.error(`Failed to process contract ${fileName}: ${error.message}`);
           continue;
         }
       }
-    
+
       logger.info(`Successfully processed ${processedContracts.length} contracts`);
       return processedContracts;
-     
+
     } catch (error) {
       logger.error(`Failed to process contracts: ${error.message}`);
       throw error;
