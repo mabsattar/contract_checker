@@ -26,6 +26,11 @@ export class ContractProcessor {
     this.processedContracts = [];
   }
 
+  async loadCompiler(version) {
+    if (this.compilerCache.has(version))
+      return this.compilerCache.get(version);
+  }
+
   getMissingContractsFilePath(chain, network, folder) {
     const basePath = path.join(process.cwd(), 'chains', chain, network);
     return folder
