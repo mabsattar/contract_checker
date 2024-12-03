@@ -22,10 +22,6 @@ function parseCommand() {
 
   if (!VALID_COMMANDS.includes(command)) {
     logger.error(`Invalid command. Valid commands are: ${VALID_COMMANDS.join(', ')}`);
-    logger.info('Usage examples:');
-    logger.info('  Find contracts:    node index.mjs find ethereum_mainnet --folder 00');
-    logger.info('  Process contracts: node index.mjs process ethereum_mainnet --folder 00');
-    logger.info('  Submit to Sourcify: node index.mjs submit ethereum_mainnet');
     process.exit(1);
   }
 

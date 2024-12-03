@@ -74,22 +74,20 @@ export class ContractProcessor {
         logger.info(`Processing contract: ${fileName}`);
         
         try {
-          // Reading the source code from the file
           logger.info("Reading contract source from:", filePath);
           const sourceCode = await fs.readFile(filePath, 'utf-8');
 
           // Extract compiler version
           const compilerVersion = await this.extractCompilerVersion(sourceCode);
           if (!compilerVersion) {
-            logger.error(`Could not extract compiler version for ${fileName}`);
+            logger.warn(`No compiler version found in source, using default`);
             continue;
           }
 
-          // Get chain-specific EVM version
           const evmVersionMap = {
-            1: 'london',    // Ethereum Mainnet
-            137: 'paris',   // Polygon
-            56: 'london',   // BSC
+            1: 'london',
+            137: 'paris',
+            56: 'london',
           };
 
           const chainId = parseInt(chain) || 1;
@@ -123,10 +121,18 @@ export class ContractProcessor {
           };
 
           // Load specific compiler version
-          const solcVersion = await solc.loadRemoteVersion(compilerVersion);
-          
+          const solcSnapshot = await new Promise((resolve, reject) => {
+            solc.loadRemoteVersion(compilerVersion, (err, solcSnapshot) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(solcSnapshot);
+              }
+            });
+          });
+
           // Compile the contract
-          const compiledOutput = JSON.parse(solcVersion.compile(JSON.stringify(solcInput)));
+          const compiledOutput = JSON.parse(solcSnapshot.compile(JSON.stringify(solcInput)));
 
           if (compiledOutput.errors) {
             const errors = compiledOutput.errors.filter(error => error.severity === 'error');
@@ -155,11 +161,10 @@ export class ContractProcessor {
             fileName: fileName,
             source: processedSource,
             metadata: JSON.parse(contractMetadata.metadata),
-            libraries: {}, // Add libraries if needed
-            constructorArguments: '', // Add constructor arguments if needed
+            libraries: {},
+            constructorArguments: '',
           };
 
-          // Add to processed contracts array
           processedContracts.push(processedContract);
           logger.info(`Successfully processed contract: ${fileName}`);
        
@@ -189,10 +194,10 @@ export class ContractProcessor {
         return version;
       }
       logger.warn('No compiler version found in source, using default');
-      return '0.8.10';
+      return '^0.8.10';
     } catch (error) {
       logger.error(`Error extracting compiler version: ${error.message}`);
-      return '0.8.10';
+      return '^0.8.10';
     }
   }
 
@@ -300,7 +305,7 @@ export class ContractProcessor {
       filename: `${formattedAddress}.sol`,
       source: contract.sourceCode,
       compiler: "solidity",
-      compilerVersion: await this.extractCompilerVersion(contract.sourceCode) || "0.8.10",
+      compilerVersion: await this.extractCompilerVersion(contract.sourceCode) || "^0.8.10",
       network: "chainName"
     };
   }
