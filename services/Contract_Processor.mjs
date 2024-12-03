@@ -27,8 +27,24 @@ export class ContractProcessor {
   }
 
   async loadCompiler(version) {
-    if (this.compilerCache.has(version))
+    if (this.compilerCache.has(version)) {
       return this.compilerCache.get(version);
+  }
+
+    try {
+      const compiler = await new Promise((resolve, reject) => {
+        solc.loadRemoteVersion(version, (err, solcSnapshot) => {
+          if (err) reject(err);
+          else resolve(solcSnapshot);
+        });
+      });
+
+      this.compilerCache.set(version, compiler);
+      return compiler;
+    } catch (error) {
+      throw new Error(`Failed to load compiler version ${version}: ${error.message}`);
+      
+    }
   }
 
   getMissingContractsFilePath(chain, network, folder) {
