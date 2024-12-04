@@ -19,17 +19,31 @@ export class ContractProcessor {
       successful: 0,
       failed: 0,
       matchingContracts: [],
-      startTime: new Date().stoSIOString();
+      startTime: new Date().toISOString(),
       lastUpdateTime: null
     };
 
     this.processedContracts = [];
+
+    this.defaultSettings = {
+      evmVersionMap: {
+        1: 'london', // Ethereym
+        137: 'paris', // Polygon
+        56: 'london', // BSC
+        42161: 'paris', // Arbitrum
+        10: 'paris'     // Optimism
+      },
+      optimizer: {
+        enabled: true,
+        runs: 200
+      }
+    };
   }
 
   async loadCompiler(version) {
     if (this.compilerCache.has(version)) {
       return this.compilerCache.get(version);
-  }
+    }
 
     try {
       const compiler = await new Promise((resolve, reject) => {
@@ -177,13 +191,12 @@ export class ContractProcessor {
         optimizer: this.defaultSettings.optimizer,
         evmVersion,
         outputSelection: {
-          '*' {
+          '*' : {
             '*': ['abi', 'evm.bytecode', 'evm.deployedBytecode', 'metadata']
           }
         }
       }
-    }
-  
+    };  
 
     const output = JSON.parse(compiler.compile(JSON.stringify(input)));
 
@@ -192,6 +205,13 @@ export class ContractProcessor {
       if (errors.length > 0) {
         throw new Error (`Contract ${contractName} not found in compilation output`);
       }
+    }
+
+    const contract = output.contracts[fileName][contractName];
+    if (!contract) {
+      throw new Error(`Contract ${contractName} not found in compilation output`);
+      
+    }
 
       return {
         metadata: JSON.parse(contract.metadata),
@@ -200,9 +220,10 @@ export class ContractProcessor {
     }
 
     ensureSPDXLicense(source) {
-      if (!source.includes(`SPDX-License0Identifier`)) {
-        return `//SPDX-License-Identifier: UNLICENSED\n + source;`
+      if (!source.includes('SPDX-License-Identifier')) {
+        return '//SPDX-License-Identifier: UNLICENSED\n' + source;
       }
+      
       return source;
     }
 
@@ -221,8 +242,7 @@ export class ContractProcessor {
         }
       }
       return libraries;
-    }
-  };    
+    }    
 
   // Helper method to extract compiler version
   async extractCompilerVersion(sourceCode) {
