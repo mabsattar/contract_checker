@@ -75,129 +75,40 @@ export class ContractProcessor {
     }
   }
 
-  async processMissingContracts(chain, network, folder = null) {
+  async processMissingContracts(chain, network, folder = null, batchSize=50) {
     try {
       const missingContracts = await this.readMissingContracts(chain, network, folder);
       const processedContracts = []; // Initialize array to store processed contracts
+      this.progress.total = missingContracts.length;
 
-      if (missingContracts.length === 0) {
-        logger.info("No missing contracts to process.");
-        return [];
-      }
+      for (let i = 0; i < missingContracts.length; i+= batchSize) {
+        const batch = missingContracts.slice(i, i + batchSize);
+        const batchResults = await promiseHooks.allSettled(
+          batch.map(contract => this.processedContracts(contract, main))
+        );
 
-      for (const contractData of missingContracts) {
-        const { address, contractName, filePath, fileName } = contractData;
-
-        // Validating required fields
-        if (!address || !contractName || !filePath || !fileName) {
-          logger.warn(`Skipping contract with missing required fields: ${address}`);
-          continue;
-        }
-
-        logger.info(`Processing contract: ${fileName}`);
-
-        try {
-          logger.info("Reading contract source from:", filePath);
-          const sourceCode = await fs.readFile(filePath, 'utf-8');
-
-          // Extract compiler version
-          const compilerVersion = await this.extractCompilerVersion(sourceCode);
-          if (!compilerVersion) {
-            logger.warn(`No compiler version found in source, using default`);
-            continue;
+        batchResults.forEach((result, index) => {
+          const contract = batch[index];
+          if (result.status === 'fulfilled' && result.value) {
+            processedContracts.push(result.value);
+            this.progress.successful++;
+          } else {
+            logger.error(`Failed to process ${contract.address}: ${result.reason}`);
+            this.progress.failed++;
           }
+          this.progress.processed++
+        });
 
-          const evmVersionMap = {
-            1: 'london',
-            137: 'paris',
-            56: 'london',
-          };
+        //saving progress afrter each batch
+        await this.saveProgress();
 
-          const chainId = parseInt(chain) || 1;
-          const evmVersion = evmVersionMap[chainId] || 'london';
-
-          // Ensure source code has SPDX identifier
-          const processedSource = !sourceCode.includes('SPDX-License-Identifier')
-            ? '// SPDX-License-Identifier: UNLICENSED\n' + sourceCode
-            : sourceCode;
-
-          // Create solc input
-          const solcInput = {
-            language: 'Solidity',
-            sources: {
-              [fileName]: {
-                content: processedSource
-              }
-            },
-            settings: {
-              optimizer: {
-                enabled: true,
-                runs: 200
-              },
-              evmVersion: evmVersion,
-              outputSelection: {
-                '*': {
-                  '*': ['abi', 'evm.bytecode', 'evm.deployedBytecode', 'metadata']
-                }
-              }
-            }
-          };
-
-          // Load specific compiler version
-          const solcSnapshot = await new Promise((resolve, reject) => {
-            solc.loadRemoteVersion(compilerVersion, (err, solcSnapshot) => {
-              if (err) {
-                reject(err);
-              } else {
-                resolve(solcSnapshot);
-              }
-            });
-          });
-
-          // Compile the contract
-          const compiledOutput = JSON.parse(solcSnapshot.compile(JSON.stringify(solcInput)));
-
-          if (compiledOutput.errors) {
-            const errors = compiledOutput.errors.filter(error => error.severity === 'error');
-            if (errors.length > 0) {
-              logger.error(`Compilation errors for ${fileName}:`, errors);
-              continue;
-            }
-          }
-
-          // Get the contract metadata
-          const contractMetadata = compiledOutput.contracts[fileName][contractName];
-          if (!contractMetadata) {
-            logger.error(`No metadata found for ${contractName} in ${fileName}`);
-            continue;
-          }
-
-          // Format for Sourcify
-          const processedContract = {
-            address: address.toLowerCase(),
-            chainId: chainId.toString(),
-            contractName: contractName,
-            compilerVersion: compilerVersion,
-            optimization: true,
-            optimizationRuns: 200,
-            evmVersion: evmVersion,
-            fileName: fileName,
-            source: processedSource,
-            metadata: JSON.parse(contractMetadata.metadata),
-            libraries: {},
-            constructorArguments: '',
-          };
-
-          processedContracts.push(processedContract);
-          logger.info(`Successfully processed contract: ${fileName}`);
-
-        } catch (error) {
-          logger.error(`Failed to process contract ${fileName}: ${error.message}`);
-          continue;
+        //adding an optional delay between batches
+        if (i + batchSize < missingContracts.length) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
       }
 
-      logger.info(`Successfully processed ${processedContracts.length} contracts`);
+      await this.saveProcessedContracts(processedContracts, chain, network, folder);
       return processedContracts;
 
     } catch (error) {
@@ -205,6 +116,113 @@ export class ContractProcessor {
       throw error;
     }
   }
+   
+  async processContract(contractData, chain) {
+
+    const {address, contractName, filePath, fileName} = contractData;
+
+    try {
+      if (!this.validateContractData(contractData)) {
+        throw new Error("Invalid contract data");        
+      };
+
+      const sourceCode = await fs.readFile(filePath, 'utf-8');
+      if (!this.isValidContract(sourceCode)) {
+        throw new Error(`Invalid Solidity contract`);        
+      }
+
+      // Extract compiler version
+      const compilerVersion = await this.extractCompilerVersion(sourceCode);
+      const compiler = await this.loadCompiler(compilerVersion);
+      
+      const chainId = parseInt(chain);
+      const evmVersion = this.defaultSettings.evmVersionMap[chainId] || 'london', 
+
+      const processedSource = this.ensureSPDXLicense(sourceCode);
+      const compilationResult = await this.compilerContract(compiler, {
+        fileName,
+        contractName,
+        source: processedSource,
+        evmVersion
+      });
+
+      return {
+        address: address.toLowerCase(),
+        chainId: chainId.toString(),
+        contractName,
+        compilerVersion,
+        optimization: this.defaultSettings.optimizer.enabled,
+        optimizationRuns: this.defaultSettings.optimizer.runs,
+        evmVersion,
+        fileName,
+        source: processedSource,
+        metadata: compilationResult.metadata,
+        libraries: compilationResult.libraries || {},
+        constructorArguments: '',
+      };
+
+    } catch (error) {
+      logger.error(`Error processing ${address}: ${error.message}`);
+      throw error;
+    }
+  }
+
+  async compileContract(compiler, {fileName, contractName, source, evmVersion }) {
+    const input = {
+      language: 'Solidity',
+      sources: {
+        [fileName]: {content: source}
+      },
+      settings: {
+        optimizer: this.defaultSettings.optimizer,
+        evmVersion,
+        outputSelection: {
+          '*' {
+            '*': ['abi', 'evm.bytecode', 'evm.deployedBytecode', 'metadata']
+          }
+        }
+      }
+    }
+  
+
+    const output = JSON.parse(compiler.compile(JSON.stringify(input)));
+
+    if(output.errors) {
+      const errors = output.errors.filter(e => e.severity === 'error');
+      if (errors.length > 0) {
+        throw new Error (`Contract ${contractName} not found in compilation output`);
+      }
+
+      return {
+        metadata: JSON.parse(contract.metadata),
+        libraries: this.extractLibraries(contract),
+      };
+    }
+
+    ensureSPDXLicense(source) {
+      if (!source.includes(`SPDX-License0Identifier`)) {
+        return `//SPDX-License-Identifier: UNLICENSED\n + source;`
+      }
+      return source;
+    }
+
+    validateContractData(contract) {
+      const required = ['address', 'contractName', 'filePath', 'fileName'];
+      return required.every(field => !!contract[field]);
+    }
+  
+    extractLibraries(contract) {
+      const libraries = {};
+      if (contract.evm?.bytecode?.linkReferences) {
+        for (const [file, fileLibs] of Object.entries(contract.evm.bytecode.linkReferences)) {
+          for (const libName of Object.keys(fileLibs)) {
+            libraries[libName] = ''; // To be filled by deployment process
+          }
+        }
+      }
+      return libraries;
+    }
+  };    
 
   // Helper method to extract compiler version
   async extractCompilerVersion(sourceCode) {
