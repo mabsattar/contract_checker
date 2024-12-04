@@ -56,8 +56,8 @@ export class ContractProcessor {
       this.compilerCache.set(version, compiler);
       return compiler;
     } catch (error) {
-      throw new Error(`Failed to load compiler version ${version}: ${error.message}`);
-      
+      logger.error(`Error loading compiler version ${version}: ${error.message}`);
+      throw error;
     }
   }
 
@@ -92,13 +92,13 @@ export class ContractProcessor {
   async processMissingContracts(chain, network, folder = null, batchSize=50) {
     try {
       const missingContracts = await this.readMissingContracts(chain, network, folder);
-      const processedContracts = []; // Initialize array to store processed contracts
+      this.processedContracts = []; // Initialize array to store processed contracts
       this.progress.total = missingContracts.length;
 
       for (let i = 0; i < missingContracts.length; i+= batchSize) {
         const batch = missingContracts.slice(i, i + batchSize);
-        const batchResults = await promise.allSettled(
-          batch.map(contract => this.processedContracts(contract, main))
+        const batchResults = await Promise.allSettled(
+          batch.map(contract => this.processContract(contract, chain))
         );
 
         batchResults.forEach((result, index) => {
@@ -255,10 +255,10 @@ export class ContractProcessor {
         return version;
       }
       logger.warn('No compiler version found in source, using default');
-      return '^0.8.10';
+      return '^0.6.0';
     } catch (error) {
       logger.error(`Error extracting compiler version: ${error.message}`);
-      return '^0.8.10';
+      return '^0.6.0';
     }
   }
 
@@ -289,7 +289,7 @@ export class ContractProcessor {
 
     // Check for Solidity-specific keywords
     const solidityKeywords = ['function', 'event', 'mapping', 'struct'];
-    if (!solidityKeywords.some(keyword => source.includes(keyword))) {
+    if (!solidityKeywords.some(keyword => lowerCaseSource.includes(keyword))) {
       logger.warn(`No Solidity - specific keywords found in source`);
       return false;
     }
@@ -371,7 +371,7 @@ export class ContractProcessor {
     };
   }
 
-  async saveProcessedContracts(processMissingContracts, chain, network, folder = null) {
+  async saveProcessedContracts(processedContracts, chain, network, folder = null) {
     const outputPath = this.getFormattedContractsFilePath(chain, network, folder);
     try {
       await fs.writeFile(outputPath, JSON.stringify(processedContracts, null, 2));
