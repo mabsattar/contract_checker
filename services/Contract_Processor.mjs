@@ -97,7 +97,7 @@ export class ContractProcessor {
 
       for (let i = 0; i < missingContracts.length; i+= batchSize) {
         const batch = missingContracts.slice(i, i + batchSize);
-        const batchResults = await promiseHooks.allSettled(
+        const batchResults = await promise.allSettled(
           batch.map(contract => this.processedContracts(contract, main))
         );
 
