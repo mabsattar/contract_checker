@@ -122,6 +122,7 @@ export class ContractProcessor {
         }
       }
 
+      logger.info(`Saving processed contracts: ${JSON.stringify(processedContracts, null, 2)}`);
       await this.saveProcessedContracts(processedContracts, chain, network, folder);
       return processedContracts;
 
@@ -150,10 +151,10 @@ export class ContractProcessor {
       const compiler = await this.loadCompiler(compilerVersion);
       
       const chainId = parseInt(chain);
-      const evmVersion = this.defaultSettings.evmVersionMap[chainId] || 'london', 
+      const evmVersion = this.defaultSettings.evmVersionMap[chainId] || 'london'; 
 
       const processedSource = this.ensureSPDXLicense(sourceCode);
-      const compilationResult = await this.compilerContract(compiler, {
+      const compilationResult = await this.compileContract(compiler, {
         fileName,
         contractName,
         source: processedSource,
@@ -299,7 +300,7 @@ export class ContractProcessor {
   }
 
 
-  async processFromFile(filePath) {
+  /*async processFromFile(filePath) {
     try {
       const data = await fs.readFile(filePath, 'utf8');
       const contracts = JSON.parse(data);
@@ -325,7 +326,7 @@ export class ContractProcessor {
           const contractData = await this.transformContract(contract);
 
           // Submit to Sourcify
-          const success = await this.submitContract(contractData);
+          //const success = await this.submitContract(contractData);
 
           if (success) {
             this.progress.successful++;
@@ -369,7 +370,7 @@ export class ContractProcessor {
       compilerVersion: await this.extractCompilerVersion(contract.sourceCode) || "^0.8.10",
       network: "chainName"
     };
-  }
+  }*/
 
   async saveProcessedContracts(processedContracts, chain, network, folder = null) {
     const outputPath = this.getFormattedContractsFilePath(chain, network, folder);
