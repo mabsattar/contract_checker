@@ -299,79 +299,6 @@ export class ContractProcessor {
     return true;
   }
 
-
-  /*async processFromFile(filePath) {
-    try {
-      const data = await fs.readFile(filePath, 'utf8');
-      const contracts = JSON.parse(data);
-
-      logger.info(`Processing ${contracts.length} contracts from file`);
-
-      // Validate contract format
-      const validContracts = contracts.filter(contract => {
-        return contract &&
-          contract.address &&
-          contract.sourceCode &&
-          typeof contract.sourceCode === 'string';
-      });
-
-      if (validContracts.length !== contracts.length) {
-        logger.warn(`Found ${contracts.length - validContracts.length} invalid contracts`);
-      }
-
-      // Process each valid contract
-      for (const contract of validContracts) {
-        try {
-          // Transform contract data for submission
-          const contractData = await this.transformContract(contract);
-
-          // Submit to Sourcify
-          //const success = await this.submitContract(contractData);
-
-          if (success) {
-            this.progress.successful++;
-            await this.cacheManager.markVerified(contract.address);
-          } else {
-            this.progress.failed++;
-            logger.warn(`Failed to verify contract ${contract.address}`);
-          }
-
-        } catch (err) {
-          logger.error(`Error processing contract ${contract.address}: ${err.message}`);
-          this.progress.failed++;
-        }
-      }
-
-      // Update total processed count
-      this.progress.processed += validContracts.length;
-
-    } catch (err) {
-      logger.error(`Error reading/parsing contracts file: ${err.message}`);
-      throw err;
-    }
-  }
-
-  async transformContract(contract) {
-    if (!contract || !contract.address || !contract.sourceCode) {
-      logger.warn(`Invalid contract data for transformation: ${contract?.address}`);
-      throw new Error('Invalid contract data');
-    }
-
-    // Ensure address is properly formatted
-    const address = contract.address.toLowerCase();
-    const formattedAddress = address.startsWith('0x') ? address : `0x${address}`;
-
-    return {
-      address: formattedAddress,
-      contractName: contract.contractName || path.basename(contract.path || ''),
-      filename: `${formattedAddress}.sol`,
-      source: contract.sourceCode,
-      compiler: "solidity",
-      compilerVersion: await this.extractCompilerVersion(contract.sourceCode) || "^0.8.10",
-      network: "chainName"
-    };
-  }*/
-
   async saveProcessedContracts(processedContracts, chain, network, folder = null) {
     const outputPath = this.getFormattedContractsFilePath(chain, network, folder);
     try {
@@ -402,30 +329,30 @@ export class ContractProcessor {
   }
 
 
-  async saveVerificationProgress() {
-    const progressPath = path.join(this.chainOutputDir, 'verification_progress.json');
-    try {
-      const progressData = {
-        progress: {
-          currentFolder: this.currentFolder,
-          processedFolders: this.processedFolders,
-          totalFolders: this.totalFolders,
-          currentBatch: this.currentBatch,
-          stats: this.progress,
-          timing: {
-            startTime: this.startTime,
-            lastUpdateTime: new Date().toISOString(),
-            estimatedTimeRemaining: this.calculateTimeRemaining()
-          }
-        },
-        sourcifyStats: this.sourcifyApi.getStats(),
-        lastUpdate: new Date().toISOString()
-      };
+  // async saveVerificationProgress() {
+  //   const progressPath = path.join(this.chainOutputDir, 'verification_progress.json');
+  //   try {
+  //     const progressData = {
+  //       progress: {
+  //         currentFolder: this.currentFolder,
+  //         processedFolders: this.processedFolders,
+  //         totalFolders: this.totalFolders,
+  //         currentBatch: this.currentBatch,
+  //         stats: this.progress,
+  //         timing: {
+  //           startTime: this.startTime,
+  //           lastUpdateTime: new Date().toISOString(),
+  //           estimatedTimeRemaining: this.calculateTimeRemaining()
+  //         }
+  //       },
+  //       sourcifyStats: this.sourcifyApi.getStats(),
+  //       lastUpdate: new Date().toISOString()
+  //     };
 
-      await fs.writeFile(progressPath, JSON.stringify(progressData, null, 2));
-      logger.debug('Verification progress saved successfully');
-    } catch (error) {
-      logger.error('Error saving verification progress:', error);
-    }
-  }
+  //     await fs.writeFile(progressPath, JSON.stringify(progressData, null, 2));
+  //     logger.debug('Verification progress saved successfully');
+  //   } catch (error) {
+  //     logger.error('Error saving verification progress:', error);
+  //   }
+  // }
 }

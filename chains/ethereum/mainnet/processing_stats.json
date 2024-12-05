@@ -1,9 +1,9 @@
 {
   "total": 1081,
-  "processed": 200,
+  "processed": 50,
   "successful": 0,
-  "failed": 200,
+  "failed": 50,
   "matchingContracts": [],
-  "startTime": "2024-12-04T20:09:57.455Z",
+  "startTime": "2024-12-05T14:55:08.255Z",
   "lastUpdateTime": null
 }
