@@ -327,32 +327,4 @@ export class ContractProcessor {
       logger.error('Error saving progress:', error);
     }
   }
-
-
-  // async saveVerificationProgress() {
-  //   const progressPath = path.join(this.chainOutputDir, 'verification_progress.json');
-  //   try {
-  //     const progressData = {
-  //       progress: {
-  //         currentFolder: this.currentFolder,
-  //         processedFolders: this.processedFolders,
-  //         totalFolders: this.totalFolders,
-  //         currentBatch: this.currentBatch,
-  //         stats: this.progress,
-  //         timing: {
-  //           startTime: this.startTime,
-  //           lastUpdateTime: new Date().toISOString(),
-  //           estimatedTimeRemaining: this.calculateTimeRemaining()
-  //         }
-  //       },
-  //       sourcifyStats: this.sourcifyApi.getStats(),
-  //       lastUpdate: new Date().toISOString()
-  //     };
-
-  //     await fs.writeFile(progressPath, JSON.stringify(progressData, null, 2));
-  //     logger.debug('Verification progress saved successfully');
-  //   } catch (error) {
-  //     logger.error('Error saving verification progress:', error);
-  //   }
-  // }
 }
