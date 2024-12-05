@@ -61,18 +61,23 @@ export class ContractProcessor {
     }
   }
 
-  getMissingContractsFilePath(chain, network, folder) {
+  getMissingContractsFilePath(chain, network, folder = null) {
     const basePath = path.join(process.cwd(), 'chains', chain, network);
-    return folder
-      ? path.join(basePath, `missing_contracts_${folder}.json`)
-      : path.join(basePath, 'missing_contracts.json');
+
+    if (folder === null) {
+      return path.join(basePath, 'missing_contracts.json');
+    } else { 
+      return path.join(basePath, `missing_contracts_${folder}.json`) 
+    }           
   }
 
-  getFormattedContractsFilePath(chain, network, folder) {
+  getFormattedContractsFilePath(chain, network, folder = null) {
     const basePath = path.join(process.cwd(), 'chains', chain, network);
-    return folder
-      ? path.join(basePath, `formatted_contracts_${folder}.json`)
-      : path.join(basePath, 'formatted_contracts.json');
+    if (folder === null) {
+      return path.join(basePath, `formatted_contracts_${folder}.json`)       
+    } else {
+      return path.join(basePath, 'formatted_contracts.json');
+    }
   }
 
   //reading and processing the missing contracts file
