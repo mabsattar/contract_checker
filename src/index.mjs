@@ -1,10 +1,10 @@
-import { Config } from './config/config.mjs';
-import { logger } from './utils/logger.mjs';
-import { CacheManager } from './utils/cache.mjs';
+import { Config } from '../config/config.mjs';
+import { logger } from '../utils/logger.mjs';
+import { CacheManager } from '../utils/cache.mjs';
 import { SourcifyAPI } from './services/Sourcify_API.mjs';
 import { ContractProcessor } from './services/Contract_Processor.mjs';
 import { ContractFinder } from './services/Contract_Finder.mjs';
-import { HealthCheck } from './utils/Health_Check.mjs';
+import { HealthCheck } from '../utils/Health_Check.mjs';
 import path from 'path';
 import fs from 'fs/promises';
 
