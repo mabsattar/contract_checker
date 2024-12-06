@@ -1,0 +1,7 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+remappings = [
+  "contracts/=/home/absystem/opensource/smart-contract-ethereum-mainnet/contracts"  # Maps "contracts/" to the actual path where contracts are located
+]
