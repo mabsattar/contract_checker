@@ -4,7 +4,7 @@
 PROJECT_PATH="/home/absystem/opensource/smart-contract-sanctuary-ethereum"
 CONTRACTS_JSON="$PROJECT_PATH/mainnet/contracts/contracts.json"
 MAINNET_DIR="$PROJECT_PATH/mainnet"
-OUTPUT_FILE="$home/absyste/opensource/contract_checker/sourcify_submission_results.json"
+OUTPUT_FILE="home/absyste/opensource/contract_checker/sourcify_submission_results.json"
 CHAIN_ID=1  # Mainnet chain ID
 
 # Ensure output file exists
@@ -26,8 +26,8 @@ while IFS= read -r line; do
 
   echo "Processing contract: $name at $address with compiler $compiler"
 
-  # Locate corresponding Solidity source file
-  source_file=$(find "$MAINNET_DIR" -name "$name.sol")
+  # Locate corresponding Solidity source file recursively in the MAINNET_DIR
+  source_file=$(find "$MAINNET_DIR" -type f -name "$name.sol" | head -n 1)
   if [ -z "$source_file" ]; then
     echo "Source file not found for $name ($address)"
     log_result "$address" "source file not found"
