@@ -11,6 +11,9 @@ CHAIN_ID=1  # Mainnet chain ID
 mkdir -p "$(dirname "$OUTPUT_FILE")"
 echo "[]" > "$OUTPUT_FILE"
 
+# Enable full backtrace for Rust errors
+export RUST_BACKTRACE=full
+
 
 # Helper function to log results
 log_result() {
@@ -19,6 +22,7 @@ log_result() {
   jq ". += [{\"address\": \"$address\", \"status\": \"$status\"}]" "$OUTPUT_FILE" > tmp.json && mv tmp.json "$OUTPUT_FILE"
 }
 
+ 
 # Process contracts.json line by line
 while IFS= read -r line; do
   # Parse JSON fields
@@ -37,6 +41,15 @@ while IFS= read -r line; do
   if [ -z "$source_file" ]; then
     echo "Source file not found for $name ($address)"
     log_result "$address" "source file not found"
+    continue
+  fi
+
+  # Check if the contract is already verified on Sourcify
+  echo "Checking if $name ($address) is verified on Sourcify..."
+  forge verify-check "$address" --chain-id "$CHAIN_ID" --verifier sourcify
+  if [ $? -eq 0 ]; then
+    echo "$name ($address) is already verified on Sourcify, skipping submission..."
+    log_result "$address" "already verified"
     continue
   fi
 
@@ -65,23 +78,24 @@ while IFS= read -r line; do
     continue
   fi
 
-  # Submit to Sourcify
-  echo "Submitting $name ($address) to Sourcify..."
-  response=$(curl -s -o /dev/null -w "%{http_code}" -X POST "https://sourcify.dev/api/v1/verify" \
-    -H "Content-Type: multipart/form-data" \
-    -F "address=$address" \
-    -F "chain=$CHAIN_ID" \
-    -F "contractName=$name" \
-    -F "metadata=@$metadata_file" \
-    -F "source=@$source_file")
-
-  if [ "$response" -eq 200 ] || [ "$response" -eq 201 ]; then
-    echo "Successfully submitted $name ($address) to Sourcify."
-    log_result "$address" "success"
-  else
-    echo "Failed to submit $name ($address) to Sourcify. HTTP status: $response"
+  # Submit to Sourcify for verification since it's not verified
+  echo "Submitting $name ($address) to Sourcify for verification..."
+  forge verify-contract "$address" "$source_file" --chain-id "$CHAIN_ID" --verifier sourcify --metadata "$metadata_file" || {
+    echo "Failed to submit $name ($address) to Sourcify"
     log_result "$address" "submission failed"
-  fi
+    continue
+  }
+
+  echo "Successfully submitted $name ($address) to Sourcify."
+  log_result "$address" "success"
 done < <(jq -c '.' "$CONTRACTS_JSON")
 
-echo "Submission process completed. Results saved to $OUTPUT_FILE."
+echo "Verification process completed. Results saved to $OUTPUT_FILE."
+
+
+    
+
+
+  
+
+    
