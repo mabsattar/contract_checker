@@ -51,7 +51,7 @@ while IFS= read -r line; do
   else
     # Recompile contract using Foundry to regenerate metadata
     echo "Recompiling $source_file with $compiler..."
-    forge build --no-parallel || {
+    forge build --run-all || {
       echo "Failed to recompile $name ($address)"
       log_result "$address" "compilation failed"
       continue
