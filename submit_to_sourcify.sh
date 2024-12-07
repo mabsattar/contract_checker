@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Configuration
-PROJECT_PATH="/home/absystem/opensource/smart-contract-sanctuary-ethereum"
-CONTRACTS_JSON="$PROJECT_PATH/contracts/mainnet/contracts.json"
-MAINNET_DIR="$PROJECT_PATH/contracts/mainnet"
+PROJECT_PATH="/home/absystem/opensource/smart-contract-sanctuary-ethereum/contracts"
+CONTRACTS_JSON="$PROJECT_PATH/mainnet/contracts.json"
+MAINNET_DIR="$PROJECT_PATH/mainnet"
 OUTPUT_FILE="home/absystem/opensource/contract_checker/sourcify_submission_results.json"
 CHAIN_ID=1  # Mainnet chain ID
 
