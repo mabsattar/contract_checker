@@ -1,7 +1,13 @@
 [profile.default]
-src = "src"
+src = "/home/absystem/opensource/smart-contract-sanctuary-ethereum/contracts/mainnet"
 out = "out"
 libs = ["lib"]
 remappings = [
-  "contracts/=/home/absystem/opensource/smart-contract-ethereum-mainnet/contracts"  # Maps "contracts/" to the actual path where contracts are located
+  "contracts/=/home/absystem/opensource/smart-contract-sanctuary-ethereum/contracts/mainnet" 
+  # Maps "contracts/" to the actual path where contracts are located
 ]
+
+# Enable optimizer settings
+optimizer = true
+optimizer_runs = 200
+

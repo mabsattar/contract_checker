@@ -4,11 +4,13 @@
 PROJECT_PATH="/home/absystem/opensource/smart-contract-sanctuary-ethereum/contracts"
 CONTRACTS_JSON="$PROJECT_PATH/mainnet/contracts.json"
 MAINNET_DIR="$PROJECT_PATH/mainnet"
-OUTPUT_FILE="home/absystem/opensource/contract_checker/sourcify_submission_results.json"
+OUTPUT_FILE="/home/absystem/opensource/contract_checker/sourcify_submission_results.json"
 CHAIN_ID=1  # Mainnet chain ID
 
-# Ensure output file exists
+# Ensure output directory exists
+mkdir -p "$(dirname "$OUTPUT_FILE")"
 echo "[]" > "$OUTPUT_FILE"
+
 
 # Helper function to log results
 log_result() {
@@ -26,25 +28,37 @@ while IFS= read -r line; do
 
   echo "Processing contract: $name at $address with compiler $compiler"
 
+  # Extract the address without the '0x' prefix
+  address_no_prefix=${address:2}
+
+
   # Locate corresponding Solidity source file recursively in the MAINNET_DIR
-  source_file=$(find "$MAINNET_DIR" -type f -name "$name.sol" | head -n 1)
+  source_file=$(find "$MAINNET_DIR" -type f -name "${address_no_prefix}_${name}.sol" | head -n 1)
   if [ -z "$source_file" ]; then
     echo "Source file not found for $name ($address)"
     log_result "$address" "source file not found"
     continue
   fi
 
-  # Recompile contract using Foundry to regenerate metadata
-  echo "Recompiling $source_file with $compiler..."
+  # Set the SOLC_VERSION environment variable
   export SOLC_VERSION="${compiler/v/}"  # Strip the 'v' from compiler version
-  forge build --use "$source_file" --compiler-version "$SOLC_VERSION" || {
-    echo "Failed to recompile $name ($address)"
-    log_result "$address" "compilation failed"
-    continue
-  }
 
-  # Locate metadata
+  
+  #   # Check if metadata already exists
   metadata_file="out/$name.metadata.json"
+  if [ -f "$metadata_file" ]; then
+    echo "Metadata already exists for $name ($address), skipping recompilation..."
+  else
+    # Recompile contract using Foundry to regenerate metadata
+    echo "Recompiling $source_file with $compiler..."
+    forge build --no-parallel || {
+      echo "Failed to recompile $name ($address)"
+      log_result "$address" "compilation failed"
+      continue
+    }
+  fi
+
+  # Check again if metadata was generated after compilation
   if [ ! -f "$metadata_file" ]; then
     echo "Metadata not generated for $name ($address)"
     log_result "$address" "metadata not found"
