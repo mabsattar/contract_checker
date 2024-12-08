@@ -14,7 +14,6 @@ echo "[]" > "$OUTPUT_FILE"
 # Enable full backtrace for Rust errors
 export RUST_BACKTRACE=full
 
-
 # Helper function to log results
 log_result() {
   local address=$1
@@ -22,7 +21,32 @@ log_result() {
   jq ". += [{\"address\": \"$address\", \"status\": \"$status\"}]" "$OUTPUT_FILE" > tmp.json && mv tmp.json "$OUTPUT_FILE"
 }
 
- 
+# Check if the contract is verified using Foundry's sourcify integration
+check_if_verified() {
+  local address=$1
+  echo "Checking if $address is verified on Sourcify..."
+  
+  if forge verify-check "$address" --chain-id "$CHAIN_ID" --verifier sourcify; then
+    echo "$address is already verified on Sourcify, skipping submission..."
+    return 0  # Verified
+  else
+    echo "$address is not verified on Sourcify, proceeding with submission..."
+    return 1  # Not verified
+  fi
+}
+
+# Inside the processing loop
+if ! check_if_verified "$address"; then
+  # Proceed with compilation and submission only if not verified
+  echo "Recompiling $source_file with $compiler..."
+  forge build --run-all || {
+    echo "Failed to recompile $name ($address)"
+    log_result "$address" "compilation failed"
+    continue
+  }
+fi
+
+
 # Process contracts.json line by line
 while IFS= read -r line; do
   # Parse JSON fields
@@ -35,7 +59,6 @@ while IFS= read -r line; do
   # Extract the address without the '0x' prefix
   address_no_prefix=${address:2}
 
-
   # Locate corresponding Solidity source file recursively in the MAINNET_DIR
   source_file=$(find "$MAINNET_DIR" -type f -name "${address_no_prefix}_${name}.sol" | head -n 1)
   if [ -z "$source_file" ]; then
@@ -44,20 +67,13 @@ while IFS= read -r line; do
     continue
   fi
 
-  # Check if the contract is already verified on Sourcify
-  echo "Checking if $name ($address) is verified on Sourcify..."
-  forge verify-check "$address" --chain-id "$CHAIN_ID" --verifier sourcify
-  if [ $? -eq 0 ]; then
-    echo "$name ($address) is already verified on Sourcify, skipping submission..."
-    log_result "$address" "already verified"
-    continue
-  fi
+  # Check if the contract is verified before compiling
+  check_if_verified "$address" || continue
 
   # Set the SOLC_VERSION environment variable
   export SOLC_VERSION="${compiler/v/}"  # Strip the 'v' from compiler version
 
-  
-  #   # Check if metadata already exists
+  # Check if metadata already exists
   metadata_file="out/$name.metadata.json"
   if [ -f "$metadata_file" ]; then
     echo "Metadata already exists for $name ($address), skipping recompilation..."
@@ -78,9 +94,9 @@ while IFS= read -r line; do
     continue
   fi
 
-  # Submit to Sourcify for verification since it's not verified
-  echo "Submitting $name ($address) to Sourcify for verification..."
-  forge verify-contract "$address" "$source_file" --chain-id "$CHAIN_ID" --verifier sourcify --metadata "$metadata_file" || {
+  # Submit to Sourcify using Foundry's built-in sourcify verifier
+  echo "Submitting $name ($address) to Sourcify..."
+  forge verify-contract "$address" "$source_file" --chain-id "$CHAIN_ID" --verifier sourcify || {
     echo "Failed to submit $name ($address) to Sourcify"
     log_result "$address" "submission failed"
     continue
@@ -90,12 +106,4 @@ while IFS= read -r line; do
   log_result "$address" "success"
 done < <(jq -c '.' "$CONTRACTS_JSON")
 
-echo "Verification process completed. Results saved to $OUTPUT_FILE."
-
-
-    
-
-
-  
-
-    
+echo "Submission process completed. Results saved to $OUTPUT_FILE."
