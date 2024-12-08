@@ -21,40 +21,53 @@ log_result() {
   jq ". += [{\"address\": \"$address\", \"status\": \"$status\"}]" "$OUTPUT_FILE" > tmp.json && mv tmp.json "$OUTPUT_FILE"
 }
 
-# Check if the contract is verified using Foundry's sourcify integration
+# Helper function to check if the contract is verified using Foundry's Sourcify integration
 check_if_verified() {
   local address=$1
   echo "Checking if $address is verified on Sourcify..."
   
-  if forge verify-check "$address" --chain-id "$CHAIN_ID" --verifier sourcify; then
-    echo "$address is already verified on Sourcify, skipping submission..."
-    return 0  # Verified
-  else
+  local result
+  result=$(forge verify-check "$address" --chain-id "$CHAIN_ID" --verifier sourcify 2>&1)
+
+  if echo "$result" | grep -q "is not verified"; then
     echo "$address is not verified on Sourcify, proceeding with submission..."
-    return 1  # Not verified
+    return 1
+  elif echo "$result" | grep -q "is already verified"; then
+    echo "$address is already verified on Sourcify, skipping submission..."
+    return 0
+  else
+    echo "Unexpected result from forge verify-check for $address: $result"
+    return 1
   fi
 }
-
-# Inside the processing loop
-if ! check_if_verified "$address"; then
-  # Proceed with compilation and submission only if not verified
-  echo "Recompiling $source_file with $compiler..."
-  forge build --run-all || {
-    echo "Failed to recompile $name ($address)"
-    log_result "$address" "compilation failed"
-    continue
-  }
-fi
 
 
 # Process contracts.json line by line
 while IFS= read -r line; do
+  # Skip empty lines or malformed JSON
+  if [ -z "$line" ] || ! echo "$line" | jq -e . > /dev/null 2>&1; then
+    echo "Skipping malformed or empty line..."
+    continue
+  fi
+
   # Parse JSON fields
-  name=$(echo "$line" | jq -r '.name')
-  address=$(echo "$line" | jq -r '.address')
-  compiler=$(echo "$line" | jq -r '.compiler')
+  name=$(echo "$line" | jq -r '.name // "Unknown"')
+  address=$(echo "$line" | jq -r '.address // empty')
+  compiler=$(echo "$line" | jq -r '.compiler // empty')
+
+  if [ -z "$address" ]; then
+    echo "Address missing for contract $name. Skipping..."
+    log_result "Unknown" "address missing"
+    continue
+  fi
 
   echo "Processing contract: $name at $address with compiler $compiler"
+
+  # Check if the contract is verified before compiling or submitting
+  if check_if_verified "$address"; then
+    log_result "$address" "already verified"
+    continue
+  fi
 
   # Extract the address without the '0x' prefix
   address_no_prefix=${address:2}
@@ -66,9 +79,6 @@ while IFS= read -r line; do
     log_result "$address" "source file not found"
     continue
   fi
-
-  # Check if the contract is verified before compiling
-  check_if_verified "$address" || continue
 
   # Set the SOLC_VERSION environment variable
   export SOLC_VERSION="${compiler/v/}"  # Strip the 'v' from compiler version
@@ -104,6 +114,7 @@ while IFS= read -r line; do
 
   echo "Successfully submitted $name ($address) to Sourcify."
   log_result "$address" "success"
+
 done < <(jq -c '.' "$CONTRACTS_JSON")
 
 echo "Submission process completed. Results saved to $OUTPUT_FILE."
