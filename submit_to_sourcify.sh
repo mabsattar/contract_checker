@@ -41,6 +41,29 @@ check_if_verified() {
   fi
 }
 
+# Helper function to compile contracts using solc
+compile_contract_with_solc() {
+  local source_file=$1
+  local compiler_version=$2
+  local metadata_file=$3
+
+  # Download and use the specified compiler version
+  solc_use_command="solc-select use $compiler_version"
+  if ! $solc_use_command; then
+    echo "Failed to switch to compiler version $compiler_version"
+    return 1
+  fi
+
+  # Compile the contract to generate metadata
+  solc --metadata --combined-json abi,metadata,bin,bin-runtime -o "$(dirname "$metadata_file")" "$source_file" > /dev/null 2>&1
+  if [ ! -f "$metadata_file" ]; then
+    echo "Metadata not generated for $source_file"
+    return 1
+  fi
+
+  return 0
+}
+
 
 # Process contracts.json line by line
 while IFS= read -r line; do
@@ -90,11 +113,15 @@ while IFS= read -r line; do
   else
     # Recompile contract using Foundry to regenerate metadata
     echo "Recompiling $source_file with $compiler..."
-    forge build --run-all || {
-      echo "Failed to recompile $name ($address)"
-      log_result "$address" "compilation failed"
+
+    #compile using solc
+    if compile_contract_with_solc "$source_file" "${compiler/v}" "$metadata_file"; then
+      echo "Successfully compiled $name ($address) with $compiler"
+    else
+      echo "Failed to compile $name ($address) with $compiler"   
+	log_result "$address" "compilation failed"
       continue
-    }
+    fi
   fi
 
   # Check again if metadata was generated after compilation
